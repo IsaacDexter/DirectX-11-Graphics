@@ -35,6 +35,7 @@ private:
 	ID3D11RenderTargetView* _pRenderTargetView;
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
+	ID3D11RasterizerState*	_wireFrame;
 	ID3D11InputLayout*      _pVertexLayout;
 	ID3D11Buffer*           _pVertexBuffer;
 	ID3D11Buffer*           _pIndexBuffer;
