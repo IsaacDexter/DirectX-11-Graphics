@@ -501,7 +501,11 @@ void Application::Draw()
     world = XMLoadFloat4x4(&_world2);
     // Transposes the matrix and copies it into the local constant buffer
     cb.mWorld = XMMatrixTranspose(world);
-    //Copies the local constant buffer into the constant buffer on the GPU
+    /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
+                                                                                                a zero based index that identifies the destination subresource, 
+                                                                                                A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
+                                                                                                A pointer to the source data memory,
+                                                                                                the size of one depth slice of source data  )*/
     _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
     //Draws the object with the new world matrix
     _pImmediateContext->DrawIndexed(36, 0, 0);
