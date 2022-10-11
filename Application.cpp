@@ -77,6 +77,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
     // Initialize the projection matrix
 	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
+    //// Initialise the orthographic matrix
+    //XMStoreFloat4x4(&_projection, XMMatrixOrthographicLH(XM_PIDIV2, _WindowWidth / (FLOAT)_WindowHeight, 0.01f, 100.0f));
 
 	return S_OK;
 }
@@ -355,6 +357,9 @@ HRESULT Application::InitDevice()
     if (FAILED(hr))
         return hr;
 
+    /* Binds one or more render targets and the depth stencil buffer to the outputMerger stage.OMSetRenderTargets(   Number of render targets to bind,
+    *                                                                                                               Pointer to an array of render targets to bind to the device,
+    *                                                                                                               Pointer to a depth-stencil view to bind to the device   )*/
     _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, nullptr);
 
     // create a rasterizer state to do wireframe rendering
@@ -382,6 +387,11 @@ HRESULT Application::InitDevice()
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
+    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers(  the first input slot for binding,
+    *                                                                   the number of buffers in the array,
+    *                                                                   the array of vertex buffers,
+    *                                                                   array of stride values one for each buffer,
+    *                                                                   array of offset values " " " "  )*/
     _pImmediateContext->IASetVertexBuffers(0, 1, &_pVertexBuffer, &stride, &offset);
 
 	InitIndexBuffer();
@@ -447,6 +457,7 @@ void Application::Update()
     // Animate the cube
     //
 	XMStoreFloat4x4(&_world, XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
+    //XMStoreFloat4x4(&_world, XMMatrixRotationY(t) * XMMatrixTranslation(2, 2, 2)); //calculate a y rotation matrix and store _world
 }
 
 void Application::Draw()
