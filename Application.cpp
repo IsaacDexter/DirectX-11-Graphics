@@ -76,9 +76,12 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
 
     // Initialize the projection matrix
+    /*XMMatrixPerspective(  Top-down field of view angle in radians,
+                            Aspect ratio of view-space X:Y,
+                            Distance to the near clipping plane > 0,
+                            Distance to the far clipping plane > 0),
+                                                                        Returns: the perspective projection matrix  */
 	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
-    //// Initialise the orthographic matrix
-    //XMStoreFloat4x4(&_projection, XMMatrixOrthographicLH(XM_PIDIV2, _WindowWidth / (FLOAT)_WindowHeight, 0.01f, 100.0f));
 
 	return S_OK;
 }
