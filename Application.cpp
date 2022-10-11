@@ -460,7 +460,7 @@ void Application::Update()
     // Animate the cube
     //
 	XMStoreFloat4x4(&_world, XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
-    //XMStoreFloat4x4(&_world, XMMatrixRotationY(t) * XMMatrixTranslation(2, 2, 2)); //calculate a y rotation matrix and store _world
+    XMStoreFloat4x4(&_world2, XMMatrixRotationX(t) * XMMatrixTranslation(2, 0, 0)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -470,11 +470,13 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; 
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
-    _pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate c0ntext before any objects we want to render in that state (wireframe)
+    _pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
 
+    //First object
 	XMMATRIX world = XMLoadFloat4x4(&_world);
 	XMMATRIX view = XMLoadFloat4x4(&_view);
 	XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
+    
     //
     // Update variables
     //
@@ -492,7 +494,17 @@ void Application::Draw()
 	_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
 	_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-	_pImmediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex    
+	_pImmediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
+
+    // Second object
+    // Converts the XMFLOAT$X$ of the cube to an XMMATRIX
+    world = XMLoadFloat4x4(&_world2);
+    // Transposes the matrix and copies it into the local constant buffer
+    cb.mWorld = XMMatrixTranspose(world);
+    //Copies the local constant buffer into the constant buffer on the GPU
+    _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
+    //Draws the object with the new world matrix
+    _pImmediateContext->DrawIndexed(36, 0, 0);
 
     //
     // Present our back buffer to our front buffer
