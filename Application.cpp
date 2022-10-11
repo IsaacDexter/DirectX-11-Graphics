@@ -194,18 +194,24 @@ HRESULT Application::InitIndexBuffer()
     // Create index buffer
     WORD indices[] =
     {
-        0,1,2,
-        2,1,3,
-        3,1,5,
-        3,5,7,
-        4,0,6,
-        6,0,2,
-        4,5,6,
-        6,5,7,
-        4,5,0,
-        0,5,1,
-        6,7,2,
-        2,7,3,
+        //Front:
+        5,  6,  4,
+        6,  5,  7,
+        //Right:
+        4,  2,  0,
+        2,  4,  6,
+        //Left:
+        1,  7,  5,
+        7,  1,  3,
+        //Back:
+        0,  3,  1,
+        3,  0,  2,
+        //Top:
+        1,  4,  0,
+        4,  1,  5,
+        //Bottom:
+        7,  2,  6,
+        2,  7,  3,
     };
 
 	D3D11_BUFFER_DESC bd;
@@ -321,6 +327,7 @@ HRESULT Application::InitDevice()
 
 	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
+    //Define the render target output buffer
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory(&sd, sizeof(sd));
     sd.BufferCount = 1;
@@ -334,6 +341,30 @@ HRESULT Application::InitDevice()
     sd.SampleDesc.Count = 1;
     sd.SampleDesc.Quality = 0;
     sd.Windowed = TRUE;
+
+    // define  the depth/stencil buffer
+    D3D11_TEXTURE2D_DESC depthStencilDesc;
+    // Texture width
+    depthStencilDesc.Width = _WindowWidth;
+    // Texture height
+    depthStencilDesc.Height = _WindowHeight;
+    // Maximum number of mipmap levels in the texture
+    depthStencilDesc.MipLevels = 1;
+    // Number of textures in the array
+    depthStencilDesc.ArraySize = 1;
+    // Texture format
+    depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    //      structure that specifies multisampling parameters for the texture
+    depthStencilDesc.SampleDesc.Count = 1;
+    depthStencilDesc.SampleDesc.Quality = 0;
+    // identifies how the texture is to be read from and written to
+    depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+    // flags for binding to pipeline stages
+    depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    // flags to specify the types of cpu access allowed. 0 if cpu access is not required
+    depthStencilDesc.CPUAccessFlags = 0;
+    // misc flags.
+    depthStencilDesc.MiscFlags = 0;
 
     for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
     {
@@ -360,11 +391,6 @@ HRESULT Application::InitDevice()
     if (FAILED(hr))
         return hr;
 
-    /* Binds one or more render targets and the depth stencil buffer to the outputMerger stage.OMSetRenderTargets(   Number of render targets to bind,
-    *                                                                                                               Pointer to an array of render targets to bind to the device,
-    *                                                                                                               Pointer to a depth-stencil view to bind to the device   )*/
-    _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, nullptr);
-
     // create a rasterizer state to do wireframe rendering
     D3D11_RASTERIZER_DESC wfdesc;
     ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC)); //Clears the size of memory need
@@ -390,11 +416,11 @@ HRESULT Application::InitDevice()
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers(  the first input slot for binding,
-    *                                                                   the number of buffers in the array,
-    *                                                                   the array of vertex buffers,
-    *                                                                   array of stride values one for each buffer,
-    *                                                                   array of offset values " " " "  )*/
+    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers( the first input slot for binding,
+                                                                    the number of buffers in the array,
+                                                                    the array of vertex buffers,
+                                                                    array of stride values one for each buffer,
+                                                                    array of offset values " " " "  )*/
     _pImmediateContext->IASetVertexBuffers(0, 1, &_pVertexBuffer, &stride, &offset);
 
 	InitIndexBuffer();
@@ -405,6 +431,16 @@ HRESULT Application::InitDevice()
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+    //Create the depth/stencil buffer
+    _pd3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, &_depthStencilBuffer);
+    //Create the depth/stencil view that will be bound to the OM stage of the pipeline
+    _pd3dDevice->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthStencilView);
+
+    /* Binds one or more render targets and the depth stencil buffer to the outputMerger stage.OMSetRenderTargets(   Number of render targets to bind,
+    *                                                                                                               Pointer to an array of render targets to bind to the device,
+    *                                                                                                               Pointer to a depth-stencil view to bind to the device   )*/
+    _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, _depthStencilView);
+
 	// Create the constant buffer
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -413,6 +449,8 @@ HRESULT Application::InitDevice()
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
+
+    
 
     if (FAILED(hr))
         return hr;
@@ -426,6 +464,8 @@ void Application::Cleanup()
     if (_pConstantBuffer) _pConstantBuffer->Release();
     if (_pVertexBuffer) _pVertexBuffer->Release();
     if (_pIndexBuffer) _pIndexBuffer->Release();
+    if (_depthStencilView) _depthStencilView->Release();
+    if (_depthStencilBuffer) _depthStencilBuffer->Release();
     if (_pVertexLayout) _pVertexLayout->Release();
     if (_pVertexShader) _pVertexShader->Release();
     if (_pPixelShader) _pPixelShader->Release();
@@ -460,7 +500,7 @@ void Application::Update()
     // Animate the cube
     //
 	XMStoreFloat4x4(&_world, XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
-    XMStoreFloat4x4(&_world2, XMMatrixRotationX(t) * XMMatrixTranslation(2, 0, 0)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+    XMStoreFloat4x4(&_world2, XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -470,7 +510,13 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; 
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
-    _pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
+    //_pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
+
+    /* Clear the depth stencil view every frame. ClearDepthStencilView( the depth/stencil view to be cleared,
+                                                                        the clear type, bitwise or-ed together,
+                                                                        the value we want to clear the depth to, 1.0f is the largest depth value anything can have,
+                                                                        the value we set the stencil to, 0 as it is not being used  )*/   
+    _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     //First object
 	XMMATRIX world = XMLoadFloat4x4(&_world);

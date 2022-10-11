@@ -40,6 +40,10 @@ private:
 	ID3D11Buffer*           _pVertexBuffer;
 	ID3D11Buffer*           _pIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
+	/// <summary>Interface Used to store the depth/stencil view</summary>
+	ID3D11DepthStencilView*	_depthStencilView;
+	/// <summary>Interface Used to store the depth/stencil buffer</summary>
+	ID3D11Texture2D*		_depthStencilBuffer;
 	// World matrices to hold the transformations for the 2 objects.
 	XMFLOAT4X4              _world, _world2;
 	XMFLOAT4X4              _view;
