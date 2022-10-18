@@ -36,8 +36,12 @@ Application::Application()
 	_pVertexShader = nullptr;
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
-	_pVertexBuffer = nullptr;
-	_pIndexBuffer = nullptr;
+
+	_pCubeVertexBuffer = nullptr;
+    _pPyramidVertexBuffer = nullptr;	
+    _pCubeIndexBuffer = nullptr;
+	_pPyramidIndexBuffer = nullptr;
+
 	_pConstantBuffer = nullptr;
 }
 
@@ -151,12 +155,84 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
 	return hr;
 }
 
-HRESULT Application::InitVertexBuffer()
+HRESULT Application::InitPyramidVertexBuffer()
+{
+    HRESULT hr;
+
+    // Create vertex buffer
+    SimpleVertex PyramidVertices[] =
+    {
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f) },
+    };
+
+    D3D11_BUFFER_DESC pyramidBd;
+    ZeroMemory(&pyramidBd, sizeof(pyramidBd));
+    pyramidBd.Usage = D3D11_USAGE_DEFAULT;
+    pyramidBd.ByteWidth = sizeof(SimpleVertex) * 8;
+    pyramidBd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    pyramidBd.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA pyramidInitData;
+    ZeroMemory(&pyramidInitData, sizeof(pyramidInitData));
+    pyramidInitData.pSysMem = PyramidVertices;
+
+    hr = _pd3dDevice->CreateBuffer(&pyramidBd, &pyramidInitData, &_pPyramidVertexBuffer);
+
+    if (FAILED(hr))
+        return hr;
+
+    return S_OK;
+}
+
+HRESULT Application::InitPyramidIndexBuffer()
+{
+    HRESULT hr;
+
+    // Create index buffer
+    WORD pyramidIndices[] =
+    {
+        //Front:
+        3,  2,  4,
+        //Left:
+        2,  0,  4,
+        //Back:
+        0,  1,  4,
+        //Right:
+        1,  3,  4,
+        //Base:
+        1,  2,  3,
+        2,  1,  0,
+    };
+
+    D3D11_BUFFER_DESC cubeBd;
+    ZeroMemory(&cubeBd, sizeof(cubeBd));
+
+    cubeBd.Usage = D3D11_USAGE_DEFAULT;
+    cubeBd.ByteWidth = sizeof(WORD) * 36;
+    cubeBd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    cubeBd.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA PyramidInitData;
+    ZeroMemory(&PyramidInitData, sizeof(PyramidInitData));
+    PyramidInitData.pSysMem = pyramidIndices;
+    hr = _pd3dDevice->CreateBuffer(&cubeBd, &PyramidInitData, &_pPyramidIndexBuffer);
+
+    if (FAILED(hr))
+        return hr;
+
+    return S_OK;
+}
+
+HRESULT Application::InitCubeVertexBuffer()
 {
 	HRESULT hr;
 
     // Create vertex buffer
-    SimpleVertex vertices[] =
+    SimpleVertex cubeVertices[] =
     {
         { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT4( 0.0f, 0.0f, 1.0f, 1.0f ) },
         { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f ) },
@@ -175,11 +251,11 @@ HRESULT Application::InitVertexBuffer()
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
-    D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = vertices;
+    D3D11_SUBRESOURCE_DATA cubeInitData;
+	ZeroMemory(&cubeInitData, sizeof(cubeInitData));
+    cubeInitData.pSysMem = cubeVertices;
 
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pVertexBuffer);
+    hr = _pd3dDevice->CreateBuffer(&bd, &cubeInitData, &_pCubeVertexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -187,12 +263,12 @@ HRESULT Application::InitVertexBuffer()
 	return S_OK;
 }
 
-HRESULT Application::InitIndexBuffer()
+HRESULT Application::InitCubeIndexBuffer()
 {
 	HRESULT hr;
 
     // Create index buffer
-    WORD indices[] =
+    WORD cubeIndices[] =
     {
         //Front:
         5,  6,  4,
@@ -222,10 +298,10 @@ HRESULT Application::InitIndexBuffer()
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-    InitData.pSysMem = indices;
-    hr = _pd3dDevice->CreateBuffer(&bd, &InitData, &_pIndexBuffer);
+	D3D11_SUBRESOURCE_DATA cubeInitData;
+	ZeroMemory(&cubeInitData, sizeof(cubeInitData));
+    cubeInitData.pSysMem = cubeIndices;
+    hr = _pd3dDevice->CreateBuffer(&bd, &cubeInitData, &_pCubeIndexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -399,6 +475,14 @@ HRESULT Application::InitDevice()
     hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);  //binds to the RS (render state) part of the pipeline, so created with CreateRasterizerState() method
     //First param (&wfdesc) is ther description of the render state, second is a pointer to a ID3D11RasterizerState object which holds the new render state
 
+    // create a rasterizer state to do wireframe rendering
+    D3D11_RASTERIZER_DESC sfdesc;
+    ZeroMemory(&sfdesc, sizeof(D3D11_RASTERIZER_DESC)); //Clears the size of memory need
+    sfdesc.FillMode = D3D11_FILL_SOLID; //Determines fill mode to use when rendering
+    sfdesc.CullMode = D3D11_CULL_NONE;  //indicates that triangles facing the specified direction are not drawn (used in back face culling)
+    hr = _pd3dDevice->CreateRasterizerState(&sfdesc, &_solidFill);  //binds to the RS (render state) part of the pipeline, so created with CreateRasterizerState() method
+    //First param (&sfdesc) is ther description of the render state, second is a pointer to a ID3D11RasterizerState object which holds the new render state
+
     // Setup the viewport
     D3D11_VIEWPORT vp;
     vp.Width = (FLOAT)_WindowWidth;
@@ -409,9 +493,14 @@ HRESULT Application::InitDevice()
     vp.TopLeftY = 0;
     _pImmediateContext->RSSetViewports(1, &vp);
 
-	InitShadersAndInputLayout();
+	hr = InitShadersAndInputLayout();
+    if (FAILED(hr)) 
+    { 
+        return HRESULT();
+    }
 
-	InitVertexBuffer();
+	InitCubeVertexBuffer();
+    InitPyramidVertexBuffer();
 
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
@@ -421,12 +510,15 @@ HRESULT Application::InitDevice()
                                                                     the array of vertex buffers,
                                                                     array of stride values one for each buffer,
                                                                     array of offset values " " " "  )*/
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_pVertexBuffer, &stride, &offset);
+    _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
+    _pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
 
-	InitIndexBuffer();
+	InitCubeIndexBuffer();
+    InitPyramidIndexBuffer();
 
     // Set index buffer
-    _pImmediateContext->IASetIndexBuffer(_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    _pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -462,8 +554,12 @@ void Application::Cleanup()
 {
     if (_pImmediateContext) _pImmediateContext->ClearState();
     if (_pConstantBuffer) _pConstantBuffer->Release();
-    if (_pVertexBuffer) _pVertexBuffer->Release();
-    if (_pIndexBuffer) _pIndexBuffer->Release();
+
+    if (_pCubeVertexBuffer) _pCubeVertexBuffer->Release();
+    if (_pPyramidVertexBuffer) _pPyramidVertexBuffer->Release();
+    if (_pCubeIndexBuffer) _pCubeIndexBuffer->Release();
+    if (_pPyramidIndexBuffer) _pPyramidIndexBuffer->Release();
+
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
     if (_pVertexLayout) _pVertexLayout->Release();
@@ -496,6 +592,24 @@ void Application::Update()
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
 
+    if (WM_KEYDOWN)
+    {
+        if ((GetAsyncKeyState(VK_LBUTTON) & 0x01))
+        {
+            if (_filledView)
+            {
+                _pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
+                _filledView = false;
+            }
+            else
+            {
+                _pImmediateContext->RSSetState(_solidFill); //Set the render state in out immediate context before any objects we want to render in that state (filled)
+                _filledView = true;
+            }
+            
+        }
+    }
+
     //
     // Animate the cube
     //
@@ -510,7 +624,6 @@ void Application::Draw()
     //
     float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; 
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
-    //_pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
 
     /* Clear the depth stencil view every frame. ClearDepthStencilView( the depth/stencil view to be cleared,
                                                                         the clear type, bitwise or-ed together,

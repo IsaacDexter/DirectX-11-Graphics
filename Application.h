@@ -36,9 +36,13 @@ private:
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
 	ID3D11RasterizerState*	_wireFrame;
+	ID3D11RasterizerState*	_solidFill;
+	bool					_filledView	=	true;
 	ID3D11InputLayout*      _pVertexLayout;
-	ID3D11Buffer*           _pVertexBuffer;
-	ID3D11Buffer*           _pIndexBuffer;
+	ID3D11Buffer*           _pCubeVertexBuffer;
+	ID3D11Buffer*           _pPyramidVertexBuffer;
+	ID3D11Buffer*           _pCubeIndexBuffer;
+	ID3D11Buffer*           _pPyramidIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
 	/// <summary>Interface Used to store the depth/stencil view</summary>
 	ID3D11DepthStencilView*	_depthStencilView;
@@ -55,8 +59,10 @@ private:
 	void Cleanup();
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();
-	HRESULT InitVertexBuffer();
-	HRESULT InitIndexBuffer();
+	HRESULT InitPyramidVertexBuffer();
+	HRESULT InitCubeVertexBuffer();
+	HRESULT InitPyramidIndexBuffer();
+	HRESULT InitCubeIndexBuffer();
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;
