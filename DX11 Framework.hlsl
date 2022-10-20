@@ -37,8 +37,6 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
     output.PosW = output.Pos;
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
-    //Light vertices near the bottom of the object darker using the y world position
-    output.Color = mul(Color, output.PosW.y);
     return output;
 }
 
@@ -48,12 +46,8 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
 //--------------------------------------------------------------------------------------
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
-    //Firstly, find the Pixel Shader, named PS
-    //1. We are going to modify the colour returned
-    //2. Multiply the input.Color by a float4(0.5f, 0.5f, 0.5f, 1.0f);
-    //3. Test and you should see your rendered objects dim in color
-    //float4 ColorModifier = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    //input.Color = mul(input.Color, ColorModifier);
+    //Use the accuracy of the pixel shader and the world y position to place the lower halves of objects in darkness while the upper halves remain lit
+    input.Color = (input.Color, input.PosW.y);
     
     return input.Color;
 }
