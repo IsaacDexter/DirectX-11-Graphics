@@ -35,16 +35,21 @@ private:
 	ID3D11RenderTargetView* _pRenderTargetView;
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
+	/// <summary>A rasterizer state used to draw objects as wireframe.</summary>
 	ID3D11RasterizerState*	_wireFrame;
+	/// <summary>A rasterizer state used to draw in block, solid fill.</summary>
 	ID3D11RasterizerState*	_solidFill;
-	bool					_filledView	=	true;
+	/// <summary>Used to track the current rasterizer state when switching between cube and wireframe.</summary>
+	ID3D11RasterizerState*	_currentRasterizerState;
 	ID3D11InputLayout*      _pVertexLayout;
+	/// <summary>A buffer to store the indexed vertices of the cube object.</summary>
 	ID3D11Buffer*           _pCubeVertexBuffer;
+	/// <summary>A buffer to store the indexed vertices of the pyramid object.</summary>
 	ID3D11Buffer*           _pPyramidVertexBuffer;
+	/// <summary>A buffer to store the indices of the cube object.</summary>
 	ID3D11Buffer*           _pCubeIndexBuffer;
-	int						_pCubeIndicesCount;
+	/// <summary>A buffer to store the indices of the pyramid object.</summary>
 	ID3D11Buffer*           _pPyramidIndexBuffer;
-	int						_pPyramidIndicesCount;
 	ID3D11Buffer*           _pConstantBuffer;
 	/// <summary>Interface Used to store the depth/stencil view</summary>
 	ID3D11DepthStencilView*	_depthStencilView;
@@ -54,6 +59,10 @@ private:
 	XMFLOAT4X4              _world, _world2;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
+	/// <summary>Avoiding hardcoded values. The number of indices in the pyramid (18)</summary>
+	int						_pPyramidIndicesCount;
+	/// <summary>Avoiding hardcoded values. The number of indices in the cube (36)</summary>
+	int						_pCubeIndicesCount;	
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

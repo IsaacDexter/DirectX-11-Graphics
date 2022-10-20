@@ -32,7 +32,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
     
     VS_OUTPUT output = (VS_OUTPUT)0;
     //Shader handles the world positon
-    output.Pos = mul( pos4, World);
+    output.Pos = mul(pos4, World);
     //Set the world position within output.
     output.PosW = output.Pos;
     output.Pos = mul( output.Pos, View );

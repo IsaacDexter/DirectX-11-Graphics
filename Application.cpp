@@ -477,13 +477,16 @@ HRESULT Application::InitDevice()
     hr = _pd3dDevice->CreateRasterizerState(&wfdesc, &_wireFrame);  //binds to the RS (render state) part of the pipeline, so created with CreateRasterizerState() method
     //First param (&wfdesc) is ther description of the render state, second is a pointer to a ID3D11RasterizerState object which holds the new render state
 
-    // create a rasterizer state to do wireframe rendering
+    // create a rasterizer state to do solid rendering
     D3D11_RASTERIZER_DESC sfdesc;
     ZeroMemory(&sfdesc, sizeof(D3D11_RASTERIZER_DESC)); //Clears the size of memory need
     sfdesc.FillMode = D3D11_FILL_SOLID; //Determines fill mode to use when rendering
     sfdesc.CullMode = D3D11_CULL_NONE;  //indicates that triangles facing the specified direction are not drawn (used in back face culling)
     hr = _pd3dDevice->CreateRasterizerState(&sfdesc, &_solidFill);  //binds to the RS (render state) part of the pipeline, so created with CreateRasterizerState() method
     //First param (&sfdesc) is ther description of the render state, second is a pointer to a ID3D11RasterizerState object which holds the new render state
+
+    //Store the solid rasterizer state in _currentRasterizerState
+    _currentRasterizerState = _solidFill;
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
@@ -587,17 +590,16 @@ void Application::Update()
     {
         if ((GetAsyncKeyState(VK_LBUTTON) & 0x01))
         {
-            if (_filledView)
+            if (_currentRasterizerState == _solidFill)
             {
-                _pImmediateContext->RSSetState(_wireFrame); //Set the render state in out immediate context before any objects we want to render in that state (wireframe)
-                _filledView = false;
+                _currentRasterizerState = _wireFrame;
             }
             else
             {
-                _pImmediateContext->RSSetState(_solidFill); //Set the render state in out immediate context before any objects we want to render in that state (filled)
-                _filledView = true;
+                _currentRasterizerState = _solidFill;
             }
-            
+            _pImmediateContext->RSSetState(_currentRasterizerState); //Set the render state in out immediate context before any objects we want to render in that state (filled)
+
         }
     }
 
@@ -632,7 +634,7 @@ void Application::Draw()
                                                                     array of stride values one for each buffer,
                                                                     array of offset values " " " "  )*/
     _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-    // Set index buffer
+    // Set index buffer for the cube.
     _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	XMMATRIX world = XMLoadFloat4x4(&_world);
