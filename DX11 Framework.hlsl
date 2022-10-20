@@ -42,5 +42,11 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
 //--------------------------------------------------------------------------------------
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
+    //Firstly, find the Pixel Shader, named PS
+    //1. We are going to modify the colour returned
+    //2. Multiply the input.Color by a float4(0.5f, 0.5f, 0.5f, 1.0f);
+    //3. Test and you should see your rendered objects dim in color
+    float4 ColorModifier = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    input.Color = mul(input.Color, ColorModifier);
     return input.Color;
 }
