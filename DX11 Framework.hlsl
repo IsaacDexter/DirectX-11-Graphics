@@ -37,6 +37,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
     output.PosW = output.Pos;
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
+    output.Color = Color;
     return output;
 }
 
@@ -47,7 +48,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float4 Color : COLOR )
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
     //Use the accuracy of the pixel shader and the world y position to place the lower halves of objects in darkness while the upper halves remain lit
-    input.Color = (input.Color, input.PosW.y);
+    input.Color = mul(input.Color, input.PosW.y);
     
     return input.Color;
 }
