@@ -207,6 +207,7 @@ HRESULT Application::InitPyramidIndexBuffer()
         1,  2,  3,
         2,  1,  0,
     };
+    _pPyramidIndicesCount = 18;
 
     D3D11_BUFFER_DESC cubeBd;
     ZeroMemory(&cubeBd, sizeof(cubeBd));
@@ -289,6 +290,7 @@ HRESULT Application::InitCubeIndexBuffer()
         7,  2,  6,
         2,  7,  3,
     };
+    _pCubeIndicesCount = 36;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -505,20 +507,9 @@ HRESULT Application::InitDevice()
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers( the first input slot for binding,
-                                                                    the number of buffers in the array,
-                                                                    the array of vertex buffers,
-                                                                    array of stride values one for each buffer,
-                                                                    array of offset values " " " "  )*/
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
 
 	InitCubeIndexBuffer();
     InitPyramidIndexBuffer();
-
-    // Set index buffer
-    _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-    _pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -619,6 +610,8 @@ void Application::Update()
 
 void Application::Draw()
 {
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset = 0;
     //
     // Clear the back buffer
     //
@@ -632,6 +625,16 @@ void Application::Draw()
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     //First object
+    //Load's the cube's vertex and index buffers into the immediate context
+    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers( the first input slot for binding,
+                                                                    the number of buffers in the array,
+                                                                    the array of vertex buffers,
+                                                                    array of stride values one for each buffer,
+                                                                    array of offset values " " " "  )*/
+    _pImmediateContext->IASetVertexBuffers(0, 1, &_pCubeVertexBuffer, &stride, &offset);
+    // Set index buffer
+    _pImmediateContext->IASetIndexBuffer(_pCubeIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
 	XMMATRIX world = XMLoadFloat4x4(&_world);
 	XMMATRIX view = XMLoadFloat4x4(&_view);
 	XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
@@ -653,9 +656,12 @@ void Application::Draw()
 	_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
 	_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-	_pImmediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
+	_pImmediateContext->DrawIndexed(_pCubeIndicesCount, 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
 
     // Second object
+    //Load the pyramid's vertex and index buffers into the immediate context
+    _pImmediateContext->IASetVertexBuffers(0, 1, &_pPyramidVertexBuffer, &stride, &offset);
+    _pImmediateContext->IASetIndexBuffer(_pPyramidIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
     // Converts the XMFLOAT$X$ of the cube to an XMMATRIX
     world = XMLoadFloat4x4(&_world2);
     // Transposes the matrix and copies it into the local constant buffer
@@ -665,9 +671,11 @@ void Application::Draw()
                                                                                                 A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
                                                                                                 A pointer to the source data memory,
                                                                                                 the size of one depth slice of source data  )*/
+    
     _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
+    
     //Draws the object with the new world matrix
-    _pImmediateContext->DrawIndexed(36, 0, 0);
+    _pImmediateContext->DrawIndexed(_pPyramidIndicesCount, 0, 0);
 
     //
     // Present our back buffer to our front buffer

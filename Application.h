@@ -42,7 +42,9 @@ private:
 	ID3D11Buffer*           _pCubeVertexBuffer;
 	ID3D11Buffer*           _pPyramidVertexBuffer;
 	ID3D11Buffer*           _pCubeIndexBuffer;
+	int						_pCubeIndicesCount;
 	ID3D11Buffer*           _pPyramidIndexBuffer;
+	int						_pPyramidIndicesCount;
 	ID3D11Buffer*           _pConstantBuffer;
 	/// <summary>Interface Used to store the depth/stencil view</summary>
 	ID3D11DepthStencilView*	_depthStencilView;
