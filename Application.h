@@ -85,7 +85,7 @@ private:
 	HRESULT InitCubeVertexBuffer();
 	HRESULT InitPyramidIndexBuffer();
 	HRESULT InitCubeIndexBuffer();
-	void LoadNormals(SimpleVertex* Vertices, WORD** Indices);
+	void CalculateNormals(std::vector<SimpleVertex>* Vertices, WORD* Indices, int IndicesCount);
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;

@@ -234,44 +234,13 @@ HRESULT Application::InitPyramidIndexBuffer()
     PyramidInitData.pSysMem = pyramidIndices;
     hr = _pd3dDevice->CreateBuffer(&cubeBd, &PyramidInitData, &_pPyramidIndexBuffer);
 
-    //For each triangle ABC
-    for (int i = 0; i < _pPyramidIndicesCount; i += 3)
-    {
-        //Load the positions into temporary vectors
-        SimpleVertex_Vector a = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i]].Normal) };
-        SimpleVertex_Vector b = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Normal) };
-        SimpleVertex_Vector c = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Normal) };
-
-        //Find the perpendicular vector to the triangle
-        XMVECTOR P = XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos);
-
-        //Add the result to the already exisiting normal and then store that result into the original vertex array's normal
-        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i]].Normal, P + a.Normal);
-        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Normal, P + b.Normal);
-        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Normal, P + c.Normal);
-    }
-    //For each vertex's normal
-    for each (SimpleVertex vertex in _pyramidVertices)
-    {
-        //Normalize that vertex's normal and store it where it was.
-        XMStoreFloat3(&vertex.Normal, XMVector3Normalize(XMLoadFloat3(&vertex.Normal)));
-    }
+  
 
     if (FAILED(hr))
         return hr;
 
     return S_OK;
 }
-
-//HRESULT Application::InitCubeNormalBuffer()
-//{
-//    HRESULT hr;
-//
-//    for each (XMFLOAT3 vertex in PyramidVertices)
-//    {
-//
-//    }
-//}
 
 HRESULT Application::InitCubeVertexBuffer()
 {
@@ -280,14 +249,14 @@ HRESULT Application::InitCubeVertexBuffer()
     // Create vertex buffer
     SimpleVertex cubeVertices[] =
     {
-        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT4( 0.0f, 0.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT4( 0.0f, 1.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT4( 1.0f, 0.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
+        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT3( 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT3( 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT3( 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT3( 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     D3D11_BUFFER_DESC bd;
@@ -356,8 +325,47 @@ HRESULT Application::InitCubeIndexBuffer()
 	return S_OK;
 }
 
-void Application::LoadNormals(SimpleVertex* Vertices, WORD**)
+/// <summary>
+/// <para>Used to calculate the smooth shading normals by:</para>
+/// <para>  -   computing the cross product for each triangle in the vertex</para>
+/// <para>  -   add that to the normal of each vertex of that triangle</para>
+/// <para>  -   normalize the normal of each vertex</para>
+/// <para>This whole function is made possible thanks to Julien Guertault on stack exchange: https://computergraphics.stackexchange.com/a/4032 </para>
+/// </summary>
+/// <param name="Vertices">:    an std::vector* of SimpleVertex s. </param>
+/// <param name="Indices">: an array of indices used to get the vertices of each triangle</param>
+/// <param name="IndicesCount">:    the number of indices (i.e. the length of indices)</param>
+void Application::CalculateNormals(std::vector<SimpleVertex>* Vertices, WORD* Indices, int IndicesCount)
 {
+    //  The function is based off of the following psuedocode
+    //  for each traingle
+    //      perpendicular - crossProduct(triangle.b - triangle.a, triangle.c - triangle.a)
+    //      a.normal += perpendicular
+    //      b.normal += perpendicular
+    //      c.normal += perpendicular
+    //  for each vertex
+    //      vertex.normal = normalize(vertex.normal)
+    for (int i = 0; i < IndicesCount; i += 3)
+    {
+        //Load the positions into temporary vectors
+        SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices[i]).Pos), XMLoadFloat3(&Vertices->at(Indices[i]).Normal)};
+        SimpleVertex_Vector b = { XMLoadFloat3(&Vertices->at(Indices[i + 1]).Pos), XMLoadFloat3(&Vertices->at(Indices[i + 1]).Normal) };
+        SimpleVertex_Vector c = { XMLoadFloat3(&Vertices->at(Indices[i + 2]).Pos), XMLoadFloat3(&Vertices->at(Indices[i + 2]).Normal) };
+
+        //Find the perpendicular vector to the triangle
+        XMVECTOR P = XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos);
+
+        //Add the result to the already exisiting normal and then store that result into the original vertex array's normal
+        XMStoreFloat3(&Vertices->at(Indices[i]).Normal, P + a.Normal);
+        XMStoreFloat3(&Vertices->at(Indices[i + 1]).Normal, P + b.Normal);
+        XMStoreFloat3(&Vertices->at(Indices[i + 2]).Normal, P + c.Normal);
+    }
+    //For each vertex's normal
+    for (int i = 0; i < Vertices->size(); i++)
+    {
+        //Normalize that vertex's normal and store it where it was.
+        XMStoreFloat3(&Vertices->at(i).Normal, XMVector3Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
+    }
 }
 
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
