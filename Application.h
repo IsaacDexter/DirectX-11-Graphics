@@ -6,6 +6,7 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include "resource.h"
+#include <vector>
 
 using namespace DirectX;
 
@@ -59,6 +60,10 @@ private:
 	XMFLOAT4X4              _world, _world2;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
+	/// <summary>The currently hardcoded vertices of the pyramid. Replace with a model loader eventually.</summary>
+	std::vector<XMFLOAT3>	_pyramidVertices;
+	/// <summary>The currently hardcoded vertices of the cube. Replace with a model loader eventually.</summary>
+	std::vector<XMFLOAT3>	_cubeVertices;
 	/// <summary>Avoiding hardcoded values. The number of indices in the pyramid (18)</summary>
 	int						_pPyramidIndicesCount;
 	/// <summary>Avoiding hardcoded values. The number of indices in the cube (36)</summary>
@@ -74,6 +79,8 @@ private:
 	HRESULT InitCubeVertexBuffer();
 	HRESULT InitPyramidIndexBuffer();
 	HRESULT InitCubeIndexBuffer();
+	HRESULT InitCubeNormalBuffer();
+	HRESULT InitPyramidNormalBuffer();
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;

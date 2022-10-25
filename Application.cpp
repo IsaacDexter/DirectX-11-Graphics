@@ -159,17 +159,26 @@ HRESULT Application::InitPyramidVertexBuffer()
 {
     HRESULT hr;
 
+    _pyramidVertices =
+    {
+        XMFLOAT3(-1.0f, -1.0f, 1.0f),
+        XMFLOAT3(1.0f, -1.0f, 1.0f),
+        XMFLOAT3(-1.0f, -1.0f, -1.0f),
+        XMFLOAT3(1.0f, -1.0f, -1.0f),
+        XMFLOAT3(0.0f, 1.0f, 0.0f),
+    };
+
     //Calculate normals
     //I want to thank Julien Guertualt's answer on stack overflow: https://computergraphics.stackexchange.com/a/4032 
-
     // Create vertex buffer
+
     SimpleVertex PyramidVertices[] =
     {
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     D3D11_BUFFER_DESC pyramidBd;
@@ -225,11 +234,30 @@ HRESULT Application::InitPyramidIndexBuffer()
     PyramidInitData.pSysMem = pyramidIndices;
     hr = _pd3dDevice->CreateBuffer(&cubeBd, &PyramidInitData, &_pPyramidIndexBuffer);
 
+    //For each triangle ABC
+    for (int i = 0; i < _pPyramidIndicesCount; i+= 3)
+    {
+        XMFLOAT3 A = _pyramidVertices[pyramidIndices[i]];
+        XMFLOAT3 B = _pyramidVertices[pyramidIndices[i + 1]];
+        XMFLOAT3 C = _pyramidVertices[pyramidIndices[i + 2]];
+        SimpleVertex N = { _pyramidVertices[pyramidIndices[i], float3 }
+    }
+
     if (FAILED(hr))
         return hr;
 
     return S_OK;
 }
+
+//HRESULT Application::InitCubeNormalBuffer()
+//{
+//    HRESULT hr;
+//
+//    for each (XMFLOAT3 vertex in PyramidVertices)
+//    {
+//
+//    }
+//}
 
 HRESULT Application::InitCubeVertexBuffer()
 {
