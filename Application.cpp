@@ -159,6 +159,9 @@ HRESULT Application::InitPyramidVertexBuffer()
 {
     HRESULT hr;
 
+    //Calculate normals
+    //I want to thank Julien Guertualt's answer on stack overflow: https://computergraphics.stackexchange.com/a/4032 
+
     // Create vertex buffer
     SimpleVertex PyramidVertices[] =
     {
