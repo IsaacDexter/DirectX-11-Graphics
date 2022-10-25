@@ -161,11 +161,11 @@ HRESULT Application::InitPyramidVertexBuffer()
 
     _pyramidVertices =
     {
-        XMFLOAT3(-1.0f, -1.0f, 1.0f),
-        XMFLOAT3(1.0f, -1.0f, 1.0f),
-        XMFLOAT3(-1.0f, -1.0f, -1.0f),
-        XMFLOAT3(1.0f, -1.0f, -1.0f),
-        XMFLOAT3(0.0f, 1.0f, 0.0f),
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     //Calculate normals
@@ -235,12 +235,26 @@ HRESULT Application::InitPyramidIndexBuffer()
     hr = _pd3dDevice->CreateBuffer(&cubeBd, &PyramidInitData, &_pPyramidIndexBuffer);
 
     //For each triangle ABC
-    for (int i = 0; i < _pPyramidIndicesCount; i+= 3)
+    for (int i = 0; i < _pPyramidIndicesCount; i += 3)
     {
-        XMFLOAT3 A = _pyramidVertices[pyramidIndices[i]];
-        XMFLOAT3 B = _pyramidVertices[pyramidIndices[i + 1]];
-        XMFLOAT3 C = _pyramidVertices[pyramidIndices[i + 2]];
-        SimpleVertex N = { _pyramidVertices[pyramidIndices[i], float3 }
+        //Load the positions into temporary vectors
+        SimpleVertex_Vector a = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i]].Normal) };
+        SimpleVertex_Vector b = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Normal) };
+        SimpleVertex_Vector c = { XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Pos), XMLoadFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Normal) };
+
+        //Find the perpendicular vector to the triangle
+        XMVECTOR P = XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos);
+
+        //Add the result to the already exisiting normal and then store that result into the original vertex array's normal
+        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i]].Normal, P + a.Normal);
+        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i + 1]].Normal, P + b.Normal);
+        XMStoreFloat3(&_pyramidVertices[pyramidIndices[i + 2]].Normal, P + c.Normal);
+    }
+    //For each vertex's normal
+    for each (SimpleVertex vertex in _pyramidVertices)
+    {
+        //Normalize that vertex's normal and store it where it was.
+        XMStoreFloat3(&vertex.Normal, XMVector3Normalize(XMLoadFloat3(&vertex.Normal)));
     }
 
     if (FAILED(hr))
@@ -340,6 +354,10 @@ HRESULT Application::InitCubeIndexBuffer()
         return hr;
 
 	return S_OK;
+}
+
+void Application::LoadNormals(SimpleVertex* Vertices, WORD**)
+{
 }
 
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)

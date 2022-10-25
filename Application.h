@@ -16,6 +16,12 @@ struct SimpleVertex
     XMFLOAT3 Normal;
 };
 
+struct SimpleVertex_Vector
+{
+	XMVECTOR Pos;
+	XMVECTOR Normal;
+};
+
 struct ConstantBuffer
 {
 	XMMATRIX mWorld;
@@ -61,9 +67,9 @@ private:
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 	/// <summary>The currently hardcoded vertices of the pyramid. Replace with a model loader eventually.</summary>
-	std::vector<XMFLOAT3>	_pyramidVertices;
+	std::vector<SimpleVertex>	_pyramidVertices;
 	/// <summary>The currently hardcoded vertices of the cube. Replace with a model loader eventually.</summary>
-	std::vector<XMFLOAT3>	_cubeVertices;
+	std::vector<SimpleVertex>	_cubeVertices;
 	/// <summary>Avoiding hardcoded values. The number of indices in the pyramid (18)</summary>
 	int						_pPyramidIndicesCount;
 	/// <summary>Avoiding hardcoded values. The number of indices in the cube (36)</summary>
@@ -79,8 +85,7 @@ private:
 	HRESULT InitCubeVertexBuffer();
 	HRESULT InitPyramidIndexBuffer();
 	HRESULT InitCubeIndexBuffer();
-	HRESULT InitCubeNormalBuffer();
-	HRESULT InitPyramidNormalBuffer();
+	void LoadNormals(SimpleVertex* Vertices, WORD** Indices);
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;
