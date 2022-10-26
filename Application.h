@@ -24,11 +24,20 @@ struct SimpleVertex_Vector
 	XMVECTOR Normal;
 };
 
-struct Model
+/// <summary><para>Stores all the information about an object: <br/>
+///  - indices, a vector of words containing the indices <br/>
+///  - vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex <br/>
+///  - ID3D11Buffer* pointers to vertex, and index buffers <br/>
+///  - An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object <br/>
+/// </para></summary>
+struct RenderedObject
 {
-	std::vector<WORD> Indices;
-	std::vector<SimpleVertex> Vertices;
 	
+	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
+	XMFLOAT4X4 world;
+	std::vector<WORD> indices;
+	std::vector<SimpleVertex> vertices;
 };
 
 struct ConstantBuffer
@@ -58,25 +67,15 @@ private:
 	/// <summary>Used to track the current rasterizer state when switching between cube and wireframe.</summary>
 	ID3D11RasterizerState*	_currentRasterizerState;
 	ID3D11InputLayout*      _pVertexLayout;
-	/// <summary>A buffer to store the indexed vertices of the cube object.</summary>
-	ID3D11Buffer*           _pCubeVertexBuffer;
-	/// <summary>A buffer to store the indexed vertices of the pyramid object.</summary>
-	ID3D11Buffer*           _pPyramidVertexBuffer;
-	/// <summary>A buffer to store the indices of the cube object.</summary>
-	ID3D11Buffer*           _pCubeIndexBuffer;
-	/// <summary>A buffer to store the indices of the pyramid object.</summary>
-	ID3D11Buffer*           _pPyramidIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
 	/// <summary>Interface Used to store the depth/stencil view</summary>
 	ID3D11DepthStencilView*	_depthStencilView;
 	/// <summary>Interface Used to store the depth/stencil buffer</summary>
 	ID3D11Texture2D*		_depthStencilBuffer;
-	// World matrices to hold the transformations for the 2 objects.
-	XMFLOAT4X4              _world, _world2;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
-	Model*					_cube;
-	Model*					_pyramid;
+	RenderedObject*			_cube;
+	RenderedObject*			_pyramid;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
