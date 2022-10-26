@@ -24,6 +24,13 @@ struct SimpleVertex_Vector
 	XMVECTOR Normal;
 };
 
+struct ConstantBuffer
+{
+	XMMATRIX mWorld;
+	XMMATRIX mView;
+	XMMATRIX mProjection;
+};
+
 /// <summary><para>Stores all the information about an object: <br/>
 ///  - indices, a vector of words containing the indices <br/>
 ///  - vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex <br/>
@@ -60,13 +67,7 @@ public:
 
 	void Update(XMMATRIX transform);
 	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
-};
-
-struct ConstantBuffer
-{
-	XMMATRIX mWorld;
-	XMMATRIX mView;
-	XMMATRIX mProjection;
+	XMFLOAT4X4 GetWorld();
 };
 
 class Application

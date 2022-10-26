@@ -397,6 +397,11 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     immediateContext->DrawIndexed(indices.size(), 0, 0);
 }
 
+XMFLOAT4X4 RenderedObject::GetWorld()
+{
+    return world;
+}
+
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
     // Register class
@@ -724,7 +729,7 @@ void Application::Draw()
     // Set index buffer for the cube.
     //_pImmediateContext->IASetIndexBuffer(_cube->indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	XMMATRIX world = XMLoadFloat4x4(&_cube->world);
+	XMMATRIX world = XMLoadFloat4x4(&_cube->GetWorld());
 	XMMATRIX view = XMLoadFloat4x4(&_view);
 	XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
     
@@ -738,6 +743,7 @@ void Application::Draw()
 
 	_pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
 
+    _cube->Draw(_pImmediateContext, _pConstantBuffer, cb);
     //
     // Renders a triangle
     //
