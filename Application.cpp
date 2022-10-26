@@ -261,6 +261,14 @@ HRESULT Application::InitPyramidVertexBuffer()
     HRESULT hr;
 
     // Create vertex buffer
+    SimpleVertex _pyramidVertices[] =
+    {
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+    };
 
     D3D11_BUFFER_DESC pyramidBd;
     ZeroMemory(&pyramidBd, sizeof(pyramidBd));
@@ -271,7 +279,7 @@ HRESULT Application::InitPyramidVertexBuffer()
 
     D3D11_SUBRESOURCE_DATA pyramidInitData;
     ZeroMemory(&pyramidInitData, sizeof(pyramidInitData));
-    pyramidInitData.pSysMem = &_pyramid->Vertices;
+    pyramidInitData.pSysMem = _pyramidVertices;
 
     hr = _pd3dDevice->CreateBuffer(&pyramidBd, &pyramidInitData, &_pPyramidVertexBuffer);
 
@@ -286,6 +294,20 @@ HRESULT Application::InitPyramidIndexBuffer()
     HRESULT hr;
 
     // Create index buffer
+    WORD _pyramidIndices[] =
+    {
+        //Front:
+        3,  2,  4,
+        //Left:
+        2,  0,  4,
+        //Back:
+        0,  1,  4,
+        //Right:
+        1,  3,  4,
+        //Base:
+        1,  2,  3,
+        2,  1,  0,
+    };
 
     D3D11_BUFFER_DESC pyramidBd;
     ZeroMemory(&pyramidBd, sizeof(pyramidBd));
@@ -297,7 +319,7 @@ HRESULT Application::InitPyramidIndexBuffer()
 
     D3D11_SUBRESOURCE_DATA PyramidInitData;
     ZeroMemory(&PyramidInitData, sizeof(PyramidInitData));
-    PyramidInitData.pSysMem = &_pyramid->Indices;
+    PyramidInitData.pSysMem = _pyramidIndices;
     hr = _pd3dDevice->CreateBuffer(&pyramidBd, &PyramidInitData, &_pPyramidIndexBuffer);
 
   
