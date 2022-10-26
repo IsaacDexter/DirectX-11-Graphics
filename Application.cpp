@@ -147,23 +147,37 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
 	return hr;
 }
 
-HRESULT Application::InitCube()
+RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice)
+{
+    pd3dDevice = _pd3dDevice; 
+    HRESULT hr;
+    hr = InitRenderedObject();
+    if (FAILED(hr))
+    {
+        return;
+    }
+}
+
+RenderedObject::~RenderedObject()
+{
+    if (vertexBuffer) vertexBuffer->Release();
+    if (indexBuffer) indexBuffer->Release();
+}
+
+HRESULT RenderedObject::InitRenderedObject()
 {
     HRESULT hr;
-    //The model is a struct that holds the vertices (position and normal) and indices of a shape.
-
-    //Set up the cube
-    _cube = new RenderedObject();
+    //The Rendered Object is a class that holds the vertices (position and normal) and indices of a shape.
 
     // Initialize the world matrix
-    XMStoreFloat4x4(&_cube->world, XMMatrixIdentity());
+    XMStoreFloat4x4(&world, XMMatrixIdentity());
 
     // Initialize vertex and index buffers
-    _cube->indexBuffer = nullptr;
-    _cube->vertexBuffer = nullptr;
+    indexBuffer = nullptr;
+    vertexBuffer = nullptr;
 
     //Set up Vertices of cube
-    _cube->vertices = 
+    vertices = 
     {
         { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
@@ -175,7 +189,7 @@ HRESULT Application::InitCube()
         { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
     //Set up Indices of cube
-    _cube->indices =
+    indices =
     {
         //Front:
         5,  6,  4,
@@ -197,90 +211,90 @@ HRESULT Application::InitCube()
         2,  7,  3,
     };
     //Set up the normals of the cube by calculating them
-    CalculateNormals(&_cube->vertices, &_cube->indices);
+    CalculateNormals(&vertices, &indices);
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
-    hr = InitCubeVertexBuffer();
+    hr = InitVertexBuffer();
     if (FAILED(hr))
         return hr;
     //Init the cube's index buffer using the indices already set out in Indices
-    hr = InitCubeIndexBuffer();
+    hr = InitIndexBuffer();
     if (FAILED(hr))
         return hr;
 
     return S_OK;
 }
 
-HRESULT Application::InitPyramid()
+//HRESULT Application::InitPyramid()
+//{
+//    HRESULT hr;
+//    //The model is a struct that holds the vertices (position and normal) and indices of a shape.
+//
+//    //Set up the pyramid
+//    _pyramid = new RenderedObject();
+//
+//    // Initialize the world matrix
+//    XMStoreFloat4x4(&_pyramid->world, XMMatrixIdentity());
+//
+//    // Initialize vertex and index buffers
+//    _pyramid->indexBuffer = nullptr;
+//    _pyramid->vertexBuffer = nullptr;
+//
+//    //Set up Vertices of pyramid
+//    _pyramid->vertices =
+//    {
+//        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+//        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+//        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+//        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+//        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+//    };
+//
+//    //Set up Indices of pyramid
+//    _pyramid->indices =
+//    {
+//        //Front:
+//        3,  2,  4,
+//        //Left:
+//        2,  0,  4,
+//        //Back:
+//        0,  1,  4,
+//        //Right:
+//        1,  3,  4,
+//        //Base:
+//        1,  2,  3,
+//        2,  1,  0,
+//    };
+//    //Set up the normals of the pyramid by calculating them
+//    CalculateNormals(&_pyramid->vertices, &_pyramid->indices);
+//    //Init the pyramid's vertex buffer using the vertices and normals already set out in Vertices
+//    hr = InitPyramidVertexBuffer();
+//    if (FAILED(hr))
+//        return hr;
+//    //Init the pyramid's index buffer using the indices already set out in Indices
+//    hr = InitPyramidIndexBuffer();
+//    if (FAILED(hr))
+//        return hr;
+//
+//    return S_OK;
+//}
+
+HRESULT RenderedObject::InitVertexBuffer()
 {
     HRESULT hr;
-    //The model is a struct that holds the vertices (position and normal) and indices of a shape.
 
-    //Set up the pyramid
-    _pyramid = new RenderedObject();
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof(SimpleVertex) * vertices.size();
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
 
-    // Initialize the world matrix
-    XMStoreFloat4x4(&_pyramid->world, XMMatrixIdentity());
-
-    // Initialize vertex and index buffers
-    _pyramid->indexBuffer = nullptr;
-    _pyramid->vertexBuffer = nullptr;
-
-    //Set up Vertices of pyramid
-    _pyramid->vertices =
-    {
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-    };
-
-    //Set up Indices of pyramid
-    _pyramid->indices =
-    {
-        //Front:
-        3,  2,  4,
-        //Left:
-        2,  0,  4,
-        //Back:
-        0,  1,  4,
-        //Right:
-        1,  3,  4,
-        //Base:
-        1,  2,  3,
-        2,  1,  0,
-    };
-    //Set up the normals of the pyramid by calculating them
-    CalculateNormals(&_pyramid->vertices, &_pyramid->indices);
-    //Init the pyramid's vertex buffer using the vertices and normals already set out in Vertices
-    hr = InitPyramidVertexBuffer();
-    if (FAILED(hr))
-        return hr;
-    //Init the pyramid's index buffer using the indices already set out in Indices
-    hr = InitPyramidIndexBuffer();
-    if (FAILED(hr))
-        return hr;
-
-    return S_OK;
-}
-
-HRESULT Application::InitPyramidVertexBuffer()
-{
-    HRESULT hr;
-
-    D3D11_BUFFER_DESC pyramidBd;
-    ZeroMemory(&pyramidBd, sizeof(pyramidBd));
-    pyramidBd.Usage = D3D11_USAGE_DEFAULT;
-    pyramidBd.ByteWidth = sizeof(SimpleVertex) * _pyramid->vertices.size();
-    pyramidBd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    pyramidBd.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA pyramidInitData;
-    ZeroMemory(&pyramidInitData, sizeof(pyramidInitData));
+    D3D11_SUBRESOURCE_DATA initData;
+    ZeroMemory(&initData, sizeof(initData));
     //The .data() makes sure that the data is passed in as oppossed to the address of the vector container
-    pyramidInitData.pSysMem = _pyramid->vertices.data();
+    initData.pSysMem = vertices.data();
 
-    hr = _pd3dDevice->CreateBuffer(&pyramidBd, &pyramidInitData, &_pyramid->vertexBuffer);
+    hr = pd3dDevice->CreateBuffer(&bd, &initData, &vertexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -288,23 +302,23 @@ HRESULT Application::InitPyramidVertexBuffer()
     return S_OK;
 }
 
-HRESULT Application::InitPyramidIndexBuffer()
+HRESULT RenderedObject::InitIndexBuffer()
 {
     HRESULT hr;
 
-    D3D11_BUFFER_DESC pyramidBd;
-    ZeroMemory(&pyramidBd, sizeof(pyramidBd));
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
 
-    pyramidBd.Usage = D3D11_USAGE_DEFAULT;
-    pyramidBd.ByteWidth = sizeof(WORD) * _pyramid->indices.size();
-    pyramidBd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    pyramidBd.CPUAccessFlags = 0;
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof(WORD) * indices.size();
+    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    bd.CPUAccessFlags = 0;
 
-    D3D11_SUBRESOURCE_DATA PyramidInitData;
-    ZeroMemory(&PyramidInitData, sizeof(PyramidInitData));
+    D3D11_SUBRESOURCE_DATA initData;
+    ZeroMemory(&initData, sizeof(initData));
     //The .data() makes sure that the data is passed in as oppossed to the address of the vector container
-    PyramidInitData.pSysMem = _pyramid->indices.data();
-    hr = _pd3dDevice->CreateBuffer(&pyramidBd, &PyramidInitData, &_pyramid->indexBuffer);
+    initData.pSysMem = indices.data();
+    hr = pd3dDevice->CreateBuffer(&bd, &initData, &indexBuffer);
 
   
 
@@ -312,54 +326,6 @@ HRESULT Application::InitPyramidIndexBuffer()
         return hr;
 
     return S_OK;
-}
-
-HRESULT Application::InitCubeVertexBuffer()
-{
-	HRESULT hr;
-
-    D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(SimpleVertex) * _cube->vertices.size();
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-    D3D11_SUBRESOURCE_DATA cubeInitData;
-	ZeroMemory(&cubeInitData, sizeof(cubeInitData));
-    cubeInitData.pSysMem = _cube->vertices.data();
-
-    hr = _pd3dDevice->CreateBuffer(&bd, &cubeInitData, &_cube->vertexBuffer);
-
-    if (FAILED(hr))
-        return hr;
-
-	return S_OK;
-}
-
-HRESULT Application::InitCubeIndexBuffer()
-{
-	HRESULT hr;
-
-    // Create index buffer
-
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-
-    bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(WORD) * _cube->indices.size();
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA cubeInitData;
-	ZeroMemory(&cubeInitData, sizeof(cubeInitData));
-    cubeInitData.pSysMem = _cube->indices.data();
-    hr = _pd3dDevice->CreateBuffer(&bd, &cubeInitData, &_cube->indexBuffer);
-
-    if (FAILED(hr))
-        return hr;
-
-	return S_OK;
 }
 
 /// <summary>
@@ -372,7 +338,7 @@ HRESULT Application::InitCubeIndexBuffer()
 /// <param name="Vertices">:    an std::vector* of SimpleVertex s. </param>
 /// <param name="Indices">: an array of indices used to get the vertices of each triangle</param>
 /// <param name="IndicesCount">:    the number of indices (i.e. the length of indices)</param>
-void Application::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices)
+void RenderedObject::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices)
 {
     //  The function is based off of the following psuedocode
     //  for each traingle
@@ -403,6 +369,32 @@ void Application::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vec
         //Normalize that vertex's normal and store it where it was.
         XMStoreFloat3(&Vertices->at(i).Normal, XMVector3Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
     }
+}
+
+void RenderedObject::Update(XMMATRIX transform)
+{
+    XMStoreFloat4x4(&world, transform); //calculate a y rotation matrix and store _world
+}
+
+void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)
+{
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset = 0;
+    //Load the pyramid's vertex and index buffers into the immediate context
+    immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+    immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    // Converts the XMFLOAT$X$ of the cube to an XMMATRIX
+    XMMATRIX _world = XMLoadFloat4x4(&world);
+    // Transposes the matrix and copies it into the local constant buffer
+    cb.mWorld = XMMatrixTranspose(_world);
+    /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
+                                                                                                a zero based index that identifies the destination subresource,
+                                                                                                A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
+                                                                                                A pointer to the source data memory,
+                                                                                                the size of one depth slice of source data  )*/
+    immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, &cb, 0, 0);
+    //Draws the object with the new world matrix
+    immediateContext->DrawIndexed(indices.size(), 0, 0);
 }
 
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
@@ -603,18 +595,10 @@ HRESULT Application::InitDevice()
     UINT offset = 0;
 
     //Initialise cube, including vertex and index buffers
-    hr = InitCube();
-    if FAILED(hr)
-    {
-        return HRESULT();
-    }
+    _cube = new RenderedObject(_pd3dDevice);
 
     //Initialise pyramid, including vertex and index buffers
-    hr = InitPyramid();
-    if FAILED(hr)
-    {
-        return HRESULT();
-    }
+    _pyramid = new RenderedObject(_pd3dDevice);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -651,10 +635,11 @@ void Application::Cleanup()
     if (_pImmediateContext) _pImmediateContext->ClearState();
     if (_pConstantBuffer) _pConstantBuffer->Release();
 
-    if (_cube->vertexBuffer) _cube->vertexBuffer->Release();
-    if (_pyramid->vertexBuffer) _pyramid->vertexBuffer->Release();
-    if (_cube->indexBuffer) _cube->indexBuffer->Release();
-    if (_pyramid->indexBuffer) _pyramid->indexBuffer->Release();
+    delete(_cube);
+    _cube = nullptr;
+
+    delete(_pyramid);
+    _pyramid = nullptr;
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
@@ -708,8 +693,8 @@ void Application::Update()
     //
     // Animate the cube
     //
-	XMStoreFloat4x4(&_cube->world, XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
-    XMStoreFloat4x4(&_pyramid->world, XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+	_cube->Update(XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
+    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -735,9 +720,9 @@ void Application::Draw()
                                                                     the array of vertex buffers,
                                                                     array of stride values one for each buffer,
                                                                     array of offset values " " " "  )*/
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_cube->vertexBuffer, &stride, &offset);
+    //_pImmediateContext->IASetVertexBuffers(0, 1, &_cube->vertexBuffer, &stride, &offset);
     // Set index buffer for the cube.
-    _pImmediateContext->IASetIndexBuffer(_cube->indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    //_pImmediateContext->IASetIndexBuffer(_cube->indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	XMMATRIX world = XMLoadFloat4x4(&_cube->world);
 	XMMATRIX view = XMLoadFloat4x4(&_view);
@@ -756,28 +741,11 @@ void Application::Draw()
     //
     // Renders a triangle
     //
-	_pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
-	_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
-    _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
-	_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-	_pImmediateContext->DrawIndexed(_cube->indices.size(), 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
-
-    // Second object
-    //Load the pyramid's vertex and index buffers into the immediate context
-    _pImmediateContext->IASetVertexBuffers(0, 1, &_pyramid->vertexBuffer, &stride, &offset);
-    _pImmediateContext->IASetIndexBuffer(_pyramid->indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-    // Converts the XMFLOAT$X$ of the cube to an XMMATRIX
-    world = XMLoadFloat4x4(&_pyramid->world);
-    // Transposes the matrix and copies it into the local constant buffer
-    cb.mWorld = XMMatrixTranspose(world);
-    /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
-                                                                                                a zero based index that identifies the destination subresource, 
-                                                                                                A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
-                                                                                                A pointer to the source data memory,
-                                                                                                the size of one depth slice of source data  )*/
-    _pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-    //Draws the object with the new world matrix
-    _pImmediateContext->DrawIndexed(_pyramid->indices.size(), 0, 0);
+	//_pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
+	//_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
+    //_pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
+	//_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
+	//_pImmediateContext->DrawIndexed(_cube->indices.size(), 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
 
 
     //

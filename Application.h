@@ -30,14 +30,36 @@ struct SimpleVertex_Vector
 ///  - ID3D11Buffer* pointers to vertex, and index buffers <br/>
 ///  - An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object <br/>
 /// </para></summary>
-struct RenderedObject
+class RenderedObject
 {
-	
+
+private:
+	/// <summary>ID3D11Buffer* pointer to vertex buffer</summary>
 	ID3D11Buffer* vertexBuffer;
+	/// <summary>ID3D11Buffer* pointer to index buffer</summary>
 	ID3D11Buffer* indexBuffer;
+	/// <summary>An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object</summary>
 	XMFLOAT4X4 world;
+	/// <summary>indices, a vector of words containing the indices</summary>
 	std::vector<WORD> indices;
+	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
 	std::vector<SimpleVertex> vertices;
+	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
+	ID3D11Device* pd3dDevice;
+private:
+	HRESULT InitRenderedObject();
+	HRESULT InitVertexBuffer();
+	HRESULT InitIndexBuffer();
+
+	void CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
+	
+
+public:
+	RenderedObject(ID3D11Device* _pd3dDevice);
+	~RenderedObject();
+
+	void Update(XMMATRIX transform);
+	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
 };
 
 struct ConstantBuffer
@@ -83,13 +105,7 @@ private:
 	void Cleanup();
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();
-	HRESULT InitPyramid();
-	HRESULT InitCube();
-	HRESULT InitPyramidVertexBuffer();
-	HRESULT InitCubeVertexBuffer();
-	HRESULT InitPyramidIndexBuffer();
-	HRESULT InitCubeIndexBuffer();
-	void CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
+	
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;
