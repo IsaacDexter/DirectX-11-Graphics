@@ -10,6 +10,8 @@
 
 using namespace DirectX;
 
+
+
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
@@ -20,6 +22,13 @@ struct SimpleVertex_Vector
 {
 	XMVECTOR Pos;
 	XMVECTOR Normal;
+};
+
+struct Model
+{
+	std::vector<WORD> Indices;
+	std::vector<SimpleVertex> Vertices;
+	
 };
 
 struct ConstantBuffer
@@ -66,14 +75,8 @@ private:
 	XMFLOAT4X4              _world, _world2;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
-	/// <summary>The currently hardcoded vertices of the pyramid. Replace with a model loader eventually.</summary>
-	std::vector<SimpleVertex>	_pyramidVertices;
-	/// <summary>The currently hardcoded vertices of the cube. Replace with a model loader eventually.</summary>
-	std::vector<SimpleVertex>	_cubeVertices;
-	/// <summary>Avoiding hardcoded values. The number of indices in the pyramid (18)</summary>
-	int						_pPyramidIndicesCount;
-	/// <summary>Avoiding hardcoded values. The number of indices in the cube (36)</summary>
-	int						_pCubeIndicesCount;	
+	Model*					_cube;
+	Model*					_pyramid;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -81,11 +84,13 @@ private:
 	void Cleanup();
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();
+	HRESULT InitPyramid();
+	HRESULT InitCube();
 	HRESULT InitPyramidVertexBuffer();
 	HRESULT InitCubeVertexBuffer();
 	HRESULT InitPyramidIndexBuffer();
 	HRESULT InitCubeIndexBuffer();
-	void CalculateNormals(std::vector<SimpleVertex>* Vertices, WORD* Indices, int IndicesCount);
+	void CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;
