@@ -40,7 +40,7 @@ struct ConstantBuffer
 class RenderedObject
 {
 
-private:
+protected:
 	/// <summary>ID3D11Buffer* pointer to vertex buffer</summary>
 	ID3D11Buffer* m_vertexBuffer;
 	/// <summary>ID3D11Buffer* pointer to index buffer</summary>
@@ -53,8 +53,8 @@ private:
 	std::vector<SimpleVertex> m_vertices;
 	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
 	ID3D11Device* m_pd3dDevice;
-private:
-	HRESULT InitRenderedObject();
+protected:
+	virtual HRESULT InitRenderedObject();
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 
@@ -68,6 +68,11 @@ public:
 	void Update(XMMATRIX transform);
 	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
 	XMFLOAT4X4 GetWorld();
+};
+
+class Pyramid: RenderedObject
+{
+	HRESULT InitRenderedObject() override;
 };
 
 class Application
@@ -100,7 +105,7 @@ private:
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 	RenderedObject*			_cube;
-	RenderedObject*			_pyramid;
+	Pyramid*			_pyramid;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

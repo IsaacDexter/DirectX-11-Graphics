@@ -226,6 +226,56 @@ HRESULT RenderedObject::InitRenderedObject()
     return S_OK;
 }
 
+HRESULT Pyramid::InitRenderedObject()
+{
+    HRESULT hr;
+    //The Rendered Object is a class that holds the vertices (position and normal) and indices of a shape.
+
+    // Initialize the world matrix
+    XMStoreFloat4x4(&m_world, XMMatrixIdentity());
+
+    // Initialize vertex and index buffers
+    m_indexBuffer = nullptr;
+    m_vertexBuffer = nullptr;
+
+    //Set up Vertices of pyramid
+    m_vertices =
+    {
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+    };
+    //Set up Indices of pyramid
+    m_indices =
+    {
+        //Front:
+        3,  2,  4,
+        //Left:
+        2,  0,  4,
+        //Back:
+        0,  1,  4,
+        //Right:
+        1,  3,  4,
+        //Base:
+        1,  2,  3,
+        2,  1,  0,
+    };
+    //Set up the normals of the pyramid by calculating them
+    CalculateNormals(&m_vertices, &m_indices);
+    //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
+    hr = InitVertexBuffer();
+    if (FAILED(hr))
+        return hr;
+    //Init the cube's index buffer using the indices already set out in Indices
+    hr = InitIndexBuffer();
+    if (FAILED(hr))
+        return hr;
+
+    return S_OK;
+}
+
 //HRESULT Application::InitPyramid()
 //{
 //    HRESULT hr;
@@ -619,7 +669,7 @@ HRESULT Application::InitDevice()
     _cube = new RenderedObject(_pd3dDevice);
 
     //Initialise pyramid, including vertex and index buffers
-    _pyramid = new RenderedObject(_pd3dDevice);
+    _pyramid = new Pyramid(_pd3dDevice);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
