@@ -149,7 +149,7 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
 
 RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice)
 {
-    pd3dDevice = _pd3dDevice; 
+    m_pd3dDevice = _pd3dDevice; 
     HRESULT hr;
     hr = InitRenderedObject();
     if (FAILED(hr))
@@ -160,8 +160,8 @@ RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice)
 
 RenderedObject::~RenderedObject()
 {
-    if (vertexBuffer) vertexBuffer->Release();
-    if (indexBuffer) indexBuffer->Release();
+    if (m_vertexBuffer) m_vertexBuffer->Release();
+    if (m_indexBuffer) m_indexBuffer->Release();
 }
 
 HRESULT RenderedObject::InitRenderedObject()
@@ -170,14 +170,14 @@ HRESULT RenderedObject::InitRenderedObject()
     //The Rendered Object is a class that holds the vertices (position and normal) and indices of a shape.
 
     // Initialize the world matrix
-    XMStoreFloat4x4(&world, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_world, XMMatrixIdentity());
 
     // Initialize vertex and index buffers
-    indexBuffer = nullptr;
-    vertexBuffer = nullptr;
+    m_indexBuffer = nullptr;
+    m_vertexBuffer = nullptr;
 
     //Set up Vertices of cube
-    vertices = 
+    m_vertices = 
     {
         { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
@@ -189,7 +189,7 @@ HRESULT RenderedObject::InitRenderedObject()
         { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
     //Set up Indices of cube
-    indices =
+    m_indices =
     {
         //Front:
         5,  6,  4,
@@ -211,7 +211,7 @@ HRESULT RenderedObject::InitRenderedObject()
         2,  7,  3,
     };
     //Set up the normals of the cube by calculating them
-    CalculateNormals(&vertices, &indices);
+    CalculateNormals(&m_vertices, &m_indices);
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
     if (FAILED(hr))
@@ -285,16 +285,16 @@ HRESULT RenderedObject::InitVertexBuffer()
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(SimpleVertex) * vertices.size();
+    bd.ByteWidth = sizeof(SimpleVertex) * m_vertices.size();
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(initData));
     //The .data() makes sure that the data is passed in as oppossed to the address of the vector container
-    initData.pSysMem = vertices.data();
+    initData.pSysMem = m_vertices.data();
 
-    hr = pd3dDevice->CreateBuffer(&bd, &initData, &vertexBuffer);
+    hr = m_pd3dDevice->CreateBuffer(&bd, &initData, &m_vertexBuffer);
 
     if (FAILED(hr))
         return hr;
@@ -310,15 +310,15 @@ HRESULT RenderedObject::InitIndexBuffer()
     ZeroMemory(&bd, sizeof(bd));
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(WORD) * indices.size();
+    bd.ByteWidth = sizeof(WORD) * m_indices.size();
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA initData;
     ZeroMemory(&initData, sizeof(initData));
     //The .data() makes sure that the data is passed in as oppossed to the address of the vector container
-    initData.pSysMem = indices.data();
-    hr = pd3dDevice->CreateBuffer(&bd, &initData, &indexBuffer);
+    initData.pSysMem = m_indices.data();
+    hr = m_pd3dDevice->CreateBuffer(&bd, &initData, &m_indexBuffer);
 
   
 
@@ -373,7 +373,7 @@ void RenderedObject::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::
 
 void RenderedObject::Update(XMMATRIX transform)
 {
-    XMStoreFloat4x4(&world, transform); //calculate a y rotation matrix and store _world
+    XMStoreFloat4x4(&m_world, transform); //calculate a y rotation matrix and store _world
 }
 
 void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)
@@ -381,25 +381,34 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
     //Load the pyramid's vertex and index buffers into the immediate context
-    immediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-    immediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+    immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+    immediateContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
     // Converts the XMFLOAT$X$ of the cube to an XMMATRIX
-    XMMATRIX _world = XMLoadFloat4x4(&world);
+    XMMATRIX world = XMLoadFloat4x4(&m_world);
     // Transposes the matrix and copies it into the local constant buffer
-    cb.mWorld = XMMatrixTranspose(_world);
-    /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
-                                                                                                a zero based index that identifies the destination subresource,
-                                                                                                A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
-                                                                                                A pointer to the source data memory,
-                                                                                                the size of one depth slice of source data  )*/
+    cb.mWorld = XMMatrixTranspose(world);
     immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, &cb, 0, 0);
+
+
+    /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
+                                                                                                    a zero based index that identifies the destination subresource,
+                                                                                                    A box that defines the portion of the destination subresource to copy the resource data into. If NULL, the data is written to the destination subresource with no offset,
+                                                                                                    A pointer to the source data memory,
+                                                                                                    the size of one depth slice of source data  )*/
+    immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, &cb, 0, 0);
+
+    //
+    // Renders a triangle
+    //
+
     //Draws the object with the new world matrix
-    immediateContext->DrawIndexed(indices.size(), 0, 0);
+    immediateContext->DrawIndexed(m_indices.size(), 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
 }
 
 XMFLOAT4X4 RenderedObject::GetWorld()
 {
-    return world;
+    return m_world;
 }
 
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
@@ -704,58 +713,30 @@ void Application::Update()
 
 void Application::Draw()
 {
-    UINT stride = sizeof(SimpleVertex);
-    UINT offset = 0;
     //
     // Clear the back buffer
     //
-    float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f}; 
+    float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
 
-    /* Clear the depth stencil view every frame. ClearDepthStencilView( the depth/stencil view to be cleared,
-                                                                        the clear type, bitwise or-ed together,
-                                                                        the value we want to clear the depth to, 1.0f is the largest depth value anything can have,
-                                                                        the value we set the stencil to, 0 as it is not being used  )*/   
-    _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-    //First object
-    //Load's the cube's vertex and index buffers into the immediate context
-    /*Binds objects to the InputAssembler Stage.IASetVertexBuffers( the first input slot for binding,
-                                                                    the number of buffers in the array,
-                                                                    the array of vertex buffers,
-                                                                    array of stride values one for each buffer,
-                                                                    array of offset values " " " "  )*/
-    //_pImmediateContext->IASetVertexBuffers(0, 1, &_cube->vertexBuffer, &stride, &offset);
-    // Set index buffer for the cube.
-    //_pImmediateContext->IASetIndexBuffer(_cube->indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-	XMMATRIX world = XMLoadFloat4x4(&_cube->GetWorld());
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
-    
+    XMMATRIX world = XMLoadFloat4x4(&_cube->GetWorld());
+    XMMATRIX view = XMLoadFloat4x4(&_view);
+    XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
     //
     // Update variables
     //
     ConstantBuffer cb;
-	cb.mWorld = XMMatrixTranspose(world);
-	cb.mView = XMMatrixTranspose(view);
-	cb.mProjection = XMMatrixTranspose(projection);
+    cb.mWorld = XMMatrixTranspose(world);
+    cb.mView = XMMatrixTranspose(view);
+    cb.mProjection = XMMatrixTranspose(projection);
 
-	_pImmediateContext->UpdateSubresource(_pConstantBuffer, 0, nullptr, &cb, 0, 0);
+    _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
+    _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
+    _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
+    _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
 
     _cube->Draw(_pImmediateContext, _pConstantBuffer, cb);
-    //
-    // Renders a triangle
-    //
-	//_pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
-	//_pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
-    //_pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
-	//_pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-	//_pImmediateContext->DrawIndexed(_cube->indices.size(), 0, 0);    //Draws the shape, total indices,starting index, starting vertex  
 
 
-    //
-    // Present our back buffer to our front buffer
-    //
     _pSwapChain->Present(0, 0);
 }

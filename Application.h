@@ -42,17 +42,17 @@ class RenderedObject
 
 private:
 	/// <summary>ID3D11Buffer* pointer to vertex buffer</summary>
-	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* m_vertexBuffer;
 	/// <summary>ID3D11Buffer* pointer to index buffer</summary>
-	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* m_indexBuffer;
 	/// <summary>An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object</summary>
-	XMFLOAT4X4 world;
+	XMFLOAT4X4 m_world;
 	/// <summary>indices, a vector of words containing the indices</summary>
-	std::vector<WORD> indices;
+	std::vector<WORD> m_indices;
 	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
-	std::vector<SimpleVertex> vertices;
+	std::vector<SimpleVertex> m_vertices;
 	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
-	ID3D11Device* pd3dDevice;
+	ID3D11Device* m_pd3dDevice;
 private:
 	HRESULT InitRenderedObject();
 	HRESULT InitVertexBuffer();
