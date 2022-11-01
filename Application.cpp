@@ -280,60 +280,6 @@ HRESULT Pyramid::InitRenderedObject()
     return S_OK;
 }
 
-//HRESULT Application::InitPyramid()
-//{
-//    HRESULT hr;
-//    //The model is a struct that holds the vertices (position and normal) and indices of a shape.
-//
-//    //Set up the pyramid
-//    _pyramid = new RenderedObject();
-//
-//    // Initialize the world matrix
-//    XMStoreFloat4x4(&_pyramid->world, XMMatrixIdentity());
-//
-//    // Initialize vertex and index buffers
-//    _pyramid->indexBuffer = nullptr;
-//    _pyramid->vertexBuffer = nullptr;
-//
-//    //Set up Vertices of pyramid
-//    _pyramid->vertices =
-//    {
-//        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-//        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-//        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-//        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-//        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-//    };
-//
-//    //Set up Indices of pyramid
-//    _pyramid->indices =
-//    {
-//        //Front:
-//        3,  2,  4,
-//        //Left:
-//        2,  0,  4,
-//        //Back:
-//        0,  1,  4,
-//        //Right:
-//        1,  3,  4,
-//        //Base:
-//        1,  2,  3,
-//        2,  1,  0,
-//    };
-//    //Set up the normals of the pyramid by calculating them
-//    CalculateNormals(&_pyramid->vertices, &_pyramid->indices);
-//    //Init the pyramid's vertex buffer using the vertices and normals already set out in Vertices
-//    hr = InitPyramidVertexBuffer();
-//    if (FAILED(hr))
-//        return hr;
-//    //Init the pyramid's index buffer using the indices already set out in Indices
-//    hr = InitPyramidIndexBuffer();
-//    if (FAILED(hr))
-//        return hr;
-//
-//    return S_OK;
-//}
-
 HRESULT RenderedObject::InitVertexBuffer()
 {
     HRESULT hr;
@@ -465,11 +411,6 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
 
     //Draws the object with the new world matrix
     immediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
-}
-
-XMFLOAT4X4 RenderedObject::GetWorld()
-{
-    return m_world;
 }
 
 HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
@@ -782,7 +723,7 @@ void Application::Draw()
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    XMMATRIX world = XMLoadFloat4x4(&_cube->GetWorld());
+    XMMATRIX world = XMLoadFloat4x4(_world);
     XMMATRIX view = XMLoadFloat4x4(&_view);
     XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
     //

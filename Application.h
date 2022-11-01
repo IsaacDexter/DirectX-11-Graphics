@@ -67,7 +67,6 @@ public:
 
 	void Update(XMMATRIX transform);
 	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
-	XMFLOAT4X4 GetWorld();
 };
 
 class Pyramid: public RenderedObject
