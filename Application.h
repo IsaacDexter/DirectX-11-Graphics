@@ -15,7 +15,7 @@ using namespace DirectX;
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
-    XMFLOAT3 Normal;
+    XMFLOAT4 Normal;
 };
 
 struct SimpleVertex_Vector
@@ -29,6 +29,25 @@ struct ConstantBuffer
 	XMMATRIX mWorld;
 	XMMATRIX mView;
 	XMMATRIX mProjection;
+
+	//A colour vector that describes the diffuse light colour. (RGBA)
+	XMFLOAT4 DiffLight;
+	//A colour vector that describes the diffuse materials reflectiveness.
+	XMFLOAT4 DiffMat;
+	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
+
+	XMFLOAT3 DirToLight;
+};
+
+struct Light
+{
+	XMFLOAT4 diffuse;
+	XMFLOAT3 directionToLight;
+};
+
+struct LightingMaterial
+{
+	XMFLOAT4 diffuse;
 };
 
 /// <summary><para>Stores all the information about an object: <br/>
@@ -49,10 +68,11 @@ protected:
 	XMFLOAT4X4 m_world;
 	/// <summary>indices, a vector of words containing the indices</summary>
 	std::vector<WORD> m_indices;
-	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
-	std::vector<SimpleVertex> m_vertices;
 	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
 	ID3D11Device* m_pd3dDevice;
+	LightingMaterial m_material;
+	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
+	std::vector<SimpleVertex> m_vertices;
 protected:
 	virtual HRESULT InitRenderedObject();
 	HRESULT InitVertexBuffer();
@@ -73,6 +93,7 @@ class Pyramid: public RenderedObject
 {
 public:
 	Pyramid(ID3D11Device* _pd3dDevice);
+	~Pyramid();
 	HRESULT InitRenderedObject() override;
 };
 
@@ -108,10 +129,12 @@ private:
 	XMFLOAT4X4              _projection;
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
+	Light*					_light;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
+	HRESULT InitObjects();
 	void Cleanup();
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();

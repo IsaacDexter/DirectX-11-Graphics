@@ -37,6 +37,8 @@ Application::Application()
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
 
+    //_light = nullptr;
+
 	_pConstantBuffer = nullptr;
 }
 
@@ -131,7 +133,7 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	UINT numElements = ARRAYSIZE(layout);
@@ -184,14 +186,14 @@ HRESULT RenderedObject::InitRenderedObject()
     //Set up Vertices of cube
     m_vertices = 
     {
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
     };
     //Set up Indices of cube
     m_indices =
@@ -217,6 +219,10 @@ HRESULT RenderedObject::InitRenderedObject()
     };
     //Set up the normals of the cube by calculating them
     CalculateNormals(&m_vertices, &m_indices);
+
+    //Set up the cubes lighting material
+    m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
     if (FAILED(hr))
@@ -230,6 +236,10 @@ HRESULT RenderedObject::InitRenderedObject()
 }
 
 Pyramid::Pyramid(ID3D11Device* _pd3dDevice) : RenderedObject(_pd3dDevice)
+{
+}
+
+Pyramid::~Pyramid()
 {
 }
 
@@ -248,11 +258,11 @@ HRESULT Pyramid::InitRenderedObject()
     //Set up Vertices of pyramid
     m_vertices =
     {
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
     };
     //Set up Indices of pyramid
     m_indices =
@@ -356,23 +366,23 @@ void RenderedObject::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::
     for (int i = 0; i < Indices->size(); i += 3)
     {
         //Load the positions into temporary vectors
-        SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices->at(i      )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i     )).Normal)};
-        SimpleVertex_Vector b = { XMLoadFloat3(&Vertices->at(Indices->at(i + 1  )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i + 1 )).Normal) };
-        SimpleVertex_Vector c = { XMLoadFloat3(&Vertices->at(Indices->at(i + 2  )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i + 2 )).Normal) };
+        SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices->at(i      )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i     )).Normal)};
+        SimpleVertex_Vector b = { XMLoadFloat3(&Vertices->at(Indices->at(i + 1  )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i + 1 )).Normal) };
+        SimpleVertex_Vector c = { XMLoadFloat3(&Vertices->at(Indices->at(i + 2  )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i + 2 )).Normal) };
 
         //Find the perpendicular vector to the triangle
         XMVECTOR P = XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos);
 
         //Add the result to the already exisiting normal and then store that result into the original vertex array's normal
-        XMStoreFloat3(&Vertices->at(Indices->at(i       )).Normal, P + a.Normal);
-        XMStoreFloat3(&Vertices->at(Indices->at(i + 1   )).Normal, P + b.Normal);
-        XMStoreFloat3(&Vertices->at(Indices->at(i + 2   )).Normal, P + c.Normal);
+        XMStoreFloat4(&Vertices->at(Indices->at(i       )).Normal, P + a.Normal);
+        XMStoreFloat4(&Vertices->at(Indices->at(i + 1   )).Normal, P + b.Normal);
+        XMStoreFloat4(&Vertices->at(Indices->at(i + 2   )).Normal, P + c.Normal);
     }
     //For each vertex's normal
     for (int i = 0; i < Vertices->size(); i++)
     {
         //Normalize that vertex's normal and store it where it was.
-        XMStoreFloat3(&Vertices->at(i).Normal, XMVector3Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
+        XMStoreFloat4(&Vertices->at(i).Normal, XMVector4Normalize(XMLoadFloat4(&Vertices->at(i).Normal)));
     }
 }
 
@@ -393,6 +403,8 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     XMMATRIX world = XMLoadFloat4x4(&m_world);
     // Transposes the matrix and copies it into the local constant buffer
     cb.mWorld = XMMatrixTranspose(world);
+    // copies the rendered diffuse material into the constant buffer
+    cb.DiffMat = m_material.diffuse;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -606,22 +618,14 @@ HRESULT Application::InitDevice()
 	hr = InitShadersAndInputLayout();
     if (FAILED(hr)) 
     { 
-        return HRESULT();
+        return hr;
     }
-
-    // Set vertex buffer
-    UINT stride = sizeof(SimpleVertex);
-    UINT offset = 0;
-
-    //Initialise cube, including vertex and index buffers
-    _cube = new RenderedObject(_pd3dDevice);
-
-    //Initialise pyramid, including vertex and index buffers
-    _pyramid = new Pyramid(_pd3dDevice);
-    _pyramid->InitRenderedObject();
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    //initialise objects
+    InitObjects();
 
     //Create the depth/stencil buffer
     _pd3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, &_depthStencilBuffer);
@@ -646,6 +650,31 @@ HRESULT Application::InitDevice()
 
     if (FAILED(hr))
         return hr;
+
+    return S_OK;
+}
+
+HRESULT Application::InitObjects()
+{
+    HRESULT hr;
+    
+    // Set vertex buffer
+    UINT stride = sizeof(SimpleVertex);
+    UINT offset = 0;
+
+    //Initialise cube, including vertex and index buffers
+    _cube = new RenderedObject(_pd3dDevice);
+
+    //Initialise pyramid, including vertex and index buffers
+    _pyramid = new Pyramid(_pd3dDevice);
+    _pyramid->InitRenderedObject();
+
+    _light = new Light();
+
+    //initialse new light source
+    _light->diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    //Make the light as above the camera facing into the scene
+    _light->directionToLight = XMFLOAT3(0.0f, 0.5, -0.5f);
 
     return S_OK;
 }
@@ -736,6 +765,9 @@ void Application::Draw()
     cb.mWorld = XMMatrixTranspose(world);
     cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
+    cb.DiffLight = _light->diffuse;
+    cb.DirToLight = _light->directionToLight;
+    cb.DiffMat = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
 
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
