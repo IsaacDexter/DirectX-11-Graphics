@@ -376,7 +376,7 @@ void RenderedObject::Update(XMMATRIX transform)
     XMStoreFloat4x4(&m_world, transform); //calculate a y rotation matrix and store _world
 }
 
-void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)
+void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb )
 {
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
@@ -389,6 +389,13 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     // Transposes the matrix and copies it into the local constant buffer
     cb.mWorld = XMMatrixTranspose(world);
     immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, &cb, 0, 0);
+
+
+    // Set vertex buffer
+    immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+
+    // Set index buffer
+    immediateContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 
     /*Copies the local constant buffer into the constant buffer on the GPU. UpdateSubresource(  a pointer to the destination resource,
