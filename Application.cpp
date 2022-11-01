@@ -226,6 +226,10 @@ HRESULT RenderedObject::InitRenderedObject()
     return S_OK;
 }
 
+Pyramid::Pyramid(ID3D11Device* _pd3dDevice) : RenderedObject(_pd3dDevice)
+{
+}
+
 HRESULT Pyramid::InitRenderedObject()
 {
     HRESULT hr;
@@ -670,6 +674,7 @@ HRESULT Application::InitDevice()
 
     //Initialise pyramid, including vertex and index buffers
     _pyramid = new Pyramid(_pd3dDevice);
+    _pyramid->InitRenderedObject();
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

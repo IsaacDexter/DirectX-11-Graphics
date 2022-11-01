@@ -70,8 +70,10 @@ public:
 	XMFLOAT4X4 GetWorld();
 };
 
-class Pyramid: RenderedObject
+class Pyramid: public RenderedObject
 {
+public:
+	Pyramid(ID3D11Device* _pd3dDevice);
 	HRESULT InitRenderedObject() override;
 };
 
