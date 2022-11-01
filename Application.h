@@ -62,7 +62,7 @@ private:
 	
 
 public:
-	RenderedObject(ID3D11Device* _pd3dDevice);
+	RenderedObject(ID3D11Device* _pd3dDevice, ID3D11Buffer* _pVertexBuffer, ID3D11Buffer* _pIndexBuffer);
 	~RenderedObject();
 
 	void Update(XMMATRIX transform);
@@ -90,6 +90,8 @@ private:
 	/// <summary>Used to track the current rasterizer state when switching between cube and wireframe.</summary>
 	ID3D11RasterizerState*	_currentRasterizerState;
 	ID3D11InputLayout*      _pVertexLayout;
+	ID3D11Buffer*			_pVertexBuffer;
+	ID3D11Buffer*			_pIndexBuffer;
 	ID3D11Buffer*           _pConstantBuffer;
 	/// <summary>Interface Used to store the depth/stencil view</summary>
 	ID3D11DepthStencilView*	_depthStencilView;

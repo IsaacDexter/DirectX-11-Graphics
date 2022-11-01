@@ -147,9 +147,11 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
 	return hr;
 }
 
-RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice)
+RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice, ID3D11Buffer* _pVertexBuffer,ID3D11Buffer* _pIndexBuffer)
 {
     m_pd3dDevice = _pd3dDevice; 
+    m_vertexBuffer = _pVertexBuffer;
+    m_indexBuffer = _pIndexBuffer;
     HRESULT hr;
     hr = InitRenderedObject();
     if (FAILED(hr))
@@ -616,10 +618,10 @@ HRESULT Application::InitDevice()
     UINT offset = 0;
 
     //Initialise cube, including vertex and index buffers
-    _cube = new RenderedObject(_pd3dDevice);
+    _cube = new RenderedObject(_pd3dDevice, _pVertexBuffer, _pIndexBuffer);
 
     //Initialise pyramid, including vertex and index buffers
-    _pyramid = new RenderedObject(_pd3dDevice);
+    _pyramid = new RenderedObject(_pd3dDevice, _pVertexBuffer, _pIndexBuffer);
 
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
