@@ -103,10 +103,11 @@ private:
 	ID3D11DepthStencilView*	_depthStencilView;
 	/// <summary>Interface Used to store the depth/stencil buffer</summary>
 	ID3D11Texture2D*		_depthStencilBuffer;
+	XMFLOAT4X4				_world;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 	RenderedObject*			_cube;
-	Pyramid*			_pyramid;
+	Pyramid*				_pyramid;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

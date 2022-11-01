@@ -69,6 +69,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
+    // Initialize the world matrix
+    XMStoreFloat4x4(&_world, XMMatrixIdentity());
+
 	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
 
     // Initialize the projection matrix
@@ -723,7 +726,7 @@ void Application::Draw()
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    XMMATRIX world = XMLoadFloat4x4(_world);
+    XMMATRIX world = XMLoadFloat4x4(&_world);
     XMMATRIX view = XMLoadFloat4x4(&_view);
     XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
     //
