@@ -150,8 +150,8 @@ HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the 
 RenderedObject::RenderedObject(ID3D11Device* _pd3dDevice, ID3D11Buffer* _pVertexBuffer,ID3D11Buffer* _pIndexBuffer)
 {
     m_pd3dDevice = _pd3dDevice; 
-    m_vertexBuffer = _pVertexBuffer;
-    m_indexBuffer = _pIndexBuffer;
+    m_vertexBuffer = nullptr;
+    m_indexBuffer = nullptr;
     HRESULT hr;
     hr = InitRenderedObject();
     if (FAILED(hr))
@@ -390,8 +390,6 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     XMMATRIX world = XMLoadFloat4x4(&m_world);
     // Transposes the matrix and copies it into the local constant buffer
     cb.mWorld = XMMatrixTranspose(world);
-    immediateContext->UpdateSubresource(constantBuffer, 0, nullptr, &cb, 0, 0);
-
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -412,7 +410,7 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     //
 
     //Draws the object with the new world matrix
-    immediateContext->DrawIndexed(m_indices.size(), 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
+    immediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
 }
 
 XMFLOAT4X4 RenderedObject::GetWorld()
@@ -727,6 +725,7 @@ void Application::Draw()
     //
     float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
+    _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     XMMATRIX world = XMLoadFloat4x4(&_cube->GetWorld());
     XMMATRIX view = XMLoadFloat4x4(&_view);
