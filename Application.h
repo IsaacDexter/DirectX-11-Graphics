@@ -62,7 +62,7 @@ private:
 	
 
 public:
-	RenderedObject(ID3D11Device* _pd3dDevice, ID3D11Buffer* _pVertexBuffer, ID3D11Buffer* _pIndexBuffer);
+	RenderedObject(ID3D11Device* _pd3dDevice);
 	~RenderedObject();
 
 	void Update(XMMATRIX transform);
