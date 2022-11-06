@@ -820,8 +820,8 @@ void Application::Update()
     //
     // Animate the cube
     //
-	_cube->Update(XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
-    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+	_cube->Update(XMMatrixRotationX(t)); //calculate a y rotation matrix and store _world
+    _pyramid->Update(XMMatrixRotationY(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
