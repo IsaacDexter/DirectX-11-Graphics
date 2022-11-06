@@ -78,7 +78,8 @@ protected:
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 
-	void CalculateNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
+	void CalculateSmoothNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
+	void CalculateFlatNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
 	
 
 public:
