@@ -205,32 +205,50 @@ HRESULT RenderedObject::InitRenderedObject()
         { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     //Set up Indices of cube
     m_indices =
     {
         //Front:
-        5,  6,  4,
-        6,  5,  7,
+        5,      6,      4,
+        6,      5,      7,
         //Right:
-        4,  2,  0,
-        2,  4,  6,
+        4 + 8,  2,      0,
+        2,      4 + 8,  6 + 8,
         //Left:
-        1,  7,  5,
-        7,  1,  3,
+        1,      7 + 8,  5 + 8,
+        7 + 8,  1,      3,
         //Back:
-        0,  3,  1,
-        3,  0,  2,
+        0 + 8,  3 + 8,  1 + 8,
+        3 + 8,  0 + 8,  2 + 8,
         //Top:
-        1,  4,  0,
-        4,  1,  5,
+        1 + 16, 4 + 16, 0 + 16,
+        4 + 16, 1 + 16, 5 + 16,
         //Bottom:
-        7,  2,  6,
-        2,  7,  3,
+        7 + 16, 2 + 16, 6 + 16,
+        2 + 16, 7 + 16, 3 + 16,
     };
     //Set up the normals of the cube by calculating them
-    CalculateSmoothNormals(&m_vertices, &m_indices);
+    CalculateFlatNormals(&m_vertices, &m_indices);
 
     //Set up the cubes lighting material
     m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
@@ -430,9 +448,9 @@ void RenderedObject::CalculateFlatNormals(std::vector<SimpleVertex>* Vertices, s
         XMVECTOR P = XMVector3Normalize(XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos));
 
         //Store that result to each vertex in the triangle and move onto the next triangle
-        XMStoreFloat3(&Vertices->at(Indices->at(i)).Normal, P + a.Normal);
-        XMStoreFloat3(&Vertices->at(Indices->at(i + 1)).Normal, P + b.Normal);
-        XMStoreFloat3(&Vertices->at(Indices->at(i + 2)).Normal, P + c.Normal);
+        XMStoreFloat3(&Vertices->at(Indices->at(i)).Normal, P);
+        XMStoreFloat3(&Vertices->at(Indices->at(i + 1)).Normal, P);
+        XMStoreFloat3(&Vertices->at(Indices->at(i + 2)).Normal, P);
     }
 }
 
@@ -706,11 +724,7 @@ HRESULT Application::InitDevice()
 
 HRESULT Application::InitObjects()
 {
-    HRESULT hr;
-    
     // Set vertex buffer
-    UINT stride = sizeof(SimpleVertex);
-    UINT offset = 0;
 
     //Initialise cube, including vertex and index buffers
     _cube = new RenderedObject(_pd3dDevice);

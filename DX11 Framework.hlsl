@@ -35,6 +35,7 @@ struct VS_OUTPUT
 VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 {
     float4 pos4 = float4(Pos, 1.0f);
+    float4 normal4 = float4(Normal.xyz, 0.0f);
     float1 diffuseAmount;
     
     VS_OUTPUT output = (VS_OUTPUT)0;
@@ -45,9 +46,10 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
     
-    output.NormalW = normalize(mul(Normal, World));
+    output.NormalW = normalize(mul(normal4, World));
     diffuseAmount = normalize(acos(dot(output.NormalW, float4(DirectionToLight, 0.0f))));
-    output.Color = mul(diffuseAmount, mul(DiffuseLight, DiffuseMaterial));
+    //output.Color = mul(diffuseAmount, mul(DiffuseLight, DiffuseMaterial));
+    output.Color = abs(normal4);
     
     return output;
 }
