@@ -301,6 +301,20 @@ HRESULT Pyramid::InitRenderedObject()
         { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
         { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     //Set up Indices of pyramid
@@ -309,17 +323,17 @@ HRESULT Pyramid::InitRenderedObject()
         //Front:
         3,  2,  4,
         //Left:
-        2,  0,  4,
+        2 + 5,  0,  4 + 5,
         //Back:
-        0,  1,  4,
+        0 + 5,  1,  4 + 10,
         //Right:
-        1,  3,  4,
+        1 + 5,  3 + 5,  4 + 11,
         //Base:
-        1,  2,  3,
-        2,  1,  0,
+        1 + 10,  2 + 10,  3 + 10,
+        2 + 10,  1 + 10,  0 + 10,
     };
     //Set up the normals of the pyramid by calculating them
-    CalculateSmoothNormals(&m_vertices, &m_indices);
+    CalculateFlatNormals(&m_vertices, &m_indices);
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
     if (FAILED(hr))
