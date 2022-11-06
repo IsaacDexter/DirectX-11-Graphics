@@ -197,14 +197,14 @@ HRESULT RenderedObject::InitRenderedObject()
     //};
     m_vertices = 
     {
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-0.577f, 0.577f, 0.577f) },
-        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.577f, 0.577f, 0.577f) },
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-0.577f, -0.577f, 0.577f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.577f, -0.577f, 0.577f) },
-        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-0.577f, 0.577f, -0.577f) },
-        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.577f, 0.577f, -0.577f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-0.577f, -0.577f, -0.577f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.577f, -0.577f, -0.577f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
 
     //Set up Indices of cube
@@ -230,7 +230,7 @@ HRESULT RenderedObject::InitRenderedObject()
         2,  7,  3,
     };
     //Set up the normals of the cube by calculating them
-    //CalculateNormals(&m_vertices, &m_indices);
+    CalculateNormals(&m_vertices, &m_indices);
 
     //Set up the cubes lighting material
     m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
