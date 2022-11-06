@@ -15,7 +15,7 @@ using namespace DirectX;
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
-    XMFLOAT4 Normal;
+    XMFLOAT3 Normal;
 };
 
 struct SimpleVertex_Vector

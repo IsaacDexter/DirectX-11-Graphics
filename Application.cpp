@@ -184,17 +184,29 @@ HRESULT RenderedObject::InitRenderedObject()
     m_vertexBuffer = nullptr;
 
     //Set up Vertices of cube
+    //m_vertices = 
+    //{
+    //    { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //};
     m_vertices = 
     {
-        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-0.577f, 0.577f, 0.577f) },
+        { XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.577f, 0.577f, 0.577f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-0.577f, -0.577f, 0.577f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.577f, -0.577f, 0.577f) },
+        { XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-0.577f, 0.577f, -0.577f) },
+        { XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.577f, 0.577f, -0.577f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-0.577f, -0.577f, -0.577f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.577f, -0.577f, -0.577f) },
     };
+
     //Set up Indices of cube
     m_indices =
     {
@@ -218,7 +230,7 @@ HRESULT RenderedObject::InitRenderedObject()
         2,  7,  3,
     };
     //Set up the normals of the cube by calculating them
-    CalculateNormals(&m_vertices, &m_indices);
+    //CalculateNormals(&m_vertices, &m_indices);
 
     //Set up the cubes lighting material
     m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
@@ -256,14 +268,23 @@ HRESULT Pyramid::InitRenderedObject()
     m_vertexBuffer = nullptr;
 
     //Set up Vertices of pyramid
+    //m_vertices =
+    //{
+    //    { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //    { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+    //};
     m_vertices =
     {
-        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
-        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
+        { XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f) },
     };
+
     //Set up Indices of pyramid
     m_indices =
     {
@@ -366,23 +387,23 @@ void RenderedObject::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::
     for (int i = 0; i < Indices->size(); i += 3)
     {
         //Load the positions into temporary vectors
-        SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices->at(i      )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i     )).Normal)};
-        SimpleVertex_Vector b = { XMLoadFloat3(&Vertices->at(Indices->at(i + 1  )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i + 1 )).Normal) };
-        SimpleVertex_Vector c = { XMLoadFloat3(&Vertices->at(Indices->at(i + 2  )).Pos), XMLoadFloat4(&Vertices->at(Indices->at(i + 2 )).Normal) };
+        SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices->at(i      )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i     )).Normal)};
+        SimpleVertex_Vector b = { XMLoadFloat3(&Vertices->at(Indices->at(i + 1  )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i + 1 )).Normal) };
+        SimpleVertex_Vector c = { XMLoadFloat3(&Vertices->at(Indices->at(i + 2  )).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i + 2 )).Normal) };
 
         //Find the perpendicular vector to the triangle
         XMVECTOR P = XMVector3Cross(b.Pos - a.Pos, c.Pos - a.Pos);
 
         //Add the result to the already exisiting normal and then store that result into the original vertex array's normal
-        XMStoreFloat4(&Vertices->at(Indices->at(i       )).Normal, P + a.Normal);
-        XMStoreFloat4(&Vertices->at(Indices->at(i + 1   )).Normal, P + b.Normal);
-        XMStoreFloat4(&Vertices->at(Indices->at(i + 2   )).Normal, P + c.Normal);
+        XMStoreFloat3(&Vertices->at(Indices->at(i       )).Normal, P + a.Normal);
+        XMStoreFloat3(&Vertices->at(Indices->at(i + 1   )).Normal, P + b.Normal);
+        XMStoreFloat3(&Vertices->at(Indices->at(i + 2   )).Normal, P + c.Normal);
     }
     //For each vertex's normal
     for (int i = 0; i < Vertices->size(); i++)
     {
         //Normalize that vertex's normal and store it where it was.
-        XMStoreFloat4(&Vertices->at(i).Normal, XMVector4Normalize(XMLoadFloat4(&Vertices->at(i).Normal)));
+        XMStoreFloat3(&Vertices->at(i).Normal, XMVector4Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
     }
 }
 

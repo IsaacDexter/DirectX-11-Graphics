@@ -9,7 +9,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer ConstantBuffer : register( b0 )
 {
-	matrix World;
+	matrix World;  
 	matrix View;
 	matrix Projection;
     
@@ -32,7 +32,7 @@ struct VS_OUTPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS( float3 Pos : POSITION, float4 Normal : NORMAL)
+VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 {
     float4 pos4 = float4(Pos, 1.0f);
     float1 diffuseAmount;
