@@ -403,7 +403,7 @@ void RenderedObject::CalculateNormals(std::vector<SimpleVertex>* Vertices, std::
     for (int i = 0; i < Vertices->size(); i++)
     {
         //Normalize that vertex's normal and store it where it was.
-        XMStoreFloat3(&Vertices->at(i).Normal, XMVector4Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
+        XMStoreFloat3(&Vertices->at(i).Normal, XMVector3Normalize(XMLoadFloat3(&Vertices->at(i).Normal)));
     }
 }
 
