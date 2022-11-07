@@ -321,16 +321,16 @@ HRESULT Pyramid::InitRenderedObject()
     m_indices =
     {
         //Front:
-        3,  2,  4,
+        3,      2,      4,
         //Left:
-        2 + 5,  0,  4 + 5,
+        2 + 5,  0,      4 + 5,
         //Back:
-        0 + 5,  1,  4 + 10,
+        0 + 5,  1,      4 + 10,
         //Right:
         1 + 5,  3 + 5,  4 + 11,
         //Base:
-        1 + 10,  2 + 10,  3 + 10,
-        2 + 10,  1 + 10,  0 + 10,
+        1 + 10, 2 + 10, 3 + 10,
+        2 + 10, 1 + 10, 0 + 10,
     };
     //Set up the normals of the pyramid by calculating them
     CalculateFlatNormals(&m_vertices, &m_indices);
@@ -451,7 +451,8 @@ void RenderedObject::CalculateFlatNormals(std::vector<SimpleVertex>* Vertices, s
     //      c.normal = perpendicular
 
     // For each triangle...
-    for (int i = 0; i < Indices->size(); i+=3)
+    int i = 0;
+    while(i < Indices->size())
     {
         //Load the positions into temporary vectors
         SimpleVertex_Vector a = { XMLoadFloat3(&Vertices->at(Indices->at(i)).Pos), XMLoadFloat3(&Vertices->at(Indices->at(i)).Normal) };
@@ -465,6 +466,7 @@ void RenderedObject::CalculateFlatNormals(std::vector<SimpleVertex>* Vertices, s
         XMStoreFloat3(&Vertices->at(Indices->at(i)).Normal, P);
         XMStoreFloat3(&Vertices->at(Indices->at(i + 1)).Normal, P);
         XMStoreFloat3(&Vertices->at(Indices->at(i + 2)).Normal, P);
+        i += 3;
     }
 }
 
