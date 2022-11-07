@@ -49,7 +49,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
     output.NormalW = normalize(mul(normal4, World));
     diffuseAmount = normalize(acos(dot(output.NormalW, float4(DirectionToLight, 0.0f))));
     //output.Color = mul(diffuseAmount, mul(DiffuseLight, DiffuseMaterial));
-    output.Color = abs(normal4);
+    output.Color = abs(output.NormalW);
     
     return output;
 }

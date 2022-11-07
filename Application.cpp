@@ -353,7 +353,7 @@ HRESULT RenderedObject::InitVertexBuffer()
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(SimpleVertex) * m_vertices.size();
+    bd.ByteWidth = sizeof(SimpleVertex) * (m_vertices.size() + 1);
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
@@ -378,7 +378,7 @@ HRESULT RenderedObject::InitIndexBuffer()
     ZeroMemory(&bd, sizeof(bd));
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(WORD) * m_indices.size();
+    bd.ByteWidth = sizeof(WORD) * (m_indices.size() + 1);
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
@@ -822,8 +822,8 @@ void Application::Update()
     //
     // Animate the cube
     //
-	_cube->Update(XMMatrixRotationX(t)); //calculate a y rotation matrix and store _world
-    _pyramid->Update(XMMatrixRotationY(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+	_cube->Update(XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
+    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
