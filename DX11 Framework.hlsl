@@ -61,9 +61,11 @@ float4 PS( VS_OUTPUT input ) : SV_Target
     float1 diffuseAmount;
     float4 totalPotentialDif;
     
-    diffuseAmount = max(dot(float4(normalize(DirectionToLight), 0.0f), input.NormalW), 0.0f);
-    totalPotentialDif = normalize(mul(DiffuseLight, DiffuseMaterial));
-    input.Color = mul(diffuseAmount, totalPotentialDif);
+    float dotAmount = dot(normalize(DirectionToLight.xyzz), input.NormalW);
+    diffuseAmount = max(dotAmount, 0.0f);
+    
+    totalPotentialDif = float4(DiffuseMaterial.r * DiffuseLight.r, DiffuseMaterial.g * DiffuseLight.g, DiffuseMaterial.b * DiffuseLight.b, DiffuseMaterial.a * DiffuseLight.a);
+    input.Color = diffuseAmount * totalPotentialDif;
     
     return input.Color;
 }

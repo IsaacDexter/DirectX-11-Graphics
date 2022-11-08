@@ -757,7 +757,7 @@ HRESULT Application::InitObjects()
     _light = new Light();
 
     //initialse new light source
-    _light->diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    _light->diffuse = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
     //Make the light as above the camera facing into the scene
     _light->directionToLight = XMFLOAT3(0.0f, 0.5, -0.5f);
 
