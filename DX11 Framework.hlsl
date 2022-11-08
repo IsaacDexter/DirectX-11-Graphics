@@ -36,20 +36,18 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 {
     float4 pos4 = float4(Pos, 1.0f);
     float4 normal4 = float4(Normal.xyz, 0.0f);
-    float1 diffuseAmount;
     
-    VS_OUTPUT output = (VS_OUTPUT)0;
+    VS_OUTPUT output = (VS_OUTPUT)0; 
+    
     //Shader handles the world positon
     output.Pos = mul(pos4, World);
     //Set the world position within output.
     output.PosW = output.Pos;
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
-    
     output.NormalW = normalize(mul(normal4, World));
-    diffuseAmount = normalize(acos(dot(output.NormalW, float4(DirectionToLight, 0.0f))));
-    //output.Color = mul(diffuseAmount, mul(DiffuseLight, DiffuseMaterial));
-    output.Color = abs(output.NormalW);
+    
+    //output.Color = abs(output.NormalW);
     
     return output;
 }
@@ -60,5 +58,12 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 //--------------------------------------------------------------------------------------
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
+    float1 diffuseAmount;
+    float4 totalPotentialDif;
+    
+    diffuseAmount = max(dot(float4(normalize(DirectionToLight), 0.0f), input.NormalW), 0.0f);
+    totalPotentialDif = normalize(mul(DiffuseLight, DiffuseMaterial));
+    input.Color = mul(diffuseAmount, totalPotentialDif);
+    
     return input.Color;
 }

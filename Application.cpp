@@ -334,6 +334,11 @@ HRESULT Pyramid::InitRenderedObject()
     };
     //Set up the normals of the pyramid by calculating them
     CalculateFlatNormals(&m_vertices, &m_indices);
+
+
+    //Set he diffuse material to reflect half red
+    m_material.diffuse = XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f);
+
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
     if (FAILED(hr))
@@ -822,7 +827,7 @@ void Application::Update()
     //
     // Animate the cube
     //
-	_cube->Update(XMMatrixRotationY(t)); //calculate a y rotation matrix and store _world
+	_cube->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
     _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
