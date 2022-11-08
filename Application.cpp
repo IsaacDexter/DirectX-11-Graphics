@@ -378,7 +378,7 @@ HRESULT RenderedObject::InitIndexBuffer()
     ZeroMemory(&bd, sizeof(bd));
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(WORD) * (m_indices.size() + 1);
+    bd.ByteWidth = sizeof(WORD) * (m_indices.size());
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     bd.CPUAccessFlags = 0;
 
