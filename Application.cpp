@@ -66,10 +66,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
+    
+    //Initialise the camera
+    _camera = new Camera(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(0.0f, 0.0f, -3.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMVECTOR Eye = XMVectorSet(_camera->GetEye().x, _camera->GetEye().y, _camera->GetEye().z, 0.0f);
+    XMVECTOR At = XMVectorSet(_camera->GetAt().x, _camera->GetAt().y, _camera->GetAt().z, 0.0f);
+    XMVECTOR Up = XMVectorSet(_camera->GetUp().x, _camera->GetUp().y, _camera->GetUp().z, 0.0f);
 
     // Initialize the world matrix
     XMStoreFloat4x4(&_world, XMMatrixIdentity());
@@ -253,6 +257,8 @@ HRESULT RenderedObject::InitRenderedObject()
     //Set up the cubes lighting material
     m_material.diffuse = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
     m_material.ambient = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
+    m_material.specular = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
+    m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
@@ -340,6 +346,8 @@ HRESULT Pyramid::InitRenderedObject()
     //Set he diffuse material to reflect half red
     m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
     m_material.ambient = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    m_material.specular = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
@@ -497,6 +505,7 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     // copies the rendered diffuse material into the constant buffer
     cb.DiffMat = m_material.diffuse;
     cb.AmbMat = m_material.ambient;
+    cb.SpecMat = m_material.specular;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -857,9 +866,9 @@ void Application::Draw()
     cb.mProjection = XMMatrixTranspose(projection);
     cb.DiffLight = _light->diffuse;
     cb.AmbLight = _light->ambient;
+    cb.SpecLight = _light->specular;
     cb.DirToLight = _light->directionToLight;
-    cb.DiffMat = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    cb.AmbMat = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
+    cb.EyeWorldPos = _camera->GetEye();
 
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
@@ -870,4 +879,32 @@ void Application::Draw()
     _pyramid->Draw(_pImmediateContext, _pConstantBuffer, cb);
 
     _pSwapChain->Present(0, 0);
+}
+
+
+
+Camera::~Camera()
+{
+}
+
+Camera::Camera(XMFLOAT3 eye, XMFLOAT3 at, XMFLOAT3 up)
+{
+    m_eye = eye;
+    m_at = at;
+    m_up = up;
+}
+
+XMFLOAT3 Camera::GetEye()
+{
+    return m_eye;
+}
+
+XMFLOAT3 Camera::GetAt()
+{
+    return m_at;
+}
+
+XMFLOAT3 Camera::GetUp()
+{
+    return m_up;
 }

@@ -26,28 +26,42 @@ struct SimpleVertex_Vector
 
 struct ConstantBuffer
 {
-	XMMATRIX mWorld;
-	XMMATRIX mView;
-	XMMATRIX mProjection;
+	// The world matrix
+	XMMATRIX	mWorld;
+	// The view matrix
+	XMMATRIX	mView;
+	// The projection matrix
+	XMMATRIX	mProjection;
 
 	//A colour vector that describes the diffuse light colour. (RGBA)
-	XMFLOAT4 DiffLight;
+	XMFLOAT4	DiffLight;
 	//A colour vector that describes the diffuse materials reflectiveness.
-	XMFLOAT4 DiffMat;
+	XMFLOAT4	DiffMat;
 	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
 
-	//A colour vector that describes the diffuse light colour. (RGBA)
-	XMFLOAT4 AmbLight;
-	//A colour vector that describes the diffuse materials reflectiveness.
-	XMFLOAT4 AmbMat;
+	// A colour vector that describes the ambient light colour. (RGBA)
+	XMFLOAT4	AmbLight;
+	// A colour vector that describes the ambient materials reflectiveness.
+	XMFLOAT4	AmbMat;
 
+	// A color vector that describes the specular light (and as such, specular highlight color)
+	XMFLOAT4	SpecLight;
+	// A color vector that describes the specular materials specularity
+	XMFLOAT4	SpecMat;
+	// Power to raise specular falloff by
+	FLOAT		SpecPower;
+
+	// The direction the the light source as a vector
 	XMFLOAT3 DirToLight;
+	// The position of the camera's eye in the world
+	XMFLOAT3 EyeWorldPos;
 };
 
 struct Light
 {
 	XMFLOAT4 diffuse;
 	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
 	XMFLOAT3 directionToLight;
 };
 
@@ -55,7 +69,30 @@ struct LightingMaterial
 {
 	XMFLOAT4 diffuse;
 	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+	//The Power to raise specular falloff by. Defaults to 10.
+	FLOAT	 specularFalloff;
 };
+
+class Camera
+{
+public:
+	Camera(XMFLOAT3 eye, XMFLOAT3 at, XMFLOAT3 up);
+	~Camera();
+
+	/// <returns>The camera's Eye Position</returns>
+	XMFLOAT3 GetEye();
+	/// <returns>The camera's Focus Position</returns>
+	XMFLOAT3 GetAt();
+	/// <returns>The camera's Up Direction</returns>
+	XMFLOAT3 GetUp();
+
+private:
+	XMFLOAT3 m_eye;
+	XMFLOAT3 m_at;
+	XMFLOAT3 m_up;
+};
+
 
 /// <summary><para>Stores all the information about an object: <br/>
 ///  - indices, a vector of words containing the indices <br/>
@@ -135,6 +172,10 @@ private:
 	XMFLOAT4X4				_world;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
+	
+	//Stores the Eye At and Up matrices
+	Camera*					_camera;
+
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
 	Light*					_light;
