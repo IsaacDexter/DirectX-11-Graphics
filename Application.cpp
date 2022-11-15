@@ -37,8 +37,6 @@ Application::Application()
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
 
-    //_light = nullptr;
-
 	_pConstantBuffer = nullptr;
 }
 
@@ -68,12 +66,12 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
     
     //Initialise the camera
-    _camera = new Camera(XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+    _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
 
     // Initialize the view matrix
-    XMVECTOR Eye = XMVectorSet(_camera->GetEye().x, _camera->GetEye().y, _camera->GetEye().z, 0.0f);
-    XMVECTOR At = XMVectorSet(_camera->GetAt().x, _camera->GetAt().y, _camera->GetAt().z, 0.0f);
-    XMVECTOR Up = XMVectorSet(_camera->GetUp().x, _camera->GetUp().y, _camera->GetUp().z, 0.0f);
+    XMVECTOR Eye = XMLoadFloat4(&_camera->GetEye());
+    XMVECTOR At = XMLoadFloat4(&_camera->GetAt());
+    XMVECTOR Up = XMLoadFloat4(&_camera->GetUp());
 
     // Initialize the world matrix
     XMStoreFloat4x4(&_world, XMMatrixIdentity());
@@ -774,7 +772,7 @@ HRESULT Application::InitObjects()
     _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     _light->specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     //Light is shining from the right
-    _light->directionToLight = XMFLOAT3(1.0f, 0.0f, 0.0f);
+    _light->directionToLight = XMVectorSet(0.0f, 0.5f, -0.5f, 1.0f);
 
     return S_OK;
 }
@@ -843,8 +841,8 @@ void Application::Update()
     //
     // Animate the cube
     //
-	_pyramid->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
-    _cube->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+	_cube->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
+    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -889,24 +887,24 @@ Camera::~Camera()
 {
 }
 
-Camera::Camera(XMFLOAT3 eye, XMFLOAT3 at, XMFLOAT3 up)
+Camera::Camera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up)
 {
     m_eye = eye;
     m_at = at;
     m_up = up;
 }
 
-XMFLOAT3 Camera::GetEye()
+XMFLOAT4 Camera::GetEye()
 {
     return m_eye;
 }
 
-XMFLOAT3 Camera::GetAt()
+XMFLOAT4 Camera::GetAt()
 {
     return m_at;
 }
 
-XMFLOAT3 Camera::GetUp()
+XMFLOAT4 Camera::GetUp()
 {
     return m_up;
 }

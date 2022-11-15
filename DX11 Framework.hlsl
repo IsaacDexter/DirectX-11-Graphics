@@ -33,10 +33,10 @@ cbuffer ConstantBuffer : register( b0 )
     // Power to raise specular falloff by
     float4 SpecularFalloff;
 
-    //The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
-    float3 DirectionToLight;
-    // The position of the camera's eye in the world
-    float3 EyeWorldPos;
+    // The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
+    float4 DirectionToLight;
+    // The eye vector; this is a vector that points in the direction of the camera in the opposite direction of the incoming view
+    float4 EyeWorldPos;
 }
 
 //--------------------------------------------------------------------------------------
@@ -98,12 +98,12 @@ float4 PS( VS_OUTPUT input ) : SV_Target
     // Calculate specular lighting
     float1 specularIntensity;
     float4 specularPotential;
-    float4 specular = (0.0f, 0.0f, 0.0f, 0.0f);
+    float4 specular;
     
     // Calculate reflection direction
     float4 reflectDir = normalize(reflect(DirectionToLight.xyzz, input.NormalW));
     //calculate viewer direction
-    float4 viewerDir = normalize(input.PosW - EyeWorldPos).xyzz;
+    float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
     // calculate specular intensity 
     specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), SpecularFalloff);
     //find the hadamard product of specular material and specular light, this is the maximum potential specular

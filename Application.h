@@ -52,9 +52,9 @@ struct ConstantBuffer
 	FLOAT		SpecPower;
 
 	// The direction the the light source as a vector
-	XMFLOAT3 DirToLight;
+	XMVECTOR	DirToLight;
 	// The position of the camera's eye in the world
-	XMFLOAT3 EyeWorldPos;
+	XMFLOAT4	EyeWorldPos;
 };
 
 struct Light
@@ -62,7 +62,7 @@ struct Light
 	XMFLOAT4 diffuse;
 	XMFLOAT4 ambient;
 	XMFLOAT4 specular;
-	XMFLOAT3 directionToLight;
+	XMVECTOR directionToLight;
 };
 
 struct LightingMaterial
@@ -77,20 +77,20 @@ struct LightingMaterial
 class Camera
 {
 public:
-	Camera(XMFLOAT3 eye, XMFLOAT3 at, XMFLOAT3 up);
+	Camera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up);
 	~Camera();
 
 	/// <returns>The camera's Eye Position</returns>
-	XMFLOAT3 GetEye();
+	XMFLOAT4 GetEye();
 	/// <returns>The camera's Focus Position</returns>
-	XMFLOAT3 GetAt();
+	XMFLOAT4 GetAt();
 	/// <returns>The camera's Up Direction</returns>
-	XMFLOAT3 GetUp();
+	XMFLOAT4 GetUp();
 
 private:
-	XMFLOAT3 m_eye;
-	XMFLOAT3 m_at;
-	XMFLOAT3 m_up;
+	XMFLOAT4 m_eye;
+	XMFLOAT4 m_at;
+	XMFLOAT4 m_up;
 };
 
 
