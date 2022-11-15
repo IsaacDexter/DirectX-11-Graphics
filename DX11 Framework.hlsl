@@ -80,23 +80,37 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
     //Calculate diffuse lighting 
-    float1 diffuseAmount;
-    float4 totalPotentialDif;
+    float1 diffuseIntesity;
+    float4 diffusePotential;
+    float4 diffuse;
     
     float1 dotAmount = dot(normalize(DirectionToLight.xyzz), input.NormalW);
-    diffuseAmount = max(dotAmount, 0.0f);
+    diffuseIntesity = max(dotAmount, 0.0f);
     
-    //find the hadamard product of diffuse material and diffuse light
-    totalPotentialDif = float4(DiffuseMaterial.r * DiffuseLight.r, DiffuseMaterial.g * DiffuseLight.g, DiffuseMaterial.b * DiffuseLight.b, DiffuseMaterial.a * DiffuseLight.a);
-    input.Color = diffuseAmount * totalPotentialDif;
+    //find the hadamard product of diffuse material and diffuse light. This is the maximum potential diffuse
+    diffusePotential = float4(DiffuseMaterial.r * DiffuseLight.r, DiffuseMaterial.g * DiffuseLight.g, DiffuseMaterial.b * DiffuseLight.b, DiffuseMaterial.a * DiffuseLight.a);
+    diffuse = diffuseIntesity * diffusePotential;
 
     //Calculate ambient lighting
     //find the hadamard product of ambient material and ambient light
     float4 ambient = float4(AmbientMaterial.r * AmbientLight.r, AmbientMaterial.g * AmbientLight.g, AmbientMaterial.b * AmbientLight.b, AmbientMaterial.a * AmbientLight.a);
-    input.Color += ambient;
 
-    //Calculate specular lighting
-    //float4 ReflectDir = reflect(-DirectionToLight.xyzz, input.NormalW);
+    // Calculate specular lighting
+    float1 specularIntensity;
+    float4 specularPotential;
+    float4 specular;
+    
+    // Calculate reflection direction
+    float4 reflectDir = normalize(reflect(-DirectionToLight.xyzz, input.NormalW));
+    // calculate viewer direction
+    float4 viewerDir = normalize(input.PosW - EyeWorldPos);
+    // calculate specular intensity 
+    specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), SpecularFalloff);
+    //find the hadamard product of specular material and specular light, this is the maximum potential specular
+    specularPotential = float4(SpecularMaterial.r * SpecularLight.r, SpecularMaterial.g * SpecularLight.g, SpecularMaterial.b * SpecularLight.b, SpecularMaterial.a * SpecularLight.a);
+    specular = specularIntensity * specularPotential;
 
+    input.Color = specular + diffuse + ambient;
+    
     return input.Color;
 }
