@@ -807,6 +807,7 @@ void Application::Update()
         t = (dwTimeCur - dwTimeStart) / 1000.0f;
     }
 
+    //Sets rasterizer state
     if (WM_KEYDOWN)
     {
         if ((GetAsyncKeyState(VK_LBUTTON) & 0x01))
