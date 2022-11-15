@@ -257,7 +257,7 @@ HRESULT RenderedObject::InitRenderedObject()
     //Set up the cubes lighting material
     m_material.diffuse = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
     m_material.ambient = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
-    m_material.specular = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
+    m_material.specular = XMFLOAT4(1.0f, 0.825f, 1.0f, 1.0f);
     m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
@@ -346,7 +346,7 @@ HRESULT Pyramid::InitRenderedObject()
     //Set he diffuse material to reflect half red
     m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
     m_material.ambient = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    m_material.specular = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    m_material.specular = XMFLOAT4(0.825f, 1.0f, 1.0f, 1.0f);
     m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
@@ -506,6 +506,7 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     cb.DiffMat = m_material.diffuse;
     cb.AmbMat = m_material.ambient;
     cb.SpecMat = m_material.specular;
+    cb.SpecPower = m_material.specularFalloff;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -771,6 +772,7 @@ HRESULT Application::InitObjects()
     //initialse new light source
     _light->diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
     _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    _light->specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     //Make the light as above the camera facing into the scene
     _light->directionToLight = XMFLOAT3(0.0f, 0.5, -0.5f);
 

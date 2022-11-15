@@ -98,19 +98,19 @@ float4 PS( VS_OUTPUT input ) : SV_Target
     // Calculate specular lighting
     float1 specularIntensity;
     float4 specularPotential;
-    float4 specular;
+    float4 specular = (0.0f, 0.0f, 0.0f, 0.0f);
     
     // Calculate reflection direction
-    float4 reflectDir = normalize(reflect(-DirectionToLight.xyzz, input.NormalW));
-    // calculate viewer direction
-    float4 viewerDir = normalize(input.PosW - EyeWorldPos);
+    float4 reflectDir = normalize(reflect(DirectionToLight.xyzz, input.NormalW));
+    //calculate viewer direction
+    float4 viewerDir = normalize(input.PosW - EyeWorldPos).xyzz;
     // calculate specular intensity 
     specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), SpecularFalloff);
     //find the hadamard product of specular material and specular light, this is the maximum potential specular
     specularPotential = float4(SpecularMaterial.r * SpecularLight.r, SpecularMaterial.g * SpecularLight.g, SpecularMaterial.b * SpecularLight.b, SpecularMaterial.a * SpecularLight.a);
     specular = specularIntensity * specularPotential;
 
-    input.Color = specular + diffuse + ambient;
+    input.Color = specular + ambient + diffuse;
     
     return input.Color;
 }
