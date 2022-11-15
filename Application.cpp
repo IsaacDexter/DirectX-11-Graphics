@@ -773,8 +773,8 @@ HRESULT Application::InitObjects()
     _light->diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
     _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     _light->specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    //Make the light as above the camera facing into the scene
-    _light->directionToLight = XMFLOAT3(0.0f, 0.5, -0.5f);
+    //Light is shining from the right
+    _light->directionToLight = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
     return S_OK;
 }
@@ -843,8 +843,8 @@ void Application::Update()
     //
     // Animate the cube
     //
-	_cube->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
-    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+	_pyramid->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
+    _cube->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
