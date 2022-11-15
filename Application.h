@@ -36,18 +36,25 @@ struct ConstantBuffer
 	XMFLOAT4 DiffMat;
 	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
 
+	//A colour vector that describes the diffuse light colour. (RGBA)
+	XMFLOAT4 AmbLight;
+	//A colour vector that describes the diffuse materials reflectiveness.
+	XMFLOAT4 AmbMat;
+
 	XMFLOAT3 DirToLight;
 };
 
 struct Light
 {
 	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
 	XMFLOAT3 directionToLight;
 };
 
 struct LightingMaterial
 {
 	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
 };
 
 /// <summary><para>Stores all the information about an object: <br/>

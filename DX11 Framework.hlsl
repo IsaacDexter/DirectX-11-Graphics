@@ -15,6 +15,10 @@ cbuffer ConstantBuffer : register( b0 )
     
     float4 DiffuseLight;
     float4 DiffuseMaterial;
+
+    float4 AmbientLight;
+    float4 AmbientMaterial;
+
     float3 DirectionToLight;
 }
 
@@ -58,14 +62,19 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 //--------------------------------------------------------------------------------------
 float4 PS( VS_OUTPUT input ) : SV_Target
 {
+    //Calculate diffuse lighting 
     float1 diffuseAmount;
     float4 totalPotentialDif;
     
-    float dotAmount = dot(normalize(DirectionToLight.xyzz), input.NormalW);
+    float1 dotAmount = dot(normalize(DirectionToLight.xyzz), input.NormalW);
     diffuseAmount = max(dotAmount, 0.0f);
     
     totalPotentialDif = float4(DiffuseMaterial.r * DiffuseLight.r, DiffuseMaterial.g * DiffuseLight.g, DiffuseMaterial.b * DiffuseLight.b, DiffuseMaterial.a * DiffuseLight.a);
     input.Color = diffuseAmount * totalPotentialDif;
-    
+
+    //Calculate ambient light
+    float4 ambient = float4(AmbientMaterial.r * AmbientLight.r, AmbientMaterial.g * AmbientLight.g, AmbientMaterial.b * AmbientLight.b, AmbientMaterial.a * AmbientLight.a);
+    input.Color += ambient;
+
     return input.Color;
 }

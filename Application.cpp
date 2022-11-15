@@ -251,7 +251,8 @@ HRESULT RenderedObject::InitRenderedObject()
     CalculateFlatNormals(&m_vertices, &m_indices);
 
     //Set up the cubes lighting material
-    m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    m_material.diffuse = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
+    m_material.ambient = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
@@ -337,7 +338,8 @@ HRESULT Pyramid::InitRenderedObject()
 
 
     //Set he diffuse material to reflect half red
-    m_material.diffuse = XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f);
+    m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    m_material.ambient = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
     hr = InitVertexBuffer();
@@ -494,6 +496,7 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     cb.mWorld = XMMatrixTranspose(world);
     // copies the rendered diffuse material into the constant buffer
     cb.DiffMat = m_material.diffuse;
+    cb.AmbMat = m_material.ambient;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -757,7 +760,8 @@ HRESULT Application::InitObjects()
     _light = new Light();
 
     //initialse new light source
-    _light->diffuse = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
+    _light->diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+    _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     //Make the light as above the camera facing into the scene
     _light->directionToLight = XMFLOAT3(0.0f, 0.5, -0.5f);
 
@@ -852,8 +856,10 @@ void Application::Draw()
     cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
     cb.DiffLight = _light->diffuse;
+    cb.AmbLight = _light->ambient;
     cb.DirToLight = _light->directionToLight;
     cb.DiffMat = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    cb.AmbMat = XMFLOAT4(0.2f, 0.2f, 0.2f, 0.2f);
 
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
