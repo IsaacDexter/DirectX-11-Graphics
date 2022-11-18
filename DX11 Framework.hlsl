@@ -42,9 +42,9 @@ cbuffer ConstantBuffer : register( b0 )
 // Texture Variables
 //--------------------------------------------------------------------------------------
 // Textures are assigned to a separate buffer inside our shader architecture, they are not included in the constant buffer with the other global variables we use. 
-Texture2D texDiffuse : register( t0 )
+Texture2D texDiffuse : register(t0);
 // We also need to define a SamplerState to tell DirectX how to transform the texture data to fit into the correct size onscreen. 
-SamplerState SampLinear : register( s0 )
+SamplerState SampLinear : register(s0);
 
 
 //--------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL, float2 TexCoord: TE
 float4 PS(VS_OUTPUT input) : SV_Target
 {
     // Samples texture
-    float4 textureColor = texDiffuse.Sample(sampLinear, input.TexCoord);
+    float4 textureColor = texDiffuse.Sample(SampLinear, input.TexCoord);
 
 
     //Calculate diffuse lighting 
