@@ -68,6 +68,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     //Initialise the camera
     _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
 
+    //initialise objects
+    InitObjects();
+
+    // Load Textures
+    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_COLOR.dds", nullptr, &_pTextureRV);
+    //bind the texture into the texture shader in register 0
+    _pImmediateContext->PSSetShaderResources(0, 1, &_pTextureRV);
+
     // Initialize the view matrix
     XMVECTOR Eye = XMLoadFloat4(&_camera->GetEye());
     XMVECTOR At = XMLoadFloat4(&_camera->GetAt());
@@ -725,9 +733,7 @@ HRESULT Application::InitDevice()
     // Set primitive topology
     _pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    //initialise objects
-    InitObjects();
-
+    
     //Create the depth/stencil buffer
     _pd3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, &_depthStencilBuffer);
     //Create the depth/stencil view that will be bound to the OM stage of the pipeline

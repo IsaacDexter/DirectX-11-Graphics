@@ -7,6 +7,7 @@
 #include <directxcolors.h>
 #include "resource.h"
 #include <vector>
+#include "DDSTextureLoader.h"
 
 using namespace DirectX;
 
@@ -157,6 +158,8 @@ private:
 	ID3D11DeviceContext*    _pImmediateContext;
 	IDXGISwapChain*         _pSwapChain;
 	ID3D11RenderTargetView* _pRenderTargetView;
+	/// <summary> Holds the texture’s shader resource view :</summary>
+	ID3D11ShaderResourceView*	_pTextureRV;
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
 	/// <summary>A rasterizer state used to draw objects as wireframe.</summary>
