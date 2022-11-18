@@ -281,9 +281,9 @@ HRESULT RenderedObject::InitRenderedObject()
     CalculateFlatNormals(&m_vertices, &m_indices);
 
     //Set up the cubes lighting material
-    m_material.diffuse = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
-    m_material.ambient = XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f);
-    m_material.specular = XMFLOAT4(1.0f, 0.825f, 1.0f, 1.0f);
+    m_material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 0.5f);
+    m_material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    m_material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
     m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
@@ -370,9 +370,9 @@ HRESULT Pyramid::InitRenderedObject()
 
 
     //Set he diffuse material to reflect half red
-    m_material.diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    m_material.ambient = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    m_material.specular = XMFLOAT4(0.825f, 1.0f, 1.0f, 1.0f);
+    m_material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_material.ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
     m_material.specularFalloff = 10.0f;
 
     //Init the cube's vertex buffer using the vertices and normals already set out in Vertices
@@ -794,7 +794,7 @@ HRESULT Application::InitObjects()
     _light = new Light();
 
     //initialse new light source
-    _light->diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+    _light->diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     _light->specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     //Light is shining from the right
