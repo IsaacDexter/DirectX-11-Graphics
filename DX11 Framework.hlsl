@@ -38,6 +38,14 @@ cbuffer ConstantBuffer : register( b0 )
     // The eye vector; this is a vector that points in the direction of the camera in the opposite direction of the incoming view
     float4 EyeWorldPos;
 }
+//--------------------------------------------------------------------------------------
+// Texture Variables
+//--------------------------------------------------------------------------------------
+// Textures are assigned to a separate buffer inside our shader architecture, they are not included in the constant buffer with the other global variables we use. 
+Texture2D texDiffuse : register( t0 )
+// We also need to define a SamplerState to tell DirectX how to transform the texture data to fit into the correct size onscreen. 
+SamplerState SampLinear : register( s0 )
+
 
 //--------------------------------------------------------------------------------------
 struct VS_OUTPUT
@@ -48,12 +56,13 @@ struct VS_OUTPUT
     float4 Color : COLOR0;
     //The world position
     float3 PosW : POSITION0;
+    float2 TexCoord : TEXCOORD0;
 };
 
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
+VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL, float2 TexCoord: TEXCOORD)
 {
     float4 pos4 = float4(Pos, 1.0f);
     float4 normal4 = float4(Normal.xyz, 0.0f);
@@ -67,6 +76,7 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
     output.NormalW = normalize(mul(normal4, World));
+    output.TexCoord = TexCoord;
     
     //output.Color = abs(output.NormalW);
     
@@ -77,8 +87,12 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL)
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS( VS_OUTPUT input ) : SV_Target
+float4 PS(VS_OUTPUT input) : SV_Target
 {
+    // Samples texture
+    float4 textureColor = texDiffuse.Sample(sampLinear, input.TexCoord);
+
+
     //Calculate diffuse lighting 
     float1 diffuseIntesity;
     float4 diffusePotential;
@@ -110,7 +124,7 @@ float4 PS( VS_OUTPUT input ) : SV_Target
     specularPotential = float4(SpecularMaterial.r * SpecularLight.r, SpecularMaterial.g * SpecularLight.g, SpecularMaterial.b * SpecularLight.b, SpecularMaterial.a * SpecularLight.a);
     specular = specularIntensity * specularPotential;
 
-    input.Color = specular + ambient + diffuse;
+    input.Color = textureColor + specular + ambient + diffuse;
     
     return input.Color;
 }

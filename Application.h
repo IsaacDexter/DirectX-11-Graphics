@@ -16,8 +16,12 @@ struct SimpleVertex
 {
     XMFLOAT3 Pos;
     XMFLOAT3 Normal;
+	XMFLOAT2 TexCoord;
 };
 
+/// <summary>
+/// Used for normal calculations.
+/// </summary>
 struct SimpleVertex_Vector
 {
 	XMVECTOR Pos;
