@@ -160,6 +160,8 @@ private:
 	ID3D11RenderTargetView* _pRenderTargetView;
 	/// <summary> Holds the texture’s shader resource view :</summary>
 	ID3D11ShaderResourceView*	_pTextureRV;
+	/// <summary> Holds the texture sampler, passed across to texture shader for use</summary>
+	ID3D11SamplerState* _pSamplerLinear;
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
 	/// <summary>A rasterizer state used to draw objects as wireframe.</summary>
