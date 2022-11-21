@@ -83,7 +83,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     // Define the specifications for our sampler :
     D3D11_SAMPLER_DESC sampDesc;
     ZeroMemory(&sampDesc, sizeof(sampDesc));
-    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    //Anisotropic filtering reduces the blur that is very visible when faces of objects relate to be near-parallel with line of sight
+    sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
