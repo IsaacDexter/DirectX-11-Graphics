@@ -11,8 +11,6 @@
 
 using namespace DirectX;
 
-
-
 struct SimpleVertex
 {
     XMFLOAT3 Pos;
@@ -98,6 +96,16 @@ private:
 	XMFLOAT4 m_up;
 };
 
+
+class Material
+{
+private:
+	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+	//The Power to raise specular falloff by. Defaults to 10.
+	FLOAT	 specularFalloff;
+};
 
 /// <summary><para>Stores all the information about an object: <br/>
 ///  - indices, a vector of words containing the indices <br/>

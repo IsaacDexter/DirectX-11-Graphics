@@ -42,9 +42,9 @@ cbuffer ConstantBuffer : register( b0 )
 // Texture Variables
 //--------------------------------------------------------------------------------------
 // Textures are assigned to a separate buffer inside our shader architecture, they are not included in the constant buffer with the other global variables we use. 
-Texture2D texDiffuse : register(t0);
+Texture2D g_diffuseMap : register(t0);
 // define a second texture2d used to repersent the specular map, placed in the second register (t1)
-Texture2D texSpecular : register(t1);
+Texture2D g_specularMap : register(t1);
 // We also need to define a SamplerState to tell DirectX how to transform the texture data to fit into the correct size onscreen. 
 SamplerState SampLinear : register(s0);
 
@@ -92,9 +92,9 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL, float2 TexCoord: TE
 float4 PS(VS_OUTPUT input) : SV_Target
 {
     // Samples texture
-    float4 textureColor = texDiffuse.Sample(SampLinear, input.TexCoord);
+    float4 textureColor = g_diffuseMap.Sample(SampLinear, input.TexCoord);
     //Samples specular map
-    float4 textureSpecular = texSpecular.Sample(SampLinear, input.TexCoord);
+    float4 textureSpecular = g_specularMap.Sample(SampLinear, input.TexCoord);
 
 
     //Calculate diffuse lighting 
@@ -123,7 +123,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     //calculate viewer direction
     float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
     // Find a power to raise the specular by from the shininess, a value stored within the specular maps .a, which is a value from 0-1 where 0 is least shiny and 1 is very shiny. The shinier an object, the smaller the highlight
-    float1 specularPower = textureSpecular.a * 10.0f;
+    float1 specularPower = textureSpecular.a * 25.0f;
     // calculate specular intensity, using the specular falloff just calculated
     specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), specularPower);
     //find the hadamard product of specular material and specular light, this is the maximum potential specular

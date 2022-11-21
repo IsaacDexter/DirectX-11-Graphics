@@ -532,6 +532,8 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
     XMMATRIX world = XMLoadFloat4x4(&m_world);
     // Transposes the matrix and copies it into the local constant buffer
     cb.mWorld = XMMatrixTranspose(world);
+
+    //Materials:
     // copies the rendered diffuse material into the constant buffer
     cb.DiffMat = m_material.diffuse;
     cb.AmbMat = m_material.ambient;
