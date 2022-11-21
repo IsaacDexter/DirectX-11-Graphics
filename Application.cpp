@@ -76,6 +76,10 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     //bind the texture into the texture shader in register 0
     _pImmediateContext->PSSetShaderResources(0, 1, &_pTextureRV);
 
+    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_SPEC.dds", nullptr, &_pTextureRV);
+    //bind the texture into the texture shader in register 1
+    _pImmediateContext->PSSetShaderResources(1, 1, &_pTextureRV);
+
     // Define the specifications for our sampler :
     D3D11_SAMPLER_DESC sampDesc;
     ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -796,7 +800,7 @@ HRESULT Application::InitObjects()
     //initialse new light source
     _light->diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     _light->ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    _light->specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    _light->specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
     //Light is shining from the right
     _light->directionToLight = XMVectorSet(0.0f, 0.5f, -0.5f, 1.0f);
 

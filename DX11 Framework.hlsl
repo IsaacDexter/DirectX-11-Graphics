@@ -43,6 +43,8 @@ cbuffer ConstantBuffer : register( b0 )
 //--------------------------------------------------------------------------------------
 // Textures are assigned to a separate buffer inside our shader architecture, they are not included in the constant buffer with the other global variables we use. 
 Texture2D texDiffuse : register(t0);
+// define a second texture2d used to repersent the specular map, placed in the second register (t1)
+Texture2D texSpecular : register(t1);
 // We also need to define a SamplerState to tell DirectX how to transform the texture data to fit into the correct size onscreen. 
 SamplerState SampLinear : register(s0);
 
@@ -91,6 +93,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
 {
     // Samples texture
     float4 textureColor = texDiffuse.Sample(SampLinear, input.TexCoord);
+    //Samples specular map
+    float4 textureSpecular = texSpecular.Sample(SampLinear, input.TexCoord);
 
 
     //Calculate diffuse lighting 
@@ -118,10 +122,12 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float4 reflectDir = normalize(reflect(DirectionToLight.xyzz, input.NormalW));
     //calculate viewer direction
     float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
-    // calculate specular intensity 
-    specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), SpecularFalloff);
+    // Find a power to raise the specular by from the shininess, a value stored within the specular maps .a, which is a value from 0-1 where 0 is least shiny and 1 is very shiny. The shinier an object, the smaller the highlight
+    float1 specularPower = textureSpecular.a * 10.0f;
+    // calculate specular intensity, using the specular falloff just calculated
+    specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), specularPower);
     //find the hadamard product of specular material and specular light, this is the maximum potential specular
-    specularPotential = float4(SpecularMaterial.r * SpecularLight.r, SpecularMaterial.g * SpecularLight.g, SpecularMaterial.b * SpecularLight.b, SpecularMaterial.a * SpecularLight.a);
+    specularPotential = float4(textureSpecular.r * SpecularLight.r, textureSpecular.g * SpecularLight.g, textureSpecular.b * SpecularLight.b, textureSpecular.a * SpecularLight.a);
     specular = specularIntensity * specularPotential;
 
     input.Color = textureColor + specular + ambient + diffuse;
