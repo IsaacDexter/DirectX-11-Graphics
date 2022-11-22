@@ -8,6 +8,7 @@
 #include "resource.h"
 #include <vector>
 #include "DDSTextureLoader.h"
+#include "Lights.h"
 
 using namespace DirectX;
 
@@ -58,14 +59,6 @@ struct ConstantBuffer
 	XMVECTOR	DirToLight;
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;
-};
-
-struct Light
-{
-	XMFLOAT4 diffuse;
-	XMFLOAT4 ambient;
-	XMFLOAT4 specular;
-	XMVECTOR directionToLight;
 };
 
 struct LightingMaterial
@@ -195,7 +188,7 @@ private:
 
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
-	Light*					_light;
+	DirectionalLight*					_light;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

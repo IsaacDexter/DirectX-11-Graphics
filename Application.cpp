@@ -798,7 +798,7 @@ HRESULT Application::InitObjects()
     _pyramid = new Pyramid(_pd3dDevice);
     _pyramid->InitRenderedObject();
 
-    _light = new Light();
+    _light = new DirectionalLight();
 
     //initialse new light source
     _light->diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
