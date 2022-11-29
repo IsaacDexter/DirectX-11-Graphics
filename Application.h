@@ -37,21 +37,17 @@ struct ConstantBuffer
 	// The projection matrix
 	XMMATRIX	mProjection;
 
-	//A colour vector that describes the diffuse light colour. (RGBA)
-	XMFLOAT4	DiffLight;
 	//A colour vector that describes the diffuse materials reflectiveness.
 	XMFLOAT4	DiffMat;
 	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
-
-	// A colour vector that describes the ambient light colour. (RGBA)
-	XMFLOAT4	AmbLight;
 	// A colour vector that describes the ambient materials reflectiveness.
 	XMFLOAT4	AmbMat;
-
-	// A color vector that describes the specular light (and as such, specular highlight color)
-	XMFLOAT4	SpecLight;
 	// A color vector that describes the specular materials specularity
 	XMFLOAT4	SpecMat;
+
+	// The first directional light in the scene
+	DirectionalLight directionalLight1;
+
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;
 
@@ -188,7 +184,8 @@ private:
 
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
-	std::vector<Light*>	_lights;
+	DirectionalLight* _light;
+	//std::vector<Light*>	_lights;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
