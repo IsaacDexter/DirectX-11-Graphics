@@ -188,7 +188,7 @@ private:
 
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
-	DirectionalLight*		_light;
+	std::vector<Light*>	_lights;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

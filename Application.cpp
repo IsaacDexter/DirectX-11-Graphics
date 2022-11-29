@@ -806,7 +806,7 @@ HRESULT Application::InitObjects()
     XMFLOAT4 specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
     //Light is shining from the the camera basically
     XMFLOAT3 directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
-    _light = new DirectionalLight(diffuse, ambient, specular, directionToLight);
+    _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
 
     return S_OK;
 }
@@ -898,12 +898,14 @@ void Application::Draw()
     cb.mWorld = XMMatrixTranspose(world);
     cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
-    cb.DiffLight = _light->getDiffuse();
-    cb.AmbLight = _light->getAmbient();
-    cb.SpecLight = _light->getSpecular();
+    for each (Light* light in _lights)
+    {
+        cb.DiffLight = light->getDiffuse();
+        cb.AmbLight = light->getAmbient();
+        cb.SpecLight = light->getSpecular();
+        cb.DirToLight = light->getDirectionToLight();
+    }
     cb.EyeWorldPos = _camera->GetEye();
-    cb.DirToLight = _light->getDirectionToLight();
-
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
