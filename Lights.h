@@ -103,3 +103,99 @@ struct SpotLight : PointLight
 		this->type = SPOT_LIGHT;
 	}
 };
+
+// A struct containing all information pertaining to directional lights, to make the constant buffer better alligned
+struct DirectionalLightBuffer
+{
+	XMFLOAT4	diffuse;            //16
+	XMFLOAT4	ambient;            //32
+	XMFLOAT4	specular;           //48
+	XMFLOAT3	directionToLight;   //60
+	LightType	type;                //64
+	DirectionalLightBuffer()
+	{
+		diffuse = XMFLOAT4();
+		ambient = XMFLOAT4();
+		specular = XMFLOAT4();
+		directionToLight = XMFLOAT3();
+		type = DIRECTIONAL_LIGHT;
+	}
+	DirectionalLightBuffer(DirectionalLight directionalLight)
+	{
+		diffuse = directionalLight.diffuse;
+		ambient = directionalLight.ambient;
+		specular = directionalLight.specular;
+		directionToLight = directionalLight.directionToLight;
+		type = DIRECTIONAL_LIGHT;
+	}
+};
+
+// A struct containing all information pertaining to point lights, to make the constant buffer better alligned
+struct PointLightBuffer
+{
+	XMFLOAT4	diffuse;        //16
+	XMFLOAT4	ambient;        //32
+	XMFLOAT4	specular;       //48
+	XMFLOAT3	position;       //60
+	float		range;          //64
+	XMFLOAT3	attenuation;    //76
+	LightType   type;            //80
+	PointLightBuffer()
+	{
+		diffuse = XMFLOAT4();
+		ambient = XMFLOAT4();
+		specular = XMFLOAT4();
+		position = XMFLOAT3();
+		range = 0.0f;
+		attenuation = XMFLOAT3();
+		type = POINT_LIGHT;
+	}
+	PointLightBuffer(PointLight pointLight)
+	{
+		diffuse = pointLight.diffuse;
+		ambient = pointLight.ambient;
+		specular = pointLight.specular;
+		position = pointLight.position;
+		range = pointLight.range;
+		attenuation = pointLight.attenuation;
+		type = POINT_LIGHT;
+	}
+};
+
+// A struct containing all information pertaining to spot lights, to make the constant buffer better alligned
+struct SpotLightBuffer
+{
+	XMFLOAT4	diffuse;        //16
+	XMFLOAT4	ambient;        //32
+	XMFLOAT4	specular;       //48
+	XMFLOAT3	position;       //60
+	float		range;          //64
+	XMFLOAT3	attenuation;    //76
+	float		spot;           //80
+	XMFLOAT3	direction;      //92
+	LightType	type;            //96
+	SpotLightBuffer()
+	{
+		diffuse = XMFLOAT4();
+		ambient = XMFLOAT4();
+		specular = XMFLOAT4();
+		position = XMFLOAT3();
+		range = 0.0f;
+		attenuation = XMFLOAT3();
+		spot = 0.0f;
+		direction = XMFLOAT3();
+		type = SPOT_LIGHT;
+	}
+	SpotLightBuffer(SpotLight spotLight)
+	{
+		diffuse = spotLight.diffuse;
+		ambient = spotLight.ambient;
+		specular = spotLight.specular;
+		position = spotLight.position;
+		range = spotLight.range;
+		attenuation = spotLight.attenuation;
+		spot = spotLight.spot;
+		direction = spotLight.direction;
+		type = SPOT_LIGHT;
+	}
+};

@@ -46,13 +46,10 @@ struct ConstantBuffer
 	XMFLOAT4	SpecMat;
 
 	// The first directional light in the scene
-	DirectionalLight directionalLight1;
+	DirectionalLightBuffer directionalLight1;
 
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;
-
-	// The direction the the light source as a vector
-	XMFLOAT3	DirToLight;
 	// Power to raise specular falloff by
 	float		SpecPower;
 };
