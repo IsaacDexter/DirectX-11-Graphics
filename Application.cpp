@@ -798,15 +798,28 @@ HRESULT Application::InitObjects()
     _pyramid = new Pyramid(_pd3dDevice);
     _pyramid->InitRenderedObject();
 
-    
+
+    XMFLOAT4 diffuse;
+    XMFLOAT4 ambient;
+    XMFLOAT4 specular;
+    XMFLOAT3 directionToLight;
 
     //initialse new light source
-    XMFLOAT4 diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-    XMFLOAT4 ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    XMFLOAT4 specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
+    diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
     //Light is shining from the the camera basically
-    XMFLOAT3 directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
+    directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
     _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+
+    //initialse new light source
+    diffuse = XMFLOAT4(0.7f, 0.1f, 0.1f, 1.0f);
+    ambient = XMFLOAT4(0.3f, 0.01f, 0.01f, 1.0f);
+    specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
+    //Light is shining from the the left
+    directionToLight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+    _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+
     //_light = new DirectionalLight(diffuse, ambient, specular, directionToLight);
 
     return S_OK;
@@ -899,30 +912,32 @@ void Application::Draw()
     cb.mWorld = XMMatrixTranspose(world);
     cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
+    int i = 0;
     for each (Light* light in _lights)
     {
         switch (light->type)
         {
         case DIRECTIONAL_LIGHT:
             {
-                DirectionalLight* directionalLight = new DirectionalLight();
-                directionalLight = dynamic_cast<DirectionalLight*>(light);
-                cb.directionalLight1 = *directionalLight;
+                DirectionalLight directionalLight = DirectionalLight();
+                directionalLight = *dynamic_cast<DirectionalLight*>(light);
+                cb.directionalLights[i] = directionalLight;
                 break;
             }
             case POINT_LIGHT:
             {
-                PointLight* pointLight = new PointLight();
-                pointLight = dynamic_cast<PointLight*>(light);
+                PointLight pointLight = PointLight();
+                pointLight = *dynamic_cast<PointLight*>(light);
                 break;
             }
         case SPOT_LIGHT:
             {
-                SpotLight* spotLight = new SpotLight();
-                spotLight = dynamic_cast<SpotLight*>(light);
+                SpotLight spotLight = SpotLight();
+                spotLight = *dynamic_cast<SpotLight*>(light);
                 break;
             }
         }
+        i++;
     }
     cb.EyeWorldPos = _camera->GetEye();
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);

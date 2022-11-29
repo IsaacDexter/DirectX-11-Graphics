@@ -46,7 +46,7 @@ struct ConstantBuffer
 	XMFLOAT4	SpecMat;
 
 	// The first directional light in the scene
-	DirectionalLightBuffer directionalLight1;
+	DirectionalLightBuffer directionalLights[2];
 
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;

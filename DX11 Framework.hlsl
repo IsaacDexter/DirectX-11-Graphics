@@ -54,7 +54,7 @@ cbuffer ConstantBuffer : register( b0 )
     float4 AmbientMaterial;     //32
     float4 SpecularMaterial;    //48
     
-    DirectionalLightBuffer directionalLights[1]; //64
+    DirectionalLightBuffer directionalLights[2]; //64 * i
     
     float4 EyeWorldPos;     //16
     float SpecularFalloff;  //20
@@ -117,9 +117,10 @@ float4 PS(VS_OUTPUT input) : SV_Target
     //Samples specular map
     float4 textureSpecular = g_specularMap.Sample(SampLinear, input.TexCoord);
     
-    input.Color.xyzw = 0.0f;
+    //Total light combined into a single color
+    float4 lightColor = 0.0f;
     
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
     
         //Calculate diffuse lighting 
@@ -155,10 +156,10 @@ float4 PS(VS_OUTPUT input) : SV_Target
         specularPotential = float4(textureSpecular.r * directionalLights[i].specular.r, textureSpecular.g * directionalLights[i].specular.g, textureSpecular.b * directionalLights[i].specular.b, textureSpecular.a * directionalLights[i].specular.a);
         specular = specularIntensity * specularPotential;
 
-        input.Color += textureColor + specular + ambient + diffuse;
+        lightColor += specular + ambient + diffuse;
     }
 
-    
+    input.Color = textureColor * saturate(lightColor);
     
     return input.Color;
 }
