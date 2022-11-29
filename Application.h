@@ -188,7 +188,7 @@ private:
 
 	RenderedObject*			_cube;
 	Pyramid*				_pyramid;
-	DirectionalLight*					_light;
+	DirectionalLight*		_light;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
