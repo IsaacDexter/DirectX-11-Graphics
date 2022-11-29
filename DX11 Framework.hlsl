@@ -30,13 +30,14 @@ cbuffer ConstantBuffer : register( b0 )
     float4 SpecularLight;
     // A color vector that describes the specular materials specularity
     float4 SpecularMaterial;
-    // Power to raise specular falloff by
-    float4 SpecularFalloff;
-
-    // The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
-    float4 DirectionToLight;
+    
     // The eye vector; this is a vector that points in the direction of the camera in the opposite direction of the incoming view
     float4 EyeWorldPos;
+    
+     // The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
+    float3 DirectionToLight;
+    // Power to raise specular falloff by
+    float SpecularFalloff;
 }
 //--------------------------------------------------------------------------------------
 // Texture Variables

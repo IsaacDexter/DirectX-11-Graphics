@@ -52,13 +52,13 @@ struct ConstantBuffer
 	XMFLOAT4	SpecLight;
 	// A color vector that describes the specular materials specularity
 	XMFLOAT4	SpecMat;
-	// Power to raise specular falloff by
-	FLOAT		SpecPower;
-
-	// The direction the the light source as a vector
-	XMVECTOR	DirToLight;
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;
+
+	// The direction the the light source as a vector
+	XMFLOAT3	DirToLight;
+	// Power to raise specular falloff by
+	float		SpecPower;
 };
 
 struct LightingMaterial
