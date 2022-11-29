@@ -39,9 +39,9 @@ struct SpotLightBuffer
     float3  position;       //60
     float   range;          //64
     float3  attenuation;    //76
-    float   spot;           //80
+    float   pad;           //80
     float3  direction;      //92
-    float   pad;            //96
+    float   spot;            //96
 };
 
 cbuffer ConstantBuffer : register( b0 )
