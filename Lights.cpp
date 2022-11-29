@@ -17,6 +17,7 @@ XMFLOAT4 Light::getSpecular()
 
 DirectionalLight::DirectionalLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 directionToLight)
 {
+	type = DIRECTIONAL;
 	this->diffuse = diffuse;
 	this->ambient = ambient;
 	this->specular = specular;
@@ -49,6 +50,7 @@ XMFLOAT3 PointLight::getAttenuation()
 
 PointLight::PointLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, float range, XMFLOAT3 attenuation)
 {
+	type = SPOT;
 	this->diffuse = diffuse;
 	this->ambient = ambient;
 	this->specular = specular;

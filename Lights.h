@@ -3,10 +3,20 @@
 
 using namespace DirectX;
 
+
+enum LightType
+{
+	DIRECTIONAL,
+	POINT,
+	SPOT,
+};
+
 /// <summary>Abstract light class upon which other lights are based</summary>
 class Light
 {
 protected:
+	LightType type;
+
 	XMFLOAT4 diffuse;
 	XMFLOAT4 ambient;
 	XMFLOAT4 specular;
