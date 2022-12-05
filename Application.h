@@ -5,113 +5,18 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <directxcolors.h>
-#include "resource.h"
 #include <vector>
+#include "resource.h"
+
 #include "DDSTextureLoader.h"
+
 #include "Lights.h"
+#include "Materials.h"
+#include "Camera.h"
+#include "Actor.h"
+
 
 using namespace DirectX;
-
-struct SimpleVertex
-{
-    XMFLOAT3 Pos;
-    XMFLOAT3 Normal;
-	XMFLOAT2 TexCoord;
-};
-
-/// <summary>
-/// Used for normal calculations.
-/// </summary>
-struct SimpleVertex_Vector
-{
-	XMVECTOR Pos;
-	XMVECTOR Normal;
-};
-
-struct ConstantBuffer
-{
-	// The world matrix
-	XMMATRIX	mWorld;
-	// The view matrix
-	XMMATRIX	mView;
-	// The projection matrix
-	XMMATRIX	mProjection;
-
-	MaterialBuffer material;
-
-	// The first directional light in the scene
-	DirectionalLightBuffer directionalLights[2];
-
-	// The position of the camera's eye in the world
-	XMFLOAT4	EyeWorldPos;
-};
-
-class Camera
-{
-public:
-	Camera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up);
-	~Camera();
-
-	/// <returns>The camera's Eye Position</returns>
-	XMFLOAT4 GetEye();
-	/// <returns>The camera's Focus Position</returns>
-	XMFLOAT4 GetAt();
-	/// <returns>The camera's Up Direction</returns>
-	XMFLOAT4 GetUp();
-
-private:
-	XMFLOAT4 m_eye;
-	XMFLOAT4 m_at;
-	XMFLOAT4 m_up;
-};
-
-/// <summary><para>Stores all the information about an object: <br/>
-///  - indices, a vector of words containing the indices <br/>
-///  - vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex <br/>
-///  - ID3D11Buffer* pointers to vertex, and index buffers <br/>
-///  - An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object <br/>
-/// </para></summary>
-class RenderedObject
-{
-
-protected:
-	/// <summary>ID3D11Buffer* pointer to vertex buffer</summary>
-	ID3D11Buffer* m_vertexBuffer;
-	/// <summary>ID3D11Buffer* pointer to index buffer</summary>
-	ID3D11Buffer* m_indexBuffer;
-	/// <summary>An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object</summary>
-	XMFLOAT4X4 m_world;
-	/// <summary>indices, a vector of words containing the indices</summary>
-	std::vector<WORD> m_indices;
-	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
-	ID3D11Device* m_pd3dDevice;
-	Material m_material;
-	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
-	std::vector<SimpleVertex> m_vertices;
-protected:
-	virtual HRESULT InitRenderedObject();
-	HRESULT InitVertexBuffer();
-	HRESULT InitIndexBuffer();
-
-	void CalculateSmoothNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
-	void CalculateFlatNormals(std::vector<SimpleVertex>* Vertices, std::vector<WORD>* Indices);
-	
-
-public:
-	RenderedObject(ID3D11Device* _pd3dDevice);
-	~RenderedObject();
-
-	void Update(XMMATRIX transform);
-	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
-};
-
-class Pyramid: public RenderedObject
-{
-public:
-	Pyramid(ID3D11Device* _pd3dDevice);
-	~Pyramid();
-	HRESULT InitRenderedObject() override;
-};
 
 class Application
 {
@@ -147,14 +52,11 @@ private:
 	XMFLOAT4X4				_world;
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
-	
-	//Stores the Eye At and Up matrices
-	Camera*					_camera;
 
-	RenderedObject*			_cube;
+	Camera*					_camera;
+	Actor*					_cube;
 	Pyramid*				_pyramid;
-	//DirectionalLight* _light;
-	std::vector<Light*>	_lights;
+	std::vector<Light*>		_lights;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);

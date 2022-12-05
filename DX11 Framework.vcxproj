@@ -379,16 +379,24 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DX11 Framework.cpp" />
-    <ClCompile Include="Lights.cpp" />
+    <ClCompile Include="Normals.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="Buffers.h" />
     <ClInclude Include="Lights.h" />
+    <ClInclude Include="Materials.h" />
+    <ClInclude Include="Normals.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="Vertices.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
   </ItemGroup>
   <ItemGroup>

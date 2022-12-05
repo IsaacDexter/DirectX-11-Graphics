@@ -9,17 +9,64 @@
       <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
       <Extensions>fx;fxh;hlsl</Extensions>
     </Filter>
+    <Filter Include="LightingResources">
+      <UniqueIdentifier>{fbe5bdbb-93c1-441d-ba80-be6fda263c0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorldObjects">
+      <UniqueIdentifier>{bffa2eaa-c384-4911-b82a-739d62dd79ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffers">
+      <UniqueIdentifier>{8fefbae6-1c32-48cc-b98c-228161ae4b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vertices">
+      <UniqueIdentifier>{5cc73bd8-3217-4673-ad39-0d0adaa3704c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Texturing">
+      <UniqueIdentifier>{a9b98451-5cb0-4c64-82ae-ad151cd8b753}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="DDSTextureLoader.h" />
-    <ClInclude Include="Lights.h" />
+    <ClInclude Include="Lights.h">
+      <Filter>LightingResources</Filter>
+    </ClInclude>
+    <ClInclude Include="Materials.h">
+      <Filter>LightingResources</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>WorldObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>WorldObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffers.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertices.h">
+      <Filter>Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="Normals.h">
+      <Filter>Vertices</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Texturing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="DX11 Framework.cpp" />
-    <ClCompile Include="DDSTextureLoader.cpp" />
-    <ClCompile Include="Lights.cpp" />
+    <ClCompile Include="Camera.cpp">
+      <Filter>WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Normals.cpp">
+      <Filter>Vertices</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Texturing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
