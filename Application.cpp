@@ -425,6 +425,8 @@ HRESULT Application::InitObjects()
     XMFLOAT4 specular;
     XMFLOAT3 directionToLight;
 
+    int directionalLightsCount = 0;
+
     //initialse new light source
     diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -432,6 +434,7 @@ HRESULT Application::InitObjects()
     //Light is shining from the the camera basically
     directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
     _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+    directionalLightsCount++;
 
     //initialse new light source
     diffuse = XMFLOAT4(0.7f, 0.1f, 0.1f, 1.0f);
@@ -440,10 +443,13 @@ HRESULT Application::InitObjects()
     //Light is shining from the the left
     directionToLight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
     _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+    directionalLightsCount++;
 
     XMFLOAT3 position;
     XMFLOAT3 attenuation;
     float range;
+
+    int pointLightsCount = 0;
 
     diffuse = XMFLOAT4(0.2f, 0.2f, 0.6f, 1.0f);
     ambient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
@@ -453,7 +459,7 @@ HRESULT Application::InitObjects()
     range = 5.0f;
 
     _lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
-    
+    pointLightsCount++;
 
     //_light = new DirectionalLight(diffuse, ambient, specular, directionToLight);
 
@@ -547,7 +553,9 @@ void Application::Draw()
     cb.mWorld = XMMatrixTranspose(world);
     cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
-    int i = 0;
+    int directionalLightsCount = 0;
+    int pointLightsCount = 0;
+    int spotLightsCount = 0;
     for each (Light* light in _lights)
     {
         switch (light->type)
@@ -556,25 +564,32 @@ void Application::Draw()
             {
                 DirectionalLight directionalLight = DirectionalLight();
                 directionalLight = *dynamic_cast<DirectionalLight*>(light);
-                cb.directionalLights[i] = directionalLight;
+                cb.directionalLights[directionalLightsCount] = directionalLight;
+                directionalLightsCount++;
                 break;
             }
             case POINT_LIGHT:
             {
                 PointLight pointLight = PointLight();
                 pointLight = *dynamic_cast<PointLight*>(light);
-                cb.pointLights[0] = pointLight;
+                cb.pointLights[pointLightsCount] = pointLight;
+                pointLightsCount++;
                 break;
             }
         case SPOT_LIGHT:
             {
                 SpotLight spotLight = SpotLight();
                 spotLight = *dynamic_cast<SpotLight*>(light);
+                cb.spotLights[spotLightsCount] = spotLight;
+                spotLightsCount++;
                 break;
             }
         }
-        i++;
     }
+    cb.directionalLightsCount = directionalLightsCount;
+    cb.pointLightsCount = pointLightsCount;
+    cb.spotLightsCount = spotLightsCount;
+
     cb.EyeWorldPos = _camera->GetEye();
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);

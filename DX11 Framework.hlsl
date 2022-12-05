@@ -54,8 +54,9 @@ struct MaterialBuffer
     float3 pad;             //16
 };
 
-#define DIRECTIONAL_LIGHT_COUNT 2
-#define POINT_LIGHT_COUNT 1
+#define DIRECTIONAL_LIGHTS_COUNT 8
+#define POINT_LIGHTS_COUNT 8
+#define SPOT_LIGHTS_COUNT 8
 
 cbuffer ConstantBuffer : register( b0 )
 {
@@ -65,10 +66,16 @@ cbuffer ConstantBuffer : register( b0 )
 
     MaterialBuffer material;
     
-    DirectionalLightBuffer directionalLights[DIRECTIONAL_LIGHT_COUNT]; //64 * i
-    PointLightBuffer pointLights[POINT_LIGHT_COUNT];
+    DirectionalLightBuffer directionalLights[DIRECTIONAL_LIGHTS_COUNT];  //64 * i
+    PointLightBuffer pointLights[POINT_LIGHTS_COUNT];                    //80*i
+    SpotLightBuffer spotLights[SPOT_LIGHTS_COUNT];                       //96*i
     
     float4 EyeWorldPos;     //16
+    
+    int directionalLightsCount;  //4
+    int pointLightsCount;        //8
+    int spotLightsCount;         //12
+    int pad;                    //16
 }
 //--------------------------------------------------------------------------------------
 // Texture Variables
@@ -290,7 +297,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     //Total light combined into a single color
     float4 lightColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
-    for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++)
+    for (int i = 0; i < directionalLightsCount; i++)
     {
         float4 ambient;
         float4 diffuse;
@@ -302,7 +309,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
         lightColor += saturate(specular + ambient + diffuse);
     }
     
-    for (int i = 0; i < POINT_LIGHT_COUNT; i++)
+    for (int i = 0; i < pointLightsCount; i++)
     {
         float4 ambient;
         float4 diffuse;
