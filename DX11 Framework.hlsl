@@ -123,7 +123,6 @@ float3 Hadamard(float3 a, float3 b)
     return (float3(a.x * b.x, a.y * b.y, a.z * b.z));
 }
 
-
 float4 CalculateDiffuse(float4 diffuseMaterial, float4 diffuseLight, float1 incident)
 {
     float1 diffuseIntesity;
@@ -165,10 +164,23 @@ float4 CalculateSpecular(float4 specularMaterial, float4 specularLight, float1 s
     return specular;
 }
 
+/// <summary>Calculates the ambient, diffuse and specular for an object being shone on by a directional light</summary>
+/// <param name="ambMat">The ambient material of the object</param>
+/// <param name="difMat">The diffuse material of the object</param>
+/// <param name="speMat">The specular material of the object, the alpha value being the specular falloff</param>
+/// <param name="difLig">The diffuse of the light</param>
+/// <param name="ambLig">The ambient of the light</param>
+/// <param name="speLig">The specular of the light</param>
+/// <param name="dirLig">A direction float3 leading to the light</param>
+/// <param name="norWor">A float4 world normal of this pixel</param>
+/// <param name="dirEye">A direction vector leading to the eye</param>
+/// <param name="ambOut">The return diffuse</param>
+/// <param name="difOut">The return ambient</param>v
+/// <param name="speOut">The return specular</param>
 void CalculateDirectionalLighting
 (
-    float4 ambMat,
     float4 difMat,
+    float4 ambMat,
     float4 speMat,
     float4 difLig,
     float4 ambLig,
@@ -176,8 +188,8 @@ void CalculateDirectionalLighting
     float3 dirLig,
     float4 norWor,
     float4 dirEye,
-    out float4 ambOut,
     out float4 difOut,
+    out float4 ambOut,
     out float4 speOut
 )
 {
@@ -203,19 +215,28 @@ float4 PS(VS_OUTPUT input) : SV_Target
 {
     // Samples texture
     float4 textureColor = g_diffuseMap.Sample(SampLinear, input.TexCoord);
-    //Samples specular map
-    float4 textureSpecular = g_specularMap.Sample(SampLinear, input.TexCoord);
+    
+    // Stores the specular falloff and material in a single float4
+    float4 specularMaterial = float4(material.SpecularMaterial.xyz, material.specularFalloff);
+    // If specular maps are being used
+    if(true)
+    {
+        //Samples specular map and overwrites the material
+        specularMaterial = g_specularMap.Sample(SampLinear, input.TexCoord);
+    }
+    
     float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
     //Total light combined into a single color
-    float4 lightColor = 0.0f;
+    float4 lightColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
     for (int i = 0; i < 2; i++)
     {
         float4 ambient;
-        float4 specular;
         float4 diffuse;
+        float4 specular;
         
-        CalculateDirectionalLighting(material.AmbientMaterial, material.DiffuseMaterial, textureSpecular, directionalLights[i].diffuse, directionalLights[i].ambient, directionalLights[i].specular, directionalLights[i].directionToLight, input.NormalW, viewerDir, ambient, diffuse, specular);
+        
+        CalculateDirectionalLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, directionalLights[i].diffuse, directionalLights[i].ambient, directionalLights[i].specular, directionalLights[i].directionToLight, input.NormalW, viewerDir, diffuse, ambient, specular);
 
         lightColor += saturate(specular + ambient + diffuse);
     }
