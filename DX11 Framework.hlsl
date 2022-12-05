@@ -44,20 +44,27 @@ struct SpotLightBuffer
     float   spot;            //96
 };
 
+struct MaterialBuffer
+{
+    float4 DiffuseMaterial; //16
+    float4 AmbientMaterial; //32
+    float4 SpecularMaterial; //48
+    
+    float specularFalloff;  //4
+    float3 pad;             //16
+};
+
 cbuffer ConstantBuffer : register( b0 )
 {
 	matrix World;       //64
 	matrix View;        //128
 	matrix Projection;  //192
 
-    float4 DiffuseMaterial;     //16
-    float4 AmbientMaterial;     //32
-    float4 SpecularMaterial;    //48
+    MaterialBuffer material;
     
     DirectionalLightBuffer directionalLights[2]; //64 * i
     
     float4 EyeWorldPos;     //16
-    float SpecularFalloff;  //20
 }
 //--------------------------------------------------------------------------------------
 // Texture Variables
@@ -106,6 +113,88 @@ VS_OUTPUT VS( float3 Pos : POSITION, float3 Normal : NORMAL, float2 TexCoord: TE
     return output;
 }
 
+float4 Hadamard(float4 a, float4 b)
+{
+    return (float4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w));
+}
+
+float3 Hadamard(float3 a, float3 b)
+{
+    return (float3(a.x * b.x, a.y * b.y, a.z * b.z));
+}
+
+
+float4 CalculateDiffuse(float4 diffuseMaterial, float4 diffuseLight, float1 incident)
+{
+    float1 diffuseIntesity;
+    float4 diffusePotential;
+    float4 diffuse;
+    
+    //Find the intesity of the diffuse light using the angle of incidence
+    diffuseIntesity = max(incident, 0.0f);
+    
+    //find the hadamard product of diffuse material and diffuse light. This is the maximum potential diffuse
+    diffusePotential = Hadamard(diffuseMaterial, diffuseLight);
+    diffuse = saturate(diffuseIntesity * diffusePotential);
+    
+    return diffuse;
+}
+
+float4 CalculateAmbient(float4 ambientMaterial, float4 ambientLight)
+{
+    //Calculate ambient lighting
+    //find the hadamard product of ambient material and ambient light
+    float4 ambient = saturate(Hadamard(ambientMaterial, ambientLight));
+    return ambient;
+}
+
+float4 CalculateSpecular(float4 specularMaterial, float4 specularLight, float1 specularAngle)
+{
+    // Calculate specular lighting
+    float1 specularIntensity;
+    float4 specularPotential;
+    float4 specular;
+    
+    // Find a power to raise the specular by from the shininess, a value stored within the specular maps .a, which is a value from 0-1 where 0 is least shiny and 1 is very shiny. The shinier an object, the smaller the highlight
+    float1 specularPower = specularMaterial.a * 25.0f;
+    // calculate specular intensity, using the specular falloff just calculated
+    specularIntensity = pow(max(specularAngle, 0), specularPower);
+    //find the hadamard product of specular material and specular light, this is the maximum potential specular
+    specularPotential = Hadamard(float4(specularMaterial.xyz, 1.0f), specularLight);
+    specular = saturate(specularIntensity * specularPotential);
+    return specular;
+}
+
+void CalculateDirectionalLighting
+(
+    float4 ambMat,
+    float4 difMat,
+    float4 speMat,
+    float4 difLig,
+    float4 ambLig,
+    float4 speLig,
+    float3 dirLig,
+    float4 norWor,
+    float4 dirEye,
+    out float4 ambOut,
+    out float4 difOut,
+    out float4 speOut
+)
+{
+    //Calculate diffuse lighting  
+    float1 angleOfIncidence = dot(normalize(dirLig.xyzz), norWor);
+    difOut = CalculateDiffuse(difMat, difLig, angleOfIncidence);
+    
+    //Calculate ambient lighting
+    ambOut = CalculateAmbient(ambMat, ambLig);
+    
+    //Calculate specular Lighting
+    float4 reflectDir = normalize(reflect(dirLig.xyzz, norWor));
+    //A weirdly unnamed angle between the reflection direction and eye direction
+    float1 angleBetweenReflectionAndEye = dot(reflectDir, dirEye);
+    speOut = CalculateSpecular(speMat, speLig, angleBetweenReflectionAndEye);
+    
+}
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -116,47 +205,19 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float4 textureColor = g_diffuseMap.Sample(SampLinear, input.TexCoord);
     //Samples specular map
     float4 textureSpecular = g_specularMap.Sample(SampLinear, input.TexCoord);
-    
+    float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
     //Total light combined into a single color
     float4 lightColor = 0.0f;
     
     for (int i = 0; i < 2; i++)
     {
-    
-        //Calculate diffuse lighting 
-        float1 diffuseIntesity;
-        float4 diffusePotential;
-        float4 diffuse;
-    
-        float1 dotAmount = dot(normalize(directionalLights[i].directionToLight.xyzz), input.NormalW);
-        diffuseIntesity = max(dotAmount, 0.0f);
-    
-        //find the hadamard product of diffuse material and diffuse light. This is the maximum potential diffuse
-        diffusePotential = float4(DiffuseMaterial.r * directionalLights[i].diffuse.r, DiffuseMaterial.g * directionalLights[i].diffuse.g, DiffuseMaterial.b * directionalLights[i].diffuse.b, DiffuseMaterial.a * directionalLights[i].diffuse.a);
-        diffuse = diffuseIntesity * diffusePotential;
-
-        //Calculate ambient lighting
-        //find the hadamard product of ambient material and ambient light
-        float4 ambient = float4(AmbientMaterial.r * directionalLights[i].ambient.r, AmbientMaterial.g * directionalLights[i].ambient.g, AmbientMaterial.b * directionalLights[i].ambient.b, AmbientMaterial.a * directionalLights[i].ambient.a);
-
-        // Calculate specular lighting
-        float1 specularIntensity;
-        float4 specularPotential;
+        float4 ambient;
         float4 specular;
-    
-        // Calculate reflection direction
-        float4 reflectDir = normalize(reflect(directionalLights[i].directionToLight.xyzz, input.NormalW));
-        //calculate viewer direction
-        float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
-        // Find a power to raise the specular by from the shininess, a value stored within the specular maps .a, which is a value from 0-1 where 0 is least shiny and 1 is very shiny. The shinier an object, the smaller the highlight
-        float1 specularPower = textureSpecular.a * 25.0f;
-        // calculate specular intensity, using the specular falloff just calculated
-        specularIntensity = pow(max(dot(reflectDir, viewerDir), 0), specularPower);
-        //find the hadamard product of specular material and specular light, this is the maximum potential specular
-        specularPotential = float4(textureSpecular.r * directionalLights[i].specular.r, textureSpecular.g * directionalLights[i].specular.g, textureSpecular.b * directionalLights[i].specular.b, textureSpecular.a * directionalLights[i].specular.a);
-        specular = specularIntensity * specularPotential;
+        float4 diffuse;
+        
+        CalculateDirectionalLighting(material.AmbientMaterial, material.DiffuseMaterial, textureSpecular, directionalLights[i].diffuse, directionalLights[i].ambient, directionalLights[i].specular, directionalLights[i].directionToLight, input.NormalW, viewerDir, ambient, diffuse, specular);
 
-        lightColor += specular + ambient + diffuse;
+        lightColor += saturate(specular + ambient + diffuse);
     }
 
     input.Color = textureColor * saturate(lightColor);

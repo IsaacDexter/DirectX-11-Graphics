@@ -25,9 +25,9 @@ struct Light
 
 	Light()
 	{
-		diffuse = XMFLOAT4();
-		ambient = XMFLOAT4();
-		specular = XMFLOAT4();
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 	Light(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular)
 	{
@@ -49,7 +49,7 @@ struct DirectionalLight : Light
 
 	DirectionalLight() : Light()
 	{
-		directionToLight = XMFLOAT3();
+		directionToLight = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		type = DIRECTIONAL_LIGHT;
 	}
 	/// <summary>A light that shines all objects from a given direction, like the sun</summary>
@@ -75,9 +75,9 @@ struct PointLight : Light
 
 	PointLight() : Light()
 	{
-		position = XMFLOAT3();
+		position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		range = 0.0f;
-		attenuation = XMFLOAT3();
+		attenuation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		type = POINT_LIGHT;
 	}
 	/// <summary>A light with a position in space that shines outwards in all directions upto a given range</summary>
@@ -105,7 +105,7 @@ struct SpotLight : PointLight
 
 	SpotLight() : PointLight()
 	{
-		direction = XMFLOAT3();
+		direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		spot = 0.0f;
 		type = SPOT_LIGHT;
 	}
@@ -126,6 +126,15 @@ struct SpotLight : PointLight
 	}
 };
 
+struct Material
+{
+	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+	//The Power to raise specular falloff by. Defaults to 10.
+	float	 specularFalloff;
+};
+
 // A struct containing all information pertaining to directional lights, to make the constant buffer better alligned
 struct DirectionalLightBuffer
 {
@@ -136,10 +145,10 @@ struct DirectionalLightBuffer
 	LightType	type;                //64
 	DirectionalLightBuffer()
 	{
-		diffuse = XMFLOAT4();
-		ambient = XMFLOAT4();
-		specular = XMFLOAT4();
-		directionToLight = XMFLOAT3();
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		directionToLight = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		type = DIRECTIONAL_LIGHT;
 	}
 	DirectionalLightBuffer(DirectionalLight directionalLight)
@@ -164,12 +173,12 @@ struct PointLightBuffer
 	LightType   type;            //80
 	PointLightBuffer()
 	{
-		diffuse = XMFLOAT4();
-		ambient = XMFLOAT4();
-		specular = XMFLOAT4();
-		position = XMFLOAT3();
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		range = 0.0f;
-		attenuation = XMFLOAT3();
+		attenuation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		type = POINT_LIGHT;
 	}
 	PointLightBuffer(PointLight pointLight)
@@ -198,14 +207,14 @@ struct SpotLightBuffer
 	LightType	type;            //96
 	SpotLightBuffer()
 	{
-		diffuse = XMFLOAT4();
-		ambient = XMFLOAT4();
-		specular = XMFLOAT4();
-		position = XMFLOAT3();
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		range = 0.0f;
-		attenuation = XMFLOAT3();
+		attenuation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		spot = 0.0f;
-		direction = XMFLOAT3();
+		direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		type = SPOT_LIGHT;
 	}
 	SpotLightBuffer(SpotLight spotLight)
@@ -219,5 +228,29 @@ struct SpotLightBuffer
 		spot = spotLight.spot;
 		direction = spotLight.direction;
 		type = SPOT_LIGHT;
+	}
+};
+
+// A struct containing all information pertaining to lighting materials, to make the constant buffer better alligned
+struct MaterialBuffer
+{
+	XMFLOAT4	diffuse;            //16
+	XMFLOAT4	ambient;            //32
+	XMFLOAT4	specular;           //48
+	float		specularFalloff;	//52
+	XMFLOAT3	pad;				//64
+	MaterialBuffer()
+	{
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specularFalloff = 0.0f;
+	}
+	MaterialBuffer(Material material)
+	{
+		diffuse = material.diffuse;
+		ambient = material.ambient;
+		specular = material.specular;
+		specularFalloff = material.specularFalloff;
 	}
 };

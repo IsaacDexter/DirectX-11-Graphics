@@ -37,30 +37,13 @@ struct ConstantBuffer
 	// The projection matrix
 	XMMATRIX	mProjection;
 
-	//A colour vector that describes the diffuse materials reflectiveness.
-	XMFLOAT4	DiffMat;
-	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
-	// A colour vector that describes the ambient materials reflectiveness.
-	XMFLOAT4	AmbMat;
-	// A color vector that describes the specular materials specularity
-	XMFLOAT4	SpecMat;
+	MaterialBuffer material;
 
 	// The first directional light in the scene
 	DirectionalLightBuffer directionalLights[2];
 
 	// The position of the camera's eye in the world
 	XMFLOAT4	EyeWorldPos;
-	// Power to raise specular falloff by
-	float		SpecPower;
-};
-
-struct LightingMaterial
-{
-	XMFLOAT4 diffuse;
-	XMFLOAT4 ambient;
-	XMFLOAT4 specular;
-	//The Power to raise specular falloff by. Defaults to 10.
-	FLOAT	 specularFalloff;
 };
 
 class Camera
@@ -80,17 +63,6 @@ private:
 	XMFLOAT4 m_eye;
 	XMFLOAT4 m_at;
 	XMFLOAT4 m_up;
-};
-
-
-class Material
-{
-private:
-	XMFLOAT4 diffuse;
-	XMFLOAT4 ambient;
-	XMFLOAT4 specular;
-	//The Power to raise specular falloff by. Defaults to 10.
-	FLOAT	 specularFalloff;
 };
 
 /// <summary><para>Stores all the information about an object: <br/>
@@ -113,7 +85,7 @@ protected:
 	std::vector<WORD> m_indices;
 	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
 	ID3D11Device* m_pd3dDevice;
-	LightingMaterial m_material;
+	Material m_material;
 	/// <summary>vertices, a vector SimpleVertex, which contain the local position and the normal of each vertex</summary>
 	std::vector<SimpleVertex> m_vertices;
 protected:

@@ -116,7 +116,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
                             Distance to the near clipping plane > 0,
                             Distance to the far clipping plane > 0),
                                                                         Returns: the perspective projection matrix  */
-	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (FLOAT) _WindowHeight, 0.01f, 100.0f));
+	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (float) _WindowHeight, 0.01f, 100.0f));
 
 	return S_OK;
 }
@@ -536,10 +536,10 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
 
     //Materials:
     // copies the rendered diffuse material into the constant buffer
-    cb.DiffMat = m_material.diffuse;
-    cb.AmbMat = m_material.ambient;
-    cb.SpecMat = m_material.specular;
-    cb.SpecPower = m_material.specularFalloff;
+    cb.material.diffuse = m_material.diffuse;
+    cb.material.ambient = m_material.ambient;
+    cb.material.specular = m_material.specular;
+    cb.material.specularFalloff = m_material.specularFalloff;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -742,8 +742,8 @@ HRESULT Application::InitDevice()
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
-    vp.Width = (FLOAT)_WindowWidth;
-    vp.Height = (FLOAT)_WindowHeight;
+    vp.Width = (float)_WindowWidth;
+    vp.Height = (float)_WindowHeight;
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
     vp.TopLeftX = 0;
