@@ -28,38 +28,39 @@ struct SimpleVertex_Vector
 	XMVECTOR Normal;
 };
 
-struct LightingMaterial
-{
-	//A colour vector that describes the diffuse materials reflectiveness
-	XMFLOAT4 diffuse;
-	// A colour vector that describes the ambient materials reflectiveness
-	XMFLOAT4 ambient;
-	// A color vector that describes the specular materials specularity
-	XMFLOAT4 specular;
-
-	//The Power to raise specular falloff by
-	FLOAT	 specularFalloff;
-	XMFLOAT3 pad;
-};
-
 struct ConstantBuffer
 {
 	// The world matrix
-	XMMATRIX mWorld;
+	XMMATRIX	mWorld;
 	// The view matrix
-	XMMATRIX mView;
+	XMMATRIX	mView;
 	// The projection matrix
-	XMMATRIX mProjection;
+	XMMATRIX	mProjection;
+
+	//A colour vector that describes the diffuse materials reflectiveness.
+	XMFLOAT4	DiffMat;
+	//The light vector; this is a vector that points in the direction of the light source in the opposite direction of the incoming light rays
+	// A colour vector that describes the ambient materials reflectiveness.
+	XMFLOAT4	AmbMat;
+	// A color vector that describes the specular materials specularity
+	XMFLOAT4	SpecMat;
 
 	// The first directional light in the scene
 	DirectionalLightBuffer directionalLights[2];
 
 	// The position of the camera's eye in the world
-	XMFLOAT3 EyeWorldPos;
-	FLOAT pad;
+	XMFLOAT4	EyeWorldPos;
+	// Power to raise specular falloff by
+	float		SpecPower;
+};
 
-	//Material buffer containging 
-	LightingMaterial material;
+struct LightingMaterial
+{
+	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+	//The Power to raise specular falloff by. Defaults to 10.
+	FLOAT	 specularFalloff;
 };
 
 class Camera
