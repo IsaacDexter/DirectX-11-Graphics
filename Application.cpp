@@ -420,6 +420,10 @@ HRESULT Application::InitObjects()
     //Initialise the camera
     _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
 
+    //Lights:
+
+    //Directional lights:
+
     XMFLOAT4 diffuse;
     XMFLOAT4 ambient;
     XMFLOAT4 specular;
@@ -433,7 +437,8 @@ HRESULT Application::InitObjects()
     specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
     //Light is shining from the the camera basically
     directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
-    _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+
+    //_lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
     directionalLightsCount++;
 
     //initialse new light source
@@ -442,8 +447,11 @@ HRESULT Application::InitObjects()
     specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
     //Light is shining from the the left
     directionToLight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
-    _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+
+    //_lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
     directionalLightsCount++;
+
+    //Point Lights:
 
     XMFLOAT3 position;
     XMFLOAT3 attenuation;
@@ -454,14 +462,31 @@ HRESULT Application::InitObjects()
     diffuse = XMFLOAT4(0.2f, 0.2f, 0.6f, 1.0f);
     ambient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
     specular = XMFLOAT4(0.3f, 0.3f, 0.9, 25.0f);
-    position = XMFLOAT3(0.0f, 0.0f, -3.0f);
+    position = XMFLOAT3(3.0f, 0.0f, 0.0f);
     attenuation = XMFLOAT3(0.0f, 0.0f, 0.4f);
-    range = 5.0f;
+    range = 10.0f;
 
-    _lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
+    //_lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
     pointLightsCount++;
 
-    //_light = new DirectionalLight(diffuse, ambient, specular, directionToLight);
+    //Spot Lights:
+
+    XMFLOAT3 direction;
+    float spot;
+
+    int spotLightsCount = 0;
+
+    diffuse = XMFLOAT4(0.2f, 0.8f, 0.2f, 1.0f);
+    ambient = XMFLOAT4(0.01f, 0.03f, 0.01f, 1.0f);
+    specular = XMFLOAT4(0.3f, 0.9f, 0.3, 20.0f);
+    position = XMFLOAT3(0.0f, 0.0f, -3.0f);
+    attenuation = XMFLOAT3(0.0f, 0.0f, 0.4f);
+    range = 10.0f;
+    direction = XMFLOAT3(-1.0f, -1.0f, 1.0f);
+    spot = 8.0f;   //8 ~ 45 degrees
+
+    _lights.push_back(new SpotLight(diffuse, ambient, specular, position, range, attenuation, direction, spot));
+    spotLightsCount++;
 
     return S_OK;
 }

@@ -39,9 +39,9 @@ struct SpotLightBuffer
     float3  position;       //60
     float   range;          //64
     float3  attenuation;    //76
-    float   pad;           //80
+    float   spot;           //80
     float3  direction;      //92
-    float   spot;            //96
+    float   pad;            //96
 };
 
 struct MaterialBuffer
@@ -248,11 +248,11 @@ void CalculatePointLighting
     
     //Get the distance from the light and test it against range
     float1 lightDistance = length(toLight);
-    toLight = normalize(toLight);
     if(lightDistance > range)
     {
         return;
     }
+    toLight = normalize(toLight);
     
     ambient = CalculateAmbient(ambientMaterial, ambientLight);
     
@@ -271,6 +271,68 @@ void CalculatePointLighting
     
     //Apply attenuation
     float1 attenuationFactor = saturate(1.0f / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
+    specular *= attenuationFactor;
+    diffuse *= attenuationFactor;
+}
+
+void CalculateSpotLighting
+(
+    float4 diffuseMaterial,
+    float4 ambientMaterial,
+    float4 specularMaterial,
+    float4 diffuseLight,
+    float4 ambientLight,
+    float4 specularLight,
+    float3 toLight,
+    float4 normal,
+    float4 toEye,
+    float3 attenuation,
+    float1 range,
+    float3 direction,
+    float spot,
+    out float4 diffuse,
+    out float4 ambient,
+    out float4 specular
+)
+{
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    
+    //Get the distance from the light and test it against range
+    float1 lightDistance = length(toLight);
+    if (lightDistance > range)
+    {
+        return;
+    }
+    //Normalize the lights direction
+    toLight = normalize(toLight);
+    
+    //Calculate the angle of incidence. If its less than 0.0f, there is no line of sight so return.
+    float1 angleOfIncidence = dot(toLight.xyzz, normal);
+
+    if (angleOfIncidence < 0.0f)
+    {
+        return;
+    }    
+    diffuse = CalculateDiffuse(diffuseMaterial, diffuseLight, angleOfIncidence);
+    
+    ambient = CalculateAmbient(ambientMaterial, ambientLight);
+    
+    float4 reflectDir = normalize(reflect(toLight.xyzz, normal));
+    //A weirdly unnamed angle between the reflection direction and eye direction
+    float1 angleBetweenReflectionAndEye = dot(reflectDir, toEye);
+    specular = CalculateSpecular(specularMaterial, specularLight, angleOfIncidence);
+    
+    
+    // Scale by spotlight factor.
+    //The angle between the beam of the spotlight and the direction to the light
+    float angleFromBeam = dot(-toLight, direction);
+    float spotFactor = pow(max(angleFromBeam, 0.0f), spot);
+    
+    //Apply attenuation
+    float1 attenuationFactor = saturate(spotFactor / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
+    ambient *= attenuationFactor;
     specular *= attenuationFactor;
     diffuse *= attenuationFactor;
 }
@@ -319,6 +381,20 @@ float4 PS(VS_OUTPUT input) : SV_Target
         //input.Color = abs(directionToLight.xyzz);
         
         CalculatePointLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, pointLights[i].diffuse, pointLights[i].ambient, pointLights[i].specular, directionToLight, input.NormalW, viewerDir, pointLights[i].attenuation, pointLights[i].range, diffuse, ambient, specular);
+
+        lightColor += saturate(specular + ambient + diffuse);
+    }
+        
+    for (int i = 0; i < spotLightsCount; i++)
+    {
+        float4 ambient;
+        float4 diffuse;
+        float4 specular;
+        
+        float3 directionToLight = (spotLights[i].position - input.PosW.xyz);
+        //input.Color = abs(directionToLight.xyzz);
+        
+        CalculateSpotLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, spotLights[i].diffuse, spotLights[i].ambient, spotLights[i].specular, directionToLight, input.NormalW, viewerDir, spotLights[i].attenuation, spotLights[i].range, spotLights[i].direction, spotLights[i].spot, diffuse, ambient, specular);
 
         lightColor += saturate(specular + ambient + diffuse);
     }
