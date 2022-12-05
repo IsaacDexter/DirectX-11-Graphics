@@ -536,10 +536,10 @@ void RenderedObject::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* c
 
     //Materials:
     // copies the rendered diffuse material into the constant buffer
-    cb.DiffMat = m_material.diffuse;
-    cb.AmbMat = m_material.ambient;
-    cb.SpecMat = m_material.specular;
-    cb.SpecPower = m_material.specularFalloff;
+    cb.material.diffuse = m_material.diffuse;
+    cb.material.ambient = m_material.ambient;
+    cb.material.specular = m_material.specular;
+    cb.material.specularFalloff = m_material.specularFalloff;
 
     // Set vertex buffer
     immediateContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -939,7 +939,7 @@ void Application::Draw()
         }
         i++;
     }
-    cb.EyeWorldPos = _camera->GetEye();
+    cb.EyeWorldPos = XMFLOAT3(_camera->GetEye().x, _camera->GetEye().y, _camera->GetEye().z);
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
