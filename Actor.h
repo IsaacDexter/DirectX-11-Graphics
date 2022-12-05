@@ -51,10 +51,16 @@ public:
 	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
 };
 
+class Cube : public Actor
+{
+public:
+	Cube(ID3D11Device* _p3dDevice);
+	HRESULT InitRenderedObject() override;
+};
+
 class Pyramid : public Actor
 {
 public:
-	Pyramid(ID3D11Device* _pd3dDevice);
-	~Pyramid();
+	Pyramid(ID3D11Device* _p3dDevice);
 	HRESULT InitRenderedObject() override;
 };

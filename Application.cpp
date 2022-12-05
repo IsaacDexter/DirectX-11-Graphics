@@ -416,11 +416,10 @@ HRESULT Application::InitObjects()
     // Set vertex buffer
 
     //Initialise cube, including vertex and index buffers
-    _cube = new Actor(_pd3dDevice);
+    _cube = new Cube(_pd3dDevice);
 
     //Initialise pyramid, including vertex and index buffers
     _pyramid = new Pyramid(_pd3dDevice);
-    _pyramid->InitRenderedObject();
 
 
     XMFLOAT4 diffuse;
