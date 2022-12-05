@@ -9,9 +9,6 @@
       <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
       <Extensions>fx;fxh;hlsl</Extensions>
     </Filter>
-    <Filter Include="LightingResources">
-      <UniqueIdentifier>{fbe5bdbb-93c1-441d-ba80-be6fda263c0a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="WorldObjects">
       <UniqueIdentifier>{bffa2eaa-c384-4911-b82a-739d62dd79ff}</UniqueIdentifier>
     </Filter>
@@ -24,14 +21,17 @@
     <Filter Include="Texturing">
       <UniqueIdentifier>{a9b98451-5cb0-4c64-82ae-ad151cd8b753}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lighting">
+      <UniqueIdentifier>{fbe5bdbb-93c1-441d-ba80-be6fda263c0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Lights.h">
-      <Filter>LightingResources</Filter>
+      <Filter>Lighting</Filter>
     </ClInclude>
     <ClInclude Include="Materials.h">
-      <Filter>LightingResources</Filter>
+      <Filter>Lighting</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>WorldObjects</Filter>

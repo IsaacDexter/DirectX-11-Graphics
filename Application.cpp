@@ -64,9 +64,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
-    
-    //Initialise the camera
-    _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
 
     //initialise objects
     InitObjects();
@@ -413,14 +410,15 @@ HRESULT Application::InitDevice()
 
 HRESULT Application::InitObjects()
 {
-    // Set vertex buffer
-
-    //Initialise cube, including vertex and index buffers
+    //Initialise cube, including its vertex and index buffers
     _cube = new Cube(_pd3dDevice);
 
-    //Initialise pyramid, including vertex and index buffers
+    //Initialise pyramid, including its vertex and index buffers
     _pyramid = new Pyramid(_pd3dDevice);
 
+
+    //Initialise the camera
+    _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
 
     XMFLOAT4 diffuse;
     XMFLOAT4 ambient;
@@ -442,6 +440,20 @@ HRESULT Application::InitObjects()
     //Light is shining from the the left
     directionToLight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
     _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+
+    XMFLOAT3 position;
+    XMFLOAT3 attenuation;
+    float range;
+
+    diffuse = XMFLOAT4(0.2f, 0.2f, 0.6f, 1.0f);
+    ambient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
+    specular = XMFLOAT4(0.3f, 0.3f, 0.9, 25.0f);
+    position = XMFLOAT3(0.0f, 0.0f, -3.0f);
+    attenuation = XMFLOAT3(0.0f, 0.0f, 0.4f);
+    range = 5.0f;
+
+    _lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
+    
 
     //_light = new DirectionalLight(diffuse, ambient, specular, directionToLight);
 
@@ -513,7 +525,7 @@ void Application::Update()
     // Animate the cube
     //
 	_cube->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
-    _pyramid->Update(XMMatrixRotationX(t) * XMMatrixTranslation(4, 0, 4)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+    _pyramid->Update(XMMatrixRotationX(-t) * XMMatrixRotationY(-t * 0.5) * XMMatrixTranslation(3, 0, 3)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -551,6 +563,7 @@ void Application::Draw()
             {
                 PointLight pointLight = PointLight();
                 pointLight = *dynamic_cast<PointLight*>(light);
+                cb.pointLights[0] = pointLight;
                 break;
             }
         case SPOT_LIGHT:

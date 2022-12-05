@@ -54,6 +54,9 @@ struct MaterialBuffer
     float3 pad;             //16
 };
 
+#define DIRECTIONAL_LIGHT_COUNT 2
+#define POINT_LIGHT_COUNT 1
+
 cbuffer ConstantBuffer : register( b0 )
 {
 	matrix World;       //64
@@ -62,7 +65,8 @@ cbuffer ConstantBuffer : register( b0 )
 
     MaterialBuffer material;
     
-    DirectionalLightBuffer directionalLights[2]; //64 * i
+    DirectionalLightBuffer directionalLights[DIRECTIONAL_LIGHT_COUNT]; //64 * i
+    PointLightBuffer pointLights[POINT_LIGHT_COUNT];
     
     float4 EyeWorldPos;     //16
 }
@@ -149,7 +153,7 @@ float4 CalculateAmbient(float4 ambientMaterial, float4 ambientLight)
 
 float4 CalculateSpecular(float4 specularMaterial, float4 specularLight, float1 specularAngle)
 {
-    // Calculate specular lighting
+    // Calculate specular lightingdiffuseMaterial
     float1 specularIntensity;
     float4 specularPotential;
     float4 specular;
@@ -165,47 +169,103 @@ float4 CalculateSpecular(float4 specularMaterial, float4 specularLight, float1 s
 }
 
 /// <summary>Calculates the ambient, diffuse and specular for an object being shone on by a directional light</summary>
-/// <param name="ambMat">The ambient material of the object</param>
-/// <param name="difMat">The diffuse material of the object</param>
-/// <param name="speMat">The specular material of the object, the alpha value being the specular falloff</param>
-/// <param name="difLig">The diffuse of the light</param>
-/// <param name="ambLig">The ambient of the light</param>
-/// <param name="speLig">The specular of the light</param>
-/// <param name="dirLig">A direction float3 leading to the light</param>
-/// <param name="norWor">A float4 world normal of this pixel</param>
-/// <param name="dirEye">A direction vector leading to the eye</param>
-/// <param name="ambOut">The return diffuse</param>
-/// <param name="difOut">The return ambient</param>v
-/// <param name="speOut">The return specular</param>
+/// <param name="ambientMaterial">The ambient material of the object</param>
+/// <param name="diffuseMaterial">The diffuse material of the object</param>
+/// <param name="specularMaterial">The specular material of the object, the alpha value being the specular falloff</param>
+/// <param name="diffuseLight">The diffuse of the light</param>
+/// <param name="ambientLight">The ambient of the light</param>
+/// <param name="specularLight">The specular of the light</param>
+/// <param name="toLight">A direction float3 leading to the light</param>
+/// <param name="normal">A float4 world normal of this pixel</param>
+/// <param name="toEye">A direction vector leading to the eye</param>
+/// <param name="ambient">The return diffuse</param>
+/// <param name="diffuse">The return ambient</param>v
+/// <param name="specular">The return specular</param>
 void CalculateDirectionalLighting
 (
-    float4 difMat,
-    float4 ambMat,
-    float4 speMat,
-    float4 difLig,
-    float4 ambLig,
-    float4 speLig,
-    float3 dirLig,
-    float4 norWor,
-    float4 dirEye,
-    out float4 difOut,
-    out float4 ambOut,
-    out float4 speOut
+    float4 diffuseMaterial,
+    float4 ambientMaterial,
+    float4 specularMaterial,
+    float4 diffuseLight,
+    float4 ambientLight,
+    float4 specularLight,
+    float3 toLight,
+    float4 normal,
+    float4 toEye,
+    out float4 diffuse,
+    out float4 ambient,
+    out float4 specular
 )
 {
-    //Calculate diffuse lighting  
-    float1 angleOfIncidence = dot(normalize(dirLig.xyzz), norWor);
-    difOut = CalculateDiffuse(difMat, difLig, angleOfIncidence);
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
-    //Calculate ambient lighting
-    ambOut = CalculateAmbient(ambMat, ambLig);
+    ambient = CalculateAmbient(ambientMaterial, ambientLight);
     
-    //Calculate specular Lighting
-    float4 reflectDir = normalize(reflect(dirLig.xyzz, norWor));
+    //Calculate the angle of incidence. If its less than 0.0f, there is no line of sight so return.
+    float1 angleOfIncidence = dot(normalize(toLight.xyzz), normal);
+    if (angleOfIncidence < 0.0f)
+    {
+        return;
+    }
+    diffuse = CalculateDiffuse(diffuseMaterial, diffuseLight, angleOfIncidence);
+    
+    float4 reflectDir = normalize(reflect(toLight.xyzz, normal));
     //A weirdly unnamed angle between the reflection direction and eye direction
-    float1 angleBetweenReflectionAndEye = dot(reflectDir, dirEye);
-    speOut = CalculateSpecular(speMat, speLig, angleBetweenReflectionAndEye);
+    float1 angleBetweenReflectionAndEye = dot(reflectDir, toEye);
+    specular = CalculateSpecular(specularMaterial, specularLight, angleBetweenReflectionAndEye);
+}
+
+void CalculatePointLighting
+(
+    float4 diffuseMaterial,
+    float4 ambientMaterial,
+    float4 specularMaterial,
+    float4 diffuseLight,
+    float4 ambientLight,
+    float4 specularLight,
+    float3 toLight,
+    float4 normal,
+    float4 toEye,
+    float3 attenuation,
+    float1 range,
+    out float4 diffuse,
+    out float4 ambient,
+    out float4 specular
+)
+{
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
+    //Get the distance from the light and test it against range
+    float1 lightDistance = length(toLight);
+    toLight = normalize(toLight);
+    if(lightDistance > range)
+    {
+        return;
+    }
+    
+    ambient = CalculateAmbient(ambientMaterial, ambientLight);
+    
+    //Calculate the angle of incidence. If its less than 0.0f, there is no line of sight so return.
+    float1 angleOfIncidence = dot(toLight.xyzz, normal);
+    if (angleOfIncidence < 0.0f)
+    {
+        return;
+    }
+    diffuse = CalculateDiffuse(diffuseMaterial, diffuseLight, angleOfIncidence);
+    
+    float4 reflectDir = normalize(reflect(toLight.xyzz, normal));
+    //A weirdly unnamed angle between the reflection direction and eye direction
+    float1 angleBetweenReflectionAndEye = dot(reflectDir, toEye);
+    specular = CalculateSpecular(specularMaterial, specularLight, angleOfIncidence);
+    
+    //Apply attenuation
+    float1 attenuationFactor = saturate(1.0f / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
+    specular *= attenuationFactor;
+    diffuse *= attenuationFactor;
 }
 
 //--------------------------------------------------------------------------------------
@@ -226,10 +286,11 @@ float4 PS(VS_OUTPUT input) : SV_Target
     }
     
     float4 viewerDir = normalize(input.PosW.xyzz - EyeWorldPos);
+    
     //Total light combined into a single color
     float4 lightColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < DIRECTIONAL_LIGHT_COUNT; i++)
     {
         float4 ambient;
         float4 diffuse;
@@ -240,8 +301,23 @@ float4 PS(VS_OUTPUT input) : SV_Target
 
         lightColor += saturate(specular + ambient + diffuse);
     }
+    
+    for (int i = 0; i < POINT_LIGHT_COUNT; i++)
+    {
+        float4 ambient;
+        float4 diffuse;
+        float4 specular;
+        
+        float3 directionToLight = (pointLights[i].position - input.PosW.xyz);
+        //input.Color = abs(directionToLight.xyzz);
+        
+        CalculatePointLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, pointLights[i].diffuse, pointLights[i].ambient, pointLights[i].specular, directionToLight, input.NormalW, viewerDir, pointLights[i].attenuation, pointLights[i].range, diffuse, ambient, specular);
+
+        lightColor += saturate(specular + ambient + diffuse);
+    }
 
     input.Color = textureColor * saturate(lightColor);
+    
     
     return input.Color;
 }
