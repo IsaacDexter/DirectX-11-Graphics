@@ -45,28 +45,14 @@ protected:
 	
 protected:
 	virtual HRESULT InitRenderedObject();
-	virtual HRESULT InitRenderedObject(std::string path);
+	virtual HRESULT InitRenderedObject(char* path);
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 
 public:
-	Actor(ID3D11Device* _pd3dDevice);
+	Actor(ID3D11Device* _pd3dDevice, char* path);
 	~Actor();
 
 	void Update(XMMATRIX transform);
 	void Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
-};
-
-class Cube : public Actor
-{
-public:
-	Cube(ID3D11Device* _p3dDevice);
-	HRESULT InitRenderedObject() override;
-};
-
-class Pyramid : public Actor
-{
-public:
-	Pyramid(ID3D11Device* _p3dDevice);
-	HRESULT InitRenderedObject() override;
 };

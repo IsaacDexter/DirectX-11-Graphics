@@ -56,7 +56,7 @@ private:
 
 	Camera*					_camera;
 	Actor*					_cube;
-	Pyramid*				_pyramid;
+	Actor*				_star;
 	std::vector<Light*>		_lights;
 
 private:

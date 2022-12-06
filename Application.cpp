@@ -69,7 +69,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     InitObjects();
 
     // Load Textures
-    CreateDDSTextureFromFile(_pd3dDevice, L"Models/Car/Car_COLOR.dds", nullptr, &_pTextureRV);
+    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_COLOR.dds", nullptr, &_pTextureRV);
     //bind the texture into the texture shader in register 0
     _pImmediateContext->PSSetShaderResources(0, 1, &_pTextureRV);
 
@@ -411,10 +411,10 @@ HRESULT Application::InitDevice()
 HRESULT Application::InitObjects()
 {
     //Initialise cube, including its vertex and index buffers
-    _cube = new Actor(_pd3dDevice);
+    _cube = new Actor(_pd3dDevice, "Models/3dsMax/cube.obj");
 
     //Initialise pyramid, including its vertex and index buffers
-    _pyramid = new Pyramid(_pd3dDevice);
+    _star = new Actor(_pd3dDevice, "Models/3dsMax/star.obj");
 
 
     //Initialise the camera
@@ -499,8 +499,8 @@ void Application::Cleanup()
     delete(_cube);
     _cube = nullptr;
 
-    delete(_pyramid);
-    _pyramid = nullptr;
+    delete(_star);
+    _star = nullptr;
 
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
@@ -556,7 +556,7 @@ void Application::Update()
     // Animate the cube
     //
 	_cube->Update(XMMatrixRotationY(t) * XMMatrixRotationX(t * 0.5)); //calculate a y rotation matrix and store _world
-    _pyramid->Update(XMMatrixRotationX(-t) * XMMatrixRotationY(-t * 0.5) * XMMatrixTranslation(3, 0, 3)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
+    _star->Update(XMMatrixRotationX(-t) * XMMatrixRotationY(-t * 0.5) * XMMatrixTranslation(3, 0, 3)); //calculate a y rotation matrix and store in _world2. Translate it by 2, 0, 0 so its in a different world space.
 }
 
 void Application::Draw()
@@ -622,7 +622,7 @@ void Application::Draw()
     _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
 
     _cube->Draw(_pImmediateContext, _pConstantBuffer, cb);
-    _pyramid->Draw(_pImmediateContext, _pConstantBuffer, cb);
+    _star->Draw(_pImmediateContext, _pConstantBuffer, cb);
 
     _pSwapChain->Present(0, 0);
 }
