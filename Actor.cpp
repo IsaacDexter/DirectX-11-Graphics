@@ -6,7 +6,7 @@ Actor::Actor(ID3D11Device* _pd3dDevice)
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
     HRESULT hr;
-    hr = InitRenderedObject();
+    hr = InitRenderedObject("");
     if (FAILED(hr))
     {
         return;
@@ -76,7 +76,7 @@ HRESULT Actor::InitRenderedObject(std::string path)
     m_indexBuffer = nullptr;
     m_vertexBuffer = nullptr;
 
-    m_mesh = OBJLoader::Load("Models/Blender/sphere.obj", m_pd3dDevice, false);
+    m_mesh = OBJLoader::Load("Models/Car/Car.obj", m_pd3dDevice);
 
     //Set up the lighting material
     m_material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -85,6 +85,7 @@ HRESULT Actor::InitRenderedObject(std::string path)
     m_material.specularFalloff = 10.0f;
 
     m_indexBuffer = m_mesh.IndexBuffer;
+    m_indexCount = m_mesh.IndexCount;
     m_vertexBuffer = m_mesh.VertexBuffer;
 
     return S_OK;
@@ -184,7 +185,7 @@ void Actor::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBu
     //
 
     //Draws the object with the new world matrix
-    immediateContext->DrawIndexed(36, 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
+    immediateContext->DrawIndexed(m_indexCount, 0, 0);    //Draws the shape, total indices,starting index, starting vertex   
 }
 
 
@@ -245,6 +246,7 @@ HRESULT Pyramid::InitRenderedObject()
         1 + 10, 2 + 10, 3 + 10,
         2 + 10, 1 + 10, 0 + 10,
     };
+    m_indexCount = m_indices.size();
     //Set up the normals of the pyramid by calculating them
     CalculateFlatNormals(&m_vertices, &m_indices);
 
@@ -337,6 +339,7 @@ HRESULT Cube::InitRenderedObject()
         7 + 16, 2 + 16, 6 + 16,
         2 + 16, 7 + 16, 3 + 16,
     };
+    m_indexCount = m_indices.size();
     //Set up the normals of the cube by calculating them
     CalculateFlatNormals(&m_vertices, &m_indices);
 

@@ -35,6 +35,7 @@ protected:
 	std::vector<SimpleVertex> m_vertices;
 	/// <summary>indices, a vector of words containing the indices</summary>
 	std::vector<WORD> m_indices;
+	int m_indexCount;
 
 	/// <summary>The objects model data</summary>
 	MeshData m_mesh;

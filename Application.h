@@ -55,7 +55,7 @@ private:
 	XMFLOAT4X4              _projection;
 
 	Camera*					_camera;
-	Cube*					_cube;
+	Actor*					_cube;
 	Pyramid*				_pyramid;
 	std::vector<Light*>		_lights;
 

@@ -69,7 +69,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     InitObjects();
 
     // Load Textures
-    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_COLOR.dds", nullptr, &_pTextureRV);
+    CreateDDSTextureFromFile(_pd3dDevice, L"Models/Car/Car_COLOR.dds", nullptr, &_pTextureRV);
     //bind the texture into the texture shader in register 0
     _pImmediateContext->PSSetShaderResources(0, 1, &_pTextureRV);
 
@@ -411,7 +411,7 @@ HRESULT Application::InitDevice()
 HRESULT Application::InitObjects()
 {
     //Initialise cube, including its vertex and index buffers
-    _cube = new Cube(_pd3dDevice);
+    _cube = new Actor(_pd3dDevice);
 
     //Initialise pyramid, including its vertex and index buffers
     _pyramid = new Pyramid(_pd3dDevice);
