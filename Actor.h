@@ -3,13 +3,14 @@
 #include <d3d11_1.h>
 #include <vector>
 
+#include "OBJLoader.h"
+
 #include "Materials.h"
 #include "Vertices.h"
 #include "Buffers.h"
 #include "Normals.h"
 
 using namespace DirectX;
-
 
 /// <summary><para>Stores all the information about an object: <br/>
 ///  - indices, a vector of words containing the indices <br/>
@@ -34,6 +35,9 @@ protected:
 	std::vector<SimpleVertex> m_vertices;
 	/// <summary>indices, a vector of words containing the indices</summary>
 	std::vector<WORD> m_indices;
+
+	/// <summary>The objects model data</summary>
+	MeshData m_mesh;
 
 	/// <summary>The objects specular, ambient and diffuse</summary>
 	Material m_material;

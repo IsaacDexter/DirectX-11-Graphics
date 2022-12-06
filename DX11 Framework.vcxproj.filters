@@ -24,6 +24,9 @@
     <Filter Include="Lighting">
       <UniqueIdentifier>{fbe5bdbb-93c1-441d-ba80-be6fda263c0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modelling">
+      <UniqueIdentifier>{4f6311fa-ea69-44b3-b90a-6e0b1204086f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -51,6 +54,9 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Texturing</Filter>
     </ClInclude>
+    <ClInclude Include="OBJLoader.h">
+      <Filter>Modelling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -66,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Texturing</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJLoader.cpp">
+      <Filter>Modelling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -37,7 +37,7 @@ HRESULT Actor::InitRenderedObject()
         
     };
 
-    //Set up Indice
+    //Set up Indices
     m_indices =
     {
         

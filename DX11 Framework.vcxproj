@@ -385,6 +385,7 @@
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DX11 Framework.cpp" />
     <ClCompile Include="Normals.cpp" />
+    <ClCompile Include="OBJLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
@@ -395,6 +396,7 @@
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="Normals.h" />
+    <ClInclude Include="OBJLoader.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Vertices.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
