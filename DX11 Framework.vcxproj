@@ -384,6 +384,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DX11 Framework.cpp" />
+    <ClCompile Include="Loading.cpp" />
     <ClCompile Include="Normals.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
   </ItemGroup>
@@ -394,6 +395,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Buffers.h" />
     <ClInclude Include="Lights.h" />
+    <ClInclude Include="Loading.h" />
     <ClInclude Include="Materials.h" />
     <ClInclude Include="Normals.h" />
     <ClInclude Include="OBJLoader.h" />

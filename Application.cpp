@@ -64,18 +64,13 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
+    //Load meshes, textures and materials
+    LoadMeshes();
+    LoadMaterials();
+    LoadTextures();
 
     //initialise objects
     InitObjects();
-
-    // Load Textures
-    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_COLOR.dds", nullptr, &_pTextureRV);
-    //bind the texture into the texture shader in register 0
-    _pImmediateContext->PSSetShaderResources(0, 1, &_pTextureRV);
-
-    CreateDDSTextureFromFile(_pd3dDevice, L"Textures/Crate_SPEC.dds", nullptr, &_pTextureRV);
-    //bind the texture into the texture shader in register 1
-    _pImmediateContext->PSSetShaderResources(1, 1, &_pTextureRV);
 
     // Define the specifications for our sampler :
     D3D11_SAMPLER_DESC sampDesc;
@@ -410,11 +405,8 @@ HRESULT Application::InitDevice()
 
 HRESULT Application::InitObjects()
 {
-    //Initialise cube, including its vertex and index buffers
-    _cube = new Actor(_pd3dDevice, "Models/3dsMax/cube.obj");
-
-    //Initialise pyramid, including its vertex and index buffers
-    _star = new Actor(_pd3dDevice, "Models/3dsMax/star.obj");
+    _cube = new Actor(_pd3dDevice, _meshes->find("cube")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second);
+    _star = new Actor(_pd3dDevice, _meshes->find("cylinder")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second);
 
 
     //Initialise the camera
@@ -489,6 +481,49 @@ HRESULT Application::InitObjects()
     spotLightsCount++;
 
     return S_OK;
+}
+
+HRESULT Application::LoadTextures()
+{
+    _textures = new std::map<std::string, Texture*>();
+    try
+    {
+        _textures->insert({ "crateDiffuse", LoadTexture(_pd3dDevice, "Textures/Crate_COLOR.dds") });
+        _textures->insert({ "crateSpecular", LoadTexture(_pd3dDevice, "Textures/Crate_SPEC.dds") });
+        return S_OK;
+    }
+    catch (const std::exception&)
+    {
+        return E_FAIL;
+    }
+}
+
+HRESULT Application::LoadMeshes()
+{
+    _meshes = new std::map<std::string, Mesh*>();
+    try
+    {
+        _meshes->insert({ "cube", LoadMesh(_pd3dDevice, "Models/3dsMax/cube.obj") });
+        _meshes->insert({ "cylinder", LoadMesh(_pd3dDevice, "Models/3dsMax/cylinder.obj") });
+        return S_OK;
+    }
+    catch (const std::exception&)
+    {
+        return E_FAIL;
+    }
+}
+
+HRESULT Application::LoadMaterials()
+{
+    _materials = new std::map<std::string, Material*>();
+    try
+    {
+        _materials->insert({ "crate", new Material(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 10.0f) });
+    }
+    catch (const std::exception&)
+    {
+        return E_FAIL;
+    }
 }
 
 void Application::Cleanup()

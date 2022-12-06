@@ -18,14 +18,17 @@
     <Filter Include="Vertices">
       <UniqueIdentifier>{5cc73bd8-3217-4673-ad39-0d0adaa3704c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Texturing">
-      <UniqueIdentifier>{a9b98451-5cb0-4c64-82ae-ad151cd8b753}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lighting">
       <UniqueIdentifier>{fbe5bdbb-93c1-441d-ba80-be6fda263c0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modelling">
+    <Filter Include="Loading">
+      <UniqueIdentifier>{9eddb964-8397-4530-8c1a-54a30aa7d2e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Loading\Modelling">
       <UniqueIdentifier>{4f6311fa-ea69-44b3-b90a-6e0b1204086f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Loading\Texturing">
+      <UniqueIdentifier>{a9b98451-5cb0-4c64-82ae-ad151cd8b753}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,10 +55,13 @@
       <Filter>Vertices</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Texturing</Filter>
+      <Filter>Loading\Texturing</Filter>
     </ClInclude>
     <ClInclude Include="OBJLoader.h">
-      <Filter>Modelling</Filter>
+      <Filter>Loading\Modelling</Filter>
+    </ClInclude>
+    <ClInclude Include="Loading.h">
+      <Filter>Loading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,10 +77,13 @@
       <Filter>Vertices</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>Texturing</Filter>
+      <Filter>Loading\Texturing</Filter>
     </ClCompile>
     <ClCompile Include="OBJLoader.cpp">
-      <Filter>Modelling</Filter>
+      <Filter>Loading\Modelling</Filter>
+    </ClCompile>
+    <ClCompile Include="Loading.cpp">
+      <Filter>Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

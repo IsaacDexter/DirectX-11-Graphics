@@ -10,6 +10,20 @@ struct Material
 	XMFLOAT4 specular;
 	//The Power to raise specular falloff by. Defaults to 10.
 	float	 specularFalloff;
+	Material()
+	{
+		diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		specularFalloff = 0.0f;
+	}
+	Material(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, float specularFalloff)
+	{
+		this->diffuse = diffuse;
+		this->ambient = ambient;
+		this->specular = specular;
+		this->specularFalloff = specularFalloff;
+	}
 };
 
 // A struct containing all information pertaining to lighting materials, to make the constant buffer better alligned

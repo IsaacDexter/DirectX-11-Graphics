@@ -348,7 +348,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     // Stores the specular falloff and material in a single float4
     float4 specularMaterial = float4(material.SpecularMaterial.xyz, material.specularFalloff);
     // If specular maps are being used
-    if(true)
+    if (true)
     {
         //Samples specular map and overwrites the material
         specularMaterial = g_specularMap.Sample(SampLinear, input.TexCoord);

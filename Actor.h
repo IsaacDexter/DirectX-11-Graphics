@@ -3,7 +3,7 @@
 #include <d3d11_1.h>
 #include <vector>
 
-#include "OBJLoader.h"
+#include "Loading.h"
 
 #include "Materials.h"
 #include "Vertices.h"
@@ -38,19 +38,16 @@ protected:
 	int m_indexCount;
 
 	/// <summary>The objects model data</summary>
-	MeshData m_mesh;
-
+	Mesh* m_mesh;
+	/// <summary>The Objects texture</summary>
+	Texture* m_diffuseMap;
+	/// <summary>The objects specular map. Leave blank to use the material's specular instead</summary>
+	Texture* m_specularMap;
 	/// <summary>The objects specular, ambient and diffuse</summary>
-	Material m_material;
-	
-protected:
-	virtual HRESULT InitRenderedObject();
-	virtual HRESULT InitRenderedObject(char* path);
-	HRESULT InitVertexBuffer();
-	HRESULT InitIndexBuffer();
+	Material* m_material;
 
 public:
-	Actor(ID3D11Device* _pd3dDevice, char* path);
+	Actor(ID3D11Device* _pd3dDevice, Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap);
 	~Actor();
 
 	void Update(XMMATRIX transform);

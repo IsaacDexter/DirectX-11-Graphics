@@ -6,10 +6,10 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include <vector>
+#include <map>
 #include "resource.h"
 
-#include "DDSTextureLoader.h"
-
+#include "Loading.h"
 
 #include "Lights.h"
 #include "Materials.h"
@@ -30,10 +30,8 @@ private:
 	ID3D11DeviceContext*    _pImmediateContext;
 	IDXGISwapChain*         _pSwapChain;
 	ID3D11RenderTargetView* _pRenderTargetView;
-	/// <summary> Holds the texture’s shader resource view :</summary>
-	ID3D11ShaderResourceView*	_pTextureRV;
 	/// <summary> Holds the texture sampler, passed across to texture shader for use</summary>
-	ID3D11SamplerState* _pSamplerLinear;
+	ID3D11SamplerState*		_pSamplerLinear;
 	ID3D11VertexShader*     _pVertexShader;
 	ID3D11PixelShader*      _pPixelShader;
 	/// <summary>A rasterizer state used to draw objects as wireframe.</summary>
@@ -54,15 +52,22 @@ private:
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 
+	std::map<std::string, Texture*>* _textures;
+	std::map<std::string, Mesh*>* _meshes;
+	std::map<std::string, Material*>* _materials;
+
 	Camera*					_camera;
 	Actor*					_cube;
-	Actor*				_star;
+	Actor*					_star;
 	std::vector<Light*>		_lights;
 
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
 	HRESULT InitObjects();
+	HRESULT LoadTextures();
+	HRESULT LoadMeshes();
+	HRESULT LoadMaterials();
 	void Cleanup();
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();
