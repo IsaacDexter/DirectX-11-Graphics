@@ -44,6 +44,7 @@ protected:
 	
 protected:
 	virtual HRESULT InitRenderedObject();
+	virtual HRESULT InitRenderedObject(std::string path);
 	HRESULT InitVertexBuffer();
 	HRESULT InitIndexBuffer();
 

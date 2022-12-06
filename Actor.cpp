@@ -64,6 +64,32 @@ HRESULT Actor::InitRenderedObject()
     return S_OK;
 }
 
+HRESULT Actor::InitRenderedObject(std::string path)
+{
+    HRESULT hr;
+    //The Rendered Object is a class that holds the vertices (position and normal) and indices of a shape.
+
+    // Initialize the world matrix
+    XMStoreFloat4x4(&m_world, XMMatrixIdentity());
+
+    // Initialize vertex and index buffers
+    m_indexBuffer = nullptr;
+    m_vertexBuffer = nullptr;
+
+    m_mesh = OBJLoader::Load("Models/Blender/sphere.obj", m_pd3dDevice, false);
+
+    //Set up the lighting material
+    m_material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    m_material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    m_material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_material.specularFalloff = 10.0f;
+
+    m_indexBuffer = m_mesh.IndexBuffer;
+    m_vertexBuffer = m_mesh.VertexBuffer;
+
+    return S_OK;
+}
+
 HRESULT Actor::InitVertexBuffer()
 {
     HRESULT hr;
