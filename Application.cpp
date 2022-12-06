@@ -434,11 +434,11 @@ HRESULT Application::InitObjects()
     //initialse new light source
     diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    specular = XMFLOAT4(0.5f, 0.5f, 0.5, 1.0f);
+    specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     //Light is shining from the the camera basically
     directionToLight = XMFLOAT3(0.0f, 0.5f, -0.5f);
 
-    //_lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
+    _lights.push_back(new DirectionalLight(diffuse, ambient, specular, directionToLight));
     directionalLightsCount++;
 
     //initialse new light source
@@ -466,7 +466,7 @@ HRESULT Application::InitObjects()
     attenuation = XMFLOAT3(0.0f, 0.0f, 0.4f);
     range = 10.0f;
 
-    //_lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
+    _lights.push_back(new PointLight(diffuse, ambient, specular, position, range, attenuation));
     pointLightsCount++;
 
     //Spot Lights:
