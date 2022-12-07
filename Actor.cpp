@@ -9,9 +9,15 @@ Actor::Actor(ID3D11Device* _pd3dDevice, Mesh* mesh, Material* material, Texture*
     m_diffuseMap = diffuseMap;
     m_specularMap = specularMap;
 
+    //Load vertex and index buffers from the mesh passed in
     m_indexBuffer = m_mesh->IndexBuffer;
     m_indexCount = m_mesh->IndexCount;
     m_vertexBuffer = m_mesh->VertexBuffer;
+
+    //Set default translation matrices
+    m_position = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+    m_rotation = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
+    m_scale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 }
 
 Actor::~Actor()
@@ -20,9 +26,88 @@ Actor::~Actor()
     if (m_indexBuffer) m_indexBuffer->Release();
 }
 
-void Actor::Update(XMMATRIX transform)
+#pragma region Translation
+
+void Actor::Translate(XMFLOAT3 translation)
 {
-    XMStoreFloat4x4(&m_world, transform); //calculate a y rotation matrix and store _world
+    m_position *= XMMatrixTranslation(translation.x, translation.y, translation.z);
+}
+
+void Actor::Translate(XMMATRIX translation)
+{
+    m_position *= translation;
+}
+
+void Actor::SetPosition(XMFLOAT3 newPosition)
+{
+    m_position = XMMatrixTranslation(newPosition.x, newPosition.y, newPosition.z);
+}
+
+void Actor::SetPosition(XMMATRIX newPosition)
+{
+    m_position = newPosition;
+}
+
+void Actor::Rotate(XMFLOAT3 rotation)
+{
+    m_rotation *= XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+}
+
+void Actor::Rotate(XMMATRIX rotation)
+{
+    m_rotation *= rotation;
+}
+
+
+void Actor::SetRotation(XMFLOAT3 newRotation)
+{
+    m_rotation = XMMatrixRotationRollPitchYaw(newRotation.x, newRotation.y, newRotation.z);
+}
+
+void Actor::SetRotation(XMMATRIX newRotation)
+{
+    m_rotation = newRotation;
+}
+
+void Actor::Scale(XMFLOAT3 scale)
+{
+    m_scale *= XMMatrixScaling(scale.x, scale.y, scale.z);
+}
+
+void Actor::Scale(XMMATRIX scale)
+{
+    m_scale *= scale;
+}
+
+void Actor::SetScale(XMFLOAT3 newScale)
+{
+    m_scale = XMMatrixScaling(newScale.x, newScale.y, newScale.z);
+}
+
+void Actor::SetScale(XMMATRIX newScale)
+{
+    m_scale = newScale;
+}
+
+void Actor::Transform(XMFLOAT3 translation, XMFLOAT3 rotation, XMFLOAT3 scale)
+{
+    Translate(translation);
+    Rotate(rotation);
+    Scale(scale);
+}
+
+void Actor::SetTransform(XMFLOAT3 newPosition, XMFLOAT3 newRotation, XMFLOAT3 newScale)
+{
+    SetPosition(newPosition);
+    SetRotation(newRotation);
+    SetScale(newScale);
+}
+
+#pragma endregion
+
+void Actor::Update()
+{
+    XMStoreFloat4x4(&m_world, m_position * m_rotation * m_scale); //calculate translation matrix and store _world
 }
 
 void Actor::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)

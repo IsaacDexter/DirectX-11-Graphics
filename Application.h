@@ -52,26 +52,42 @@ private:
 	XMFLOAT4X4              _view;
 	XMFLOAT4X4              _projection;
 
-	std::map<std::string, Texture*>* _textures;
-	std::map<std::string, Mesh*>* _meshes;
-	std::map<std::string, Material*>* _materials;
 
-	Camera*					_camera;
-	Actor*					_cube;
-	Actor*					_star;
-	std::vector<Light*>		_lights;
-
+	Camera*	_camera;
+	std::map<std::string, Texture*>*			_textures;
+	std::map<std::string, Mesh*>*				_meshes;
+	std::map<std::string, Material*>*			_materials;						
+	std::map<std::string, Actor*>*				_actors;
+	std::map<std::string, DirectionalLight*>*	_directionalLights;
+	std::map<std::string, PointLight*>*			_pointLights;
+	std::map<std::string, SpotLight*>*			_spotLights;
 private:
 	HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 	HRESULT InitDevice();
-	HRESULT InitObjects();
-	HRESULT LoadTextures();
-	HRESULT LoadMeshes();
-	HRESULT LoadMaterials();
-	void Cleanup();
-	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 	HRESULT InitShadersAndInputLayout();
+
+	void InitObjects();
+	void LoadTextures();
+	void LoadMeshes();
+	void LoadMaterials();
+	void LoadLights(); 
+
+	void UpdateActors();
+	void DrawActors(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb);
+
+	/// <summary>Stores lights of the directional type from their respective maps into the constant buffer. Cleans up draw code a bit</summary>
+	/// <param name="cb">A pointer to the constant buffer</param>
+	void StoreDirectionalLights(ConstantBuffer* cb);
+	/// <summary>Stores lights of the point type from their respective maps into the constant buffer. Cleans up draw code a bit</summary>
+	/// <param name="cb">A pointer to the constant buffer</param>
+	void StorePointLights(ConstantBuffer* cb);
+	/// <summary>Stores lights of the spot type from their respective maps into the constant buffer. Cleans up draw code a bit</summary>
+	/// <param name="cb">A pointer to the constant buffer</param>
+	void StoreSpotLights(ConstantBuffer* cb);
+
+	void Cleanup();
 	
+	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
 	UINT _WindowHeight;
 	UINT _WindowWidth;

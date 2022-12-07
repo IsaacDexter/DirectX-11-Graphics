@@ -87,7 +87,7 @@ struct PointLight : Light
 	/// <param name="position">The position of the light in 3D space</param>
 	/// <param name="range">A point whose distance from the light source is greater than the range will recieve no light from that source</param>
 	/// <param name="attenuation">Stores the three attenuation constants in the format (a0, a1, a2) that control how light intensity falls off with distance</param>
-	PointLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, float range, XMFLOAT3 attenuation) : Light(diffuse, ambient, specular)
+	PointLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range) : Light(diffuse, ambient, specular)
 	{
 		this->position = position;
 		this->range = range;
@@ -118,7 +118,7 @@ struct SpotLight : PointLight
 	/// <param name="attenuation">Stores the three attenuation constants in the format (a0, a1, a2) that control how light intensity falls off with distance</param>
 	/// <param name="direction">The direction vector; this is a vector that points in the direction of the light source in the same direction as the outgoing light rays</param>
 	/// <param name="spot">The exponent used in the spotlight calculation to control the spotlight cone</param>
-	SpotLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, float range, XMFLOAT3 attenuation, XMFLOAT3 direction, float spot) : PointLight(diffuse, ambient, specular, position, range, attenuation)
+	SpotLight(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot) : PointLight(diffuse, ambient, specular, position, attenuation, range)
 	{
 		this->direction = direction;
 		this->spot = spot;
