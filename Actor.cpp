@@ -1,8 +1,7 @@
 #include "Actor.h"
 
-Actor::Actor(ID3D11Device* _pd3dDevice, Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap = nullptr)
+Actor::Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap = nullptr)
 { 
-    m_pd3dDevice = _pd3dDevice;
 
     m_mesh = mesh;
     m_material = material;

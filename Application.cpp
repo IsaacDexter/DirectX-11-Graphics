@@ -64,14 +64,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
         return E_FAIL;
     }
 
-    //Load meshes, textures and materials
-    LoadMeshes();
-    LoadMaterials();
-    LoadTextures();
-
-    //initialise objects
-    InitObjects();
-
     // Define the specifications for our sampler :
     D3D11_SAMPLER_DESC sampDesc;
     ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -90,17 +82,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     // Tell DirectX which sampler to use in the texture shader, assigning it to sampler register one:
     _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
 
-
-
-    // Initialize the view matrix
-    XMVECTOR Eye = XMLoadFloat4(&_camera->GetEye());
-    XMVECTOR At = XMLoadFloat4(&_camera->GetAt());
-    XMVECTOR Up = XMLoadFloat4(&_camera->GetUp());
-
-    // Initialize the world matrix
-    XMStoreFloat4x4(&_world, XMMatrixIdentity());
-
-	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(Eye, At, Up));
+    _level = new Level("", _pd3dDevice, _pImmediateContext, _pConstantBuffer);
 
     // Initialize the projection matrix
     /*XMMatrixPerspective(  Top-down field of view angle in radians,
@@ -108,7 +90,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
                             Distance to the near clipping plane > 0,
                             Distance to the far clipping plane > 0),
                                                                         Returns: the perspective projection matrix  */
-	XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (float) _WindowHeight, 0.01f, 100.0f));
+    XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (float)_WindowHeight, 0.01f, 100.0f));
 
 	return S_OK;
 }
@@ -395,70 +377,11 @@ HRESULT Application::InitDevice()
 	bd.CPUAccessFlags = 0;
     hr = _pd3dDevice->CreateBuffer(&bd, nullptr, &_pConstantBuffer);
 
-    
-
     if (FAILED(hr))
         return hr;
 
     return S_OK;
 }
-
-#pragma region Loading
-
-void Application::InitObjects()
-{
-    _actors = new std::map<std::string, Actor*>();
-
-    _actors->insert({ "cube", new Actor(_pd3dDevice, _meshes->find("cube")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second) });
-    _actors->insert({ "cylinder", new Actor(_pd3dDevice, _meshes->find("cylinder")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second) });;
-    _actors->find("cylinder")->second->SetPosition(XMFLOAT3(3.0f, 0.0f, 3.0f));
-    
-    //Initialise Lights
-    LoadLights();
-    
-    //Initialise the camera
-    _camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
-}
-
-void Application::LoadTextures()
-{
-    _textures = new std::map<std::string, Texture*>();
-
-    _textures->insert({ "crateDiffuse", LoadTexture(_pd3dDevice, "Textures/Crate_COLOR.dds") });
-    _textures->insert({ "crateSpecular", LoadTexture(_pd3dDevice, "Textures/Crate_SPEC.dds") });
-}
-
-void Application::LoadMeshes()
-{
-    _meshes = new std::map<std::string, Mesh*>();
-
-    _meshes->insert({ "cube", LoadMesh(_pd3dDevice, "Models/3dsMax/cube.obj") });
-    _meshes->insert({ "cylinder", LoadMesh(_pd3dDevice, "Models/3dsMax/cylinder.obj") });
-}
-
-void Application::LoadMaterials()
-{
-    _materials = new std::map<std::string, Material*>();
-   
-    _materials->insert({ "crate", new Material(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 10.0f) });
-}
-
-void Application::LoadLights()
-{
-    _directionalLights = new std::map<std::string, DirectionalLight*>();
-    _pointLights = new std::map<std::string, PointLight*>();
-    _spotLights = new std::map<std::string, SpotLight*>();
-
-    _directionalLights->insert({ "sun", new DirectionalLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT3(0.0f, 0.5f, -0.5f)) });
-
-    _pointLights->insert({ "bulb", new PointLight(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f), XMFLOAT4(0.7f, 0.7f, 0.7, 25.0f), XMFLOAT3(3.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.4f), 10.0f) });
-
-    _spotLights->insert({ "torch", new SpotLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f), XMFLOAT4(0.9f, 0.9f, 0.9, 20.0f), XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.4f), 10.0f, XMFLOAT3(-1.0f, -1.0f, 1.0f), 8.0f) });
-}
-
-#pragma endregion
-
-
 
 void Application::Cleanup()
 {
@@ -472,44 +395,12 @@ void Application::Cleanup()
     if (_wireFrame) _wireFrame->Release();
     if (_solidFill) _solidFill->Release();
     if (_currentRasterizerState) _currentRasterizerState->Release();
-    if (_depthStencilView) _depthStencilView->Release();
-    if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    //if (_depthStencilView) _depthStencilView->Release();
+    //if (_depthStencilBuffer) _depthStencilBuffer->Release();
     if (_pImmediateContext) _pImmediateContext->Release();
     if (_pImmediateContext) _pImmediateContext->ClearState();
     if (_pd3dDevice) _pd3dDevice->Release();
-
-    _textures->clear();
-    delete _textures;
-    _meshes->clear();
-    delete _meshes;
-    _materials->clear();
-    delete _materials;
-    _actors->clear();
-    delete _actors;
-    _directionalLights->clear();
-    delete _directionalLights;
-    _pointLights->clear();
-    delete _pointLights;
-    _spotLights->clear();
-    delete _spotLights;
-    delete _camera;
 }
-
-void Application::UpdateActors()
-{
-    // For each actor
-    // Create a map iterator and point to beginning of map
-    std::map<std::string, Actor*>::iterator it = _actors->begin();
-    // Iterate over the map using Iterator till end.
-    while (it != _actors->end())
-    {
-        // Access the actor from element pointed by it and call Update()
-        it->second->Update();
-        // Increment the Iterator to point to next entry
-        it++;
-    }
-}
-
 
 void Application::Update()
 {
@@ -549,88 +440,8 @@ void Application::Update()
         }
     }
 
-    // Animate actors
-    _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));
-    _actors->find("cylinder")->second->SetRotation(XMFLOAT3(-t, -t/2, 0.0f));
-
-    // Update actors
-    UpdateActors();
-}
-
-void Application::StoreDirectionalLights(ConstantBuffer* cb)
-{
-    // For each directional Light
-    // Initialise index to constant buffer
-    int i = 0;
-    // Create a map iterator and point to beginning of map
-    std::map<std::string, DirectionalLight*>::iterator it = _directionalLights->begin();
-    // Iterate over the map using Iterator till end.
-    while (it != _directionalLights->end())
-    {
-        // Access the light from element pointed by it and store in the constant buffer
-        cb->directionalLights[i] = *it->second;
-        // Increment the Iterator to point to next entry
-        it++;
-        // Increment the index for the constant buffer
-        i++;
-    }
-    // Store count into constant buffer
-    cb->directionalLightsCount = i;
-}
-
-void Application::StorePointLights(ConstantBuffer* cb)
-{
-    // For each point Light
-    // Initialise index to constant buffer
-    int i = 0;
-    // Create a map iterator and point to beginning of map
-    std::map<std::string, PointLight*>::iterator it = _pointLights->begin();
-    // Iterate over the map using Iterator till end.
-    while (it != _pointLights->end())
-    {
-        // Access the light from element pointed by it and store in the constant buffer
-        cb->pointLights[i] = *it->second;
-        // Increment the Iterator to point to next entry
-        it++;
-        // Increment the index for the constant buffer
-        i++;
-    }
-    cb->pointLightsCount = i;
-}
-
-void Application::StoreSpotLights(ConstantBuffer* cb)
-{
-    // For each spot Light
-    // Initialise index to constant buffer
-    int i = 0;
-    // Create a map iterator and point to beginning of map
-    std::map<std::string, SpotLight*>::iterator it = _spotLights->begin();
-    // Iterate over the map using Iterator till end.
-    while (it != _spotLights->end())
-    {
-        // Access the light from element pointed by it and store in the constant buffer
-        cb->spotLights[i] = *it->second;
-        // Increment the Iterator to point to next entry
-        it++;
-        // Increment the index for the constant buffer
-        i++;
-    }
-    cb->spotLightsCount = i;
-}
-
-void Application::DrawActors(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)
-{
-    // For each actor
-    // Create a map iterator and point to beginning of map
-    std::map<std::string, Actor*>::iterator it = _actors->begin();
-    // Iterate over the map using Iterator till end.
-    while (it != _actors->end())
-    {
-        // Access the actor from element pointed by it and call Update()
-        it->second->Draw(immediateContext, constantBuffer, cb);
-        // Increment the Iterator to point to next entry
-        it++;
-    }
+    //Update the level
+    _level->Update(t);
 }
 
 void Application::Draw()
@@ -642,31 +453,19 @@ void Application::Draw()
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    XMMATRIX world = XMLoadFloat4x4(&_world);
-    XMMATRIX view = XMLoadFloat4x4(&_view);
     XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
     //
     // Update variables
     //
     ConstantBuffer cb;
-    cb.mWorld = XMMatrixTranspose(world);
-    cb.mView = XMMatrixTranspose(view);
     cb.mProjection = XMMatrixTranspose(projection);
-
-    // Store lights in the constant buffer
-    StoreDirectionalLights(&cb);
-    StorePointLights(&cb);
-    StoreSpotLights(&cb);
-
-    cb.EyeWorldPos = _camera->GetEye();
 
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
-    
-    // Draw actors
-    DrawActors(_pImmediateContext, _pConstantBuffer, cb);
+
+    _level->Draw(&cb);
 
     _pSwapChain->Present(0, 0);
 }

@@ -30,6 +30,9 @@
     <Filter Include="Loading\Texturing">
       <UniqueIdentifier>{a9b98451-5cb0-4c64-82ae-ad151cd8b753}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Levels">
+      <UniqueIdentifier>{26d51986-b2ec-4aef-a652-17671f23750a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -63,6 +66,9 @@
     <ClInclude Include="Loading.h">
       <Filter>Loading</Filter>
     </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -84,6 +90,9 @@
     </ClCompile>
     <ClCompile Include="Loading.cpp">
       <Filter>Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Levels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

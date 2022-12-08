@@ -23,8 +23,6 @@ class Actor
 protected:
 	/// <summary>An XMFLOAT4X4 4 by 4 matrix containing the world transforms of the object</summary>
 	XMFLOAT4X4 m_world;
-	/// <summary>A pointer to the direct 3d Device, needed to initialise buffers</summary>
-	ID3D11Device* m_pd3dDevice;
 
 	/// <summary>ID3D11Buffer* pointer to vertex buffer</summary>
 	ID3D11Buffer* m_vertexBuffer;
@@ -51,7 +49,7 @@ protected:
 	Material* m_material;
 
 public:
-	Actor(ID3D11Device* _pd3dDevice, Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap);
+	Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap);
 	~Actor();
 
 	#pragma region Translation
