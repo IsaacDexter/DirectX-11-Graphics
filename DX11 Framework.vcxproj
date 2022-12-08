@@ -402,7 +402,7 @@
     <ClInclude Include="Normals.h" />
     <ClInclude Include="OBJLoader.h" />
     <CLInclude Include="resource.h" />
-    <ClInclude Include="Common.h" />
+    <ClInclude Include="Vertices.h" />
     <ResourceCompile Include="DX11 Framework.rc" />
   </ItemGroup>
   <ItemGroup>

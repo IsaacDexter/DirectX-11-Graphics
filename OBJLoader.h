@@ -6,7 +6,7 @@
 #include <vector>		//For storing the XMFLOAT3/2 variables
 #include <map>			//For fast searching when re-creating the index buffer
 
-#include "Common.h"
+#include "Vertices.h"
 
 using namespace DirectX;
 

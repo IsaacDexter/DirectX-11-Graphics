@@ -3,8 +3,6 @@
 
 using namespace DirectX;
 
-typedef MeshData Mesh;
-typedef ID3D11ShaderResourceView Texture;
 
 struct SimpleVertex
 {

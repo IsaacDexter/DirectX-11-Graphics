@@ -3,9 +3,11 @@
 
 #include "OBJLoader.h"
 #include "DDSTextureLoader.h"
-#include "Common.h"
 
 using namespace DirectX;
+
+typedef MeshData Mesh;
+typedef ID3D11ShaderResourceView Texture;
 
 Mesh* LoadMesh(ID3D11Device* d3dDevice, char* path);
 Texture* LoadTexture(ID3D11Device* d3dDevice, char* path);

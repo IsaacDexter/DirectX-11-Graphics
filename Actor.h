@@ -3,8 +3,10 @@
 #include <d3d11_1.h>
 #include <vector>
 
+#include "Loading.h"
+
 #include "Materials.h"
-#include "Common.h"
+#include "Vertices.h"
 #include "Buffers.h"
 #include "Normals.h"
 

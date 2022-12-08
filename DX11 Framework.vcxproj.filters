@@ -51,7 +51,7 @@
     <ClInclude Include="Buffers.h">
       <Filter>Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="Vertices.h">
       <Filter>Vertices</Filter>
     </ClInclude>
     <ClInclude Include="Normals.h">
