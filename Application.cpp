@@ -462,9 +462,8 @@ void Application::LoadLights()
 
 void Application::Cleanup()
 {
-    if (_pd3dDevice) _pd3dDevice->Release();
-    if (_pImmediateContext) _pImmediateContext->ClearState();
-    if (_pImmediateContext) _pImmediateContext->Release();
+    if (_pVertexLayout) _pVertexLayout->Release();
+    
     if (_pSwapChain) _pSwapChain->Release();
     if (_pRenderTargetView) _pRenderTargetView->Release();
     if (_pSamplerLinear) _pSamplerLinear->Release();
@@ -473,12 +472,11 @@ void Application::Cleanup()
     if (_wireFrame) _wireFrame->Release();
     if (_solidFill) _solidFill->Release();
     if (_currentRasterizerState) _currentRasterizerState->Release();
-    if (_pVertexLayout) _pVertexLayout->Release();
-    if (_pVertexBuffer) _pVertexBuffer->Release();
-    if (_pIndexBuffer) _pIndexBuffer->Release();
-    if (_pConstantBuffer) _pConstantBuffer->Release();
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    if (_pImmediateContext) _pImmediateContext->Release();
+    if (_pImmediateContext) _pImmediateContext->ClearState();
+    if (_pd3dDevice) _pd3dDevice->Release();
 
     _textures->clear();
     delete _textures;
@@ -553,7 +551,7 @@ void Application::Update()
 
     // Animate actors
     _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));
-    _actors->find("cylinder")->second->SetRotation(XMMatrixRotationRollPitchYaw(-t, -t/2, 0.0f));
+    _actors->find("cylinder")->second->SetRotation(XMFLOAT3(-t, -t/2, 0.0f));
 
     // Update actors
     UpdateActors();

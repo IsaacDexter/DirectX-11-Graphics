@@ -107,7 +107,7 @@ void Actor::SetTransform(XMFLOAT3 newPosition, XMFLOAT3 newRotation, XMFLOAT3 ne
 
 void Actor::Update()
 {
-    XMStoreFloat4x4(&m_world, m_position * m_rotation * m_scale); //calculate translation matrix and store _world
+    XMStoreFloat4x4(&m_world, m_scale * m_rotation * m_position); //calculate translation matrix and store _world
 }
 
 void Actor::Draw(ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, ConstantBuffer cb)
