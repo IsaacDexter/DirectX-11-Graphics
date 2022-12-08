@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <vector>
-#include "Vertices.h"
+#include "Common.h"
 
 using namespace DirectX;
 

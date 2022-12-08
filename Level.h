@@ -6,7 +6,7 @@
 #include "Loading.h"
 
 #include "Materials.h"
-#include "Vertices.h"
+#include "Common.h"
 #include "Buffers.h"
 #include "Normals.h"
 #include "Camera.h"
