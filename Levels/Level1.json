@@ -52,6 +52,14 @@
     {
       "name": "tilesSpecular",
       "path": "Textures/Tiles_SPEC.dds"
+    },
+    {
+      "name": "rustDiffuse",
+      "path": "Textures/Rust_COLOR.dds"
+    },
+    {
+      "name": "rustSpecular",
+      "path": "Textures/Rust_SPEC.dds"
     }
   ],
   "actors": [
@@ -75,8 +83,8 @@
       "name": "cylinder",
       "mesh": "cylinder",
       "material": "crate",
-      "diffuseMap": "crateDiffuse",
-      "specularMap": "crateSpecular",
+      "diffuseMap": "rustDiffuse",
+      "specularMap": "rustSpecular",
       "position_x": 3.0,
       "position_y": 0.0,
       "position_z": 3.0,
