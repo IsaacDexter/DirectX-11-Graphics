@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Loading.h"
+#include "include/nlohmann/json.hpp"
 
 #include "Materials.h"
 #include "Vertices.h"
