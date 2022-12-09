@@ -395,11 +395,11 @@ void Application::Cleanup()
     if (_wireFrame) _wireFrame->Release();
     if (_solidFill) _solidFill->Release();
     if (_currentRasterizerState) _currentRasterizerState->Release();
-    //if (_depthStencilView) _depthStencilView->Release();
-    //if (_depthStencilBuffer) _depthStencilBuffer->Release();
-    //if (_pImmediateContext) _pImmediateContext->Release();
-    //if (_pImmediateContext) _pImmediateContext->ClearState();
-    //if (_pd3dDevice) _pd3dDevice->Release();
+    if (_depthStencilView) _depthStencilView->Release();
+    if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    if (_pImmediateContext) _pImmediateContext->Release();
+    if (_pImmediateContext) _pImmediateContext->ClearState();
+    if (_pd3dDevice) _pd3dDevice->Release();
 }
 
 void Application::Update()

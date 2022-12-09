@@ -220,7 +220,8 @@ void Level::LoadPointLights(json jFile)
 
 void Level::LoadSpotLights(json jFile)
 {
-    json lights = jFile["spotLights"]; //Gets the array
+    json lights;
+    lights = jFile["spotLights"]; //Gets the array
     int size = lights.size();
     for (unsigned int i = 0; i < size; i++)
     {

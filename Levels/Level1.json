@@ -38,12 +38,20 @@
       "path": "Textures/Crate_SPEC.dds"
     },
     {
+      "name": "asphaltDiffuse",
+      "path": "Textures/Asphalt_COLOR.dds"
+    },
+    {
+      "name": "asphaltSpecular",
+      "path": "Textures/Asphalt_SPEC.dds"
+    },
+    {
       "name": "tilesDiffuse",
-      "path": "Textures/TilesOnyxOpaloBlack/TilesOnyxOpaloBlack001_COL_2K.dds"
+      "path": "Textures/Tiles_COLOR.dds"
     },
     {
       "name": "tilesSpecular",
-      "path": "Textures/TilesOnyxOpaloBlack/TilesOnyxOpaloBlack001_GLOSS_2K.dds"
+      "path": "Textures/Tiles_SPEC.dds"
     }
   ],
   "actors": [
@@ -51,8 +59,8 @@
       "name": "cube",
       "mesh": "cube",
       "material": "crate",
-      "diffuseMap": "crateDiffuse",
-      "specularMap": "crateSpecular",
+      "diffuseMap": "tilesDiffuse",
+      "specularMap": "tilesSpecular",
       "position_x": 0.0,
       "position_y": 0.0,
       "position_z": 0.0,
