@@ -1,0 +1,147 @@
+{
+  "version": 1.0,
+  "name": "Level1",
+  "meshes": [
+    {
+      "name": "cube",
+      "path": "Models/3dsMax/cube.obj"
+    },
+    {
+      "name": "cylinder",
+      "path": "Models/3dsMax/cylinder.obj"
+    }
+  ],
+  "materials": [
+    {
+      "name": "crate",
+      "diffuse_r": 0.8,
+      "diffuse_g": 0.8,
+      "diffuse_b": 0.8,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.2,
+      "ambient_g": 0.2,
+      "ambient_b": 0.2,
+      "ambient_a": 1.0,
+      "specular_r": 1.0,
+      "specular_g": 1.0,
+      "specular_b": 1.0,
+      "specular_a": 1.0,
+      "specularFalloff": 10.0
+    }
+  ],
+  "textures": [
+    {
+      "name": "crateDiffuse",
+      "path": "Textures/Crate_COLOR.dds"
+    },
+    {
+      "name": "crateSpecular",
+      "path": "Textures/Crate_SPEC.dds"
+    }
+  ],
+  "actors": [
+    {
+      "name": "cube",
+      "mesh": "cube",
+      "material": "crate",
+      "diffuseMap": "crateDiffuse",
+      "specularMap": "crateSpecular",
+      "position_x": 0.0,
+      "position_y": 0.0,
+      "position_z": 0.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.0,
+      "rotation_z": 0.0,
+      "scale_x": 1.0,
+      "scale_y": 1.0,
+      "scale_z": 1.0
+    },
+    {
+      "name": "cylinder",
+      "mesh": "cylinder",
+      "material": "crate",
+      "diffuseMap": "crateDiffuse",
+      "specularMap": "crateSpecular",
+      "position_x": 3.0,
+      "position_y": 0.0,
+      "position_z": 3.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.0,
+      "rotation_z": 0.0,
+      "scale_x": 1.0,
+      "scale_y": 1.0,
+      "scale_z": 1.0
+    }
+  ],
+  "lights": [
+    {
+      "type": "directional",
+      "name": "sun",
+      "diffuse_r": 0.5,
+      "diffuse_g": 0.5,
+      "diffuse_b": 0.5,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.2,
+      "ambient_g": 0.2,
+      "ambient_b": 0.2,
+      "ambient_a": 1.0,
+      "specular_r": 0.5,
+      "specular_g": 0.5,
+      "specular_b": 0.5,
+      "specular_a": 25.0,
+      "direction_x": 0.0,
+      "direction_y": 0.5,
+      "direction_z": -0.5
+    },
+    {
+      "type": "point",
+      "name": "bulb",
+      "diffuse_r": 1.0,
+      "diffuse_g": 1.0,
+      "diffuse_b": 1.0,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.01,
+      "ambient_g": 0.01,
+      "ambient_b": 0.01,
+      "ambient_a": 1.0,
+      "specular_r": 0.7,
+      "specular_g": 0.7,
+      "specular_b": 0.7,
+      "specular_a": 25.0,
+      "position_x": 3.0,
+      "position_y": 0.0,
+      "position_z": 0.0,
+      "attenuation_r": 0.0,
+      "attenuation_g": 0.0,
+      "attenuation_b": 0.4,
+      "range": 10.0
+    },
+    {
+      "type": "spot",
+      "name": "torch",
+      "diffuse_r": 0.8,
+      "diffuse_g": 0.8,
+      "diffuse_b": 0.8,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.01,
+      "ambient_g": 0.01,
+      "ambient_b": 0.01,
+      "ambient_a": 1.0,
+      "specular_r": 0.7,
+      "specular_g": 0.7,
+      "specular_b": 0.7,
+      "specular_a": 20.0,
+      "position_x": 3.0,
+      "position_y": 0.0,
+      "position_z": 0.0,
+      "attenuation_r": 0.0,
+      "attenuation_g": 0.0,
+      "attenuation_b": 0.4,
+      "range": 10.0,
+      "direction_x": -1.0,
+      "direction_y": -1.0,
+      "direction_z": 1.0,
+      "spot": 8.0
+    }
+  ]
+}

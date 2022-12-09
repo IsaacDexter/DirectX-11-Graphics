@@ -49,7 +49,7 @@ protected:
 	Material* m_material;
 
 public:
-	Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap);
+	Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale);
 	~Actor();
 
 	#pragma region Translation

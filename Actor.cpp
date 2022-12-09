@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-Actor::Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap = nullptr)
+Actor::Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specularMap, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale)
 { 
 
     m_mesh = mesh;
@@ -14,9 +14,13 @@ Actor::Actor(Mesh* mesh, Material* material, Texture* diffuseMap, Texture* specu
     m_vertexBuffer = m_mesh->VertexBuffer;
 
     //Set default translation matrices
-    m_position = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-    m_rotation = XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 0.0f);
-    m_scale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+    XMStoreFloat4x4(&m_world, XMMatrixIdentity());
+
+    m_position = XMMatrixIdentity();
+    m_rotation = XMMatrixIdentity();
+    m_scale = XMMatrixIdentity();
+
+    SetTransform(position, rotation, scale);
 }
 
 Actor::~Actor()

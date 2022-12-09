@@ -111,6 +111,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Level1.json" />
+    <None Include="Levels\Level1.json">
+      <Filter>Levels</Filter>
+    </None>
   </ItemGroup>
 </Project>
