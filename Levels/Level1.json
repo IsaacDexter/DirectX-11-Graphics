@@ -1,5 +1,4 @@
 {
-  "version": 1.0,
   "name": "Level1",
   "meshes": [
     {
@@ -37,6 +36,14 @@
     {
       "name": "crateSpecular",
       "path": "Textures/Crate_SPEC.dds"
+    },
+    {
+      "name": "tilesDiffuse",
+      "path": "Textures/TilesOnyxOpaloBlack/TilesOnyxOpaloBlack001_COL_2K.dds"
+    },
+    {
+      "name": "tilesSpecular",
+      "path": "Textures/TilesOnyxOpaloBlack/TilesOnyxOpaloBlack001_GLOSS_2K.dds"
     }
   ],
   "actors": [
@@ -73,9 +80,8 @@
       "scale_z": 1.0
     }
   ],
-  "lights": [
+  "directionalLights": [
     {
-      "type": "directional",
       "name": "sun",
       "diffuse_r": 0.5,
       "diffuse_g": 0.5,
@@ -92,9 +98,10 @@
       "direction_x": 0.0,
       "direction_y": 0.5,
       "direction_z": -0.5
-    },
+    }
+  ],
+  "pointLights": [
     {
-      "type": "point",
       "name": "bulb",
       "diffuse_r": 1.0,
       "diffuse_g": 1.0,
@@ -115,9 +122,10 @@
       "attenuation_g": 0.0,
       "attenuation_b": 0.4,
       "range": 10.0
-    },
+    }
+  ],
+  "spotLights": [
     {
-      "type": "spot",
       "name": "torch",
       "diffuse_r": 0.8,
       "diffuse_g": 0.8,

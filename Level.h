@@ -48,15 +48,21 @@ private:
 	void LoadMesh(std::string name, std::string path);
 	void LoadMaterial(std::string name, std::string path);
 	void LoadMaterial(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, float specularFalloff);
-	void LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction);
-	void LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range);
-	void LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot);
+	
+	void LoadDirectionalLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction);
+	void LoadPointLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range);
+	void LoadSpotLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot);
+	
 	void LoadActor(std::string name, std::string mesh, std::string material, std::string diffuseMap, std::string specularMap, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale);
 
 	void LoadTextures(json jFile);
 	void LoadMeshes(json jFile);
 	void LoadMaterials(json jFile);
-	void LoadLights(json jFile);
+
+	void LoadDirectionalLights(json jFile);
+	void LoadPointLights(json jFile);
+	void LoadSpotLights(json jFile);
+
 	void LoadActors(json jFile);
 
 	void UpdateActors();

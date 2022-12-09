@@ -1,6 +1,6 @@
 #include "Loading.h"
 
-Mesh* LoadMesh(ID3D11Device* d3dDevice, char* path)
+Mesh* LoadOBJ(ID3D11Device* d3dDevice, std::string path)
 {
     Mesh* mesh = new Mesh;
     *mesh = OBJLoader::Load(path, d3dDevice);
@@ -8,14 +8,15 @@ Mesh* LoadMesh(ID3D11Device* d3dDevice, char* path)
     return mesh;
 }
 
-Texture* LoadTexture(ID3D11Device* d3dDevice, char* path)
+Texture* LoadDDS(ID3D11Device* d3dDevice, std::string path)
 {
     Texture* texture;
 
     //Convert the path to a wChar
-    const size_t cSize = strlen(path) + 1;
+    const char* c = path.c_str();
+    const size_t cSize = strlen(c) + 1;
     wchar_t* wPath = new wchar_t[cSize];
-    mbstowcs(wPath, path, cSize);
+    mbstowcs(wPath, c, cSize);
 
     CreateDDSTextureFromFile(d3dDevice, wPath, nullptr, &texture);
 

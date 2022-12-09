@@ -20,36 +20,68 @@ void Level::InitObjects()
 
 #pragma region Loading
 
-void Level::LoadMesh(std::string name, std::string)
+void Level::LoadMesh(std::string name, std::string path)
 {
+    _meshes->insert({ name, LoadOBJ(m_d3dDevice, path) });
 }
 
-void Level::LoadMaterial(std::string name, std::string)
+void Level::LoadMaterial(std::string name, std::string path)
 {
 }
 
 void Level::LoadMaterial(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, float specularFalloff)
 {
+    _materials->insert({ name, new Material(    diffuse,
+                                                ambient,
+                                                specular,
+                                                specularFalloff) });
 }
 
-void Level::LoadTexture(std::string name, std::string)
+void Level::LoadTexture(std::string name, std::string path)
 {
+
+    _textures->insert({ name, LoadDDS(m_d3dDevice, path) });
 }
 
 void Level::LoadActor(std::string name, std::string mesh, std::string material, std::string diffuseMap, std::string specularMap, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale)
 {
+    _actors->insert({ name, new Actor(  _meshes->find(mesh)->second,
+                                        _materials->find(material)->second,
+                                        _textures->find(diffuseMap)->second,
+                                        _textures->find(specularMap)->second,
+                                        position,
+                                        rotation,
+                                        scale   ) });
 }
 
-void Level::LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction)
+void Level::LoadDirectionalLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction)
 {
+    _directionalLights->insert({ name, new DirectionalLight(    diffuse,
+                                                                ambient,
+                                                                specular,
+                                                                direction   ) });
 }
 
-void Level::LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range)
+void Level::LoadPointLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range)
 {
+    _pointLights->insert({ name, new PointLight(    diffuse,
+                                                    ambient,
+                                                    specular,
+                                                    position,
+                                                    attenuation,
+                                                    range   ) });
 }
 
-void Level::LoadLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot)
+void Level::LoadSpotLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot)
 {
+    _spotLights->insert({ name, new SpotLight(  diffuse,
+                                                ambient,
+                                                specular,
+                                                position,
+                                                attenuation,
+                                                range,
+                                                direction,
+                                                spot) });
 }
 
 void Level::LoadMeshes(json jFile)
@@ -92,7 +124,7 @@ void Level::LoadMaterials(json jFile)
 
 void Level::LoadTextures(json jFile)
 {
-    json textures = jFile["texures"];  //Gets the array
+    json textures = jFile["textures"];  //Gets the array
     int size = textures.size();
     for (unsigned int i = 0; i < size; i++)
     {
@@ -128,8 +160,97 @@ void Level::LoadActors(json jFile)
     }
 }
 
-void Level::LoadLights(json jFile)
+void Level::LoadDirectionalLights(json jFile)
 {
+    json lights = jFile["directionalLights"]; //Gets the array
+    int size = lights.size();
+    for (unsigned int i = 0; i < size; i++)
+    {
+        json lightDesc = lights.at(i);
+        std::string name = lightDesc["name"];
+        float diffuse_r = lightDesc["diffuse_r"];
+        float diffuse_g = lightDesc["diffuse_g"];
+        float diffuse_b = lightDesc["diffuse_b"];
+        float diffuse_a = lightDesc["diffuse_a"];
+        float ambient_r = lightDesc["ambient_r"];
+        float ambient_g = lightDesc["ambient_g"];
+        float ambient_b = lightDesc["ambient_b"];
+        float ambient_a = lightDesc["ambient_a"];
+        float specular_r = lightDesc["specular_r"];
+        float specular_g = lightDesc["specular_g"];
+        float specular_b = lightDesc["specular_b"];
+        float specular_a = lightDesc["specular_a"];
+        float direction_x = lightDesc["direction_x"];
+        float direction_y = lightDesc["direction_y"];
+        float direction_z = lightDesc["direction_z"];
+        LoadDirectionalLight(name, XMFLOAT4(diffuse_r, diffuse_g, diffuse_b, diffuse_a), XMFLOAT4(ambient_r, ambient_g, ambient_b, ambient_a), XMFLOAT4(specular_r, specular_g, specular_b, specular_a), XMFLOAT3(direction_x, direction_y, direction_z));
+    }
+}
+
+void Level::LoadPointLights(json jFile)
+{
+    json lights = jFile["pointLights"]; //Gets the array
+    int size = lights.size();
+    for (unsigned int i = 0; i < size; i++)
+    {
+        json lightDesc = lights.at(i);
+        std::string name = lightDesc["name"];
+        float diffuse_r = lightDesc["diffuse_r"];
+        float diffuse_g = lightDesc["diffuse_g"];
+        float diffuse_b = lightDesc["diffuse_b"];
+        float diffuse_a = lightDesc["diffuse_a"];
+        float ambient_r = lightDesc["ambient_r"];
+        float ambient_g = lightDesc["ambient_g"];
+        float ambient_b = lightDesc["ambient_b"];
+        float ambient_a = lightDesc["ambient_a"];
+        float specular_r = lightDesc["specular_r"];
+        float specular_g = lightDesc["specular_g"];
+        float specular_b = lightDesc["specular_b"];
+        float specular_a = lightDesc["specular_a"];
+        float position_x = lightDesc["position_x"];
+        float position_y = lightDesc["position_y"];
+        float position_z = lightDesc["position_z"];
+        float attenuation_r = lightDesc["attenuation_r"];
+        float attenuation_g = lightDesc["attenuation_g"];
+        float attenuation_b = lightDesc["attenuation_b"];
+        float range = lightDesc["range"];
+        LoadPointLight(name, XMFLOAT4(diffuse_r, diffuse_g, diffuse_b, diffuse_a), XMFLOAT4(ambient_r, ambient_g, ambient_b, ambient_a), XMFLOAT4(specular_r, specular_g, specular_b, specular_a), XMFLOAT3(position_x, position_y, position_z), XMFLOAT3(attenuation_r, attenuation_g, attenuation_b), range);
+    }
+}
+
+void Level::LoadSpotLights(json jFile)
+{
+    json lights = jFile["spotLights"]; //Gets the array
+    int size = lights.size();
+    for (unsigned int i = 0; i < size; i++)
+    {
+        json lightDesc = lights.at(i);
+        std::string name = lightDesc["name"];
+        float diffuse_r = lightDesc["diffuse_r"];
+        float diffuse_g = lightDesc["diffuse_g"];
+        float diffuse_b = lightDesc["diffuse_b"];
+        float diffuse_a = lightDesc["diffuse_a"];
+        float ambient_r = lightDesc["ambient_r"];
+        float ambient_g = lightDesc["ambient_g"];
+        float ambient_b = lightDesc["ambient_b"];
+        float ambient_a = lightDesc["ambient_a"];
+        float specular_r = lightDesc["specular_r"];
+        float specular_g = lightDesc["specular_g"];
+        float specular_b = lightDesc["specular_b"];
+        float specular_a = lightDesc["specular_a"];
+        float position_x = lightDesc["position_x"];
+        float position_y = lightDesc["position_y"];
+        float position_z = lightDesc["position_z"];
+        float attenuation_r = lightDesc["attenuation_r"];
+        float attenuation_g = lightDesc["attenuation_g"];
+        float attenuation_b = lightDesc["attenuation_b"];
+        float range = lightDesc["range"];
+        float direction_x = lightDesc["direction_x"];
+        float direction_y = lightDesc["direction_y"];
+        float direction_z = lightDesc["direction_z"];
+        float spot = lightDesc["spot"];
+        LoadSpotLight(name, XMFLOAT4(diffuse_r, diffuse_g, diffuse_b, diffuse_a), XMFLOAT4(ambient_r, ambient_g, ambient_b, ambient_a), XMFLOAT4(specular_r, specular_g, specular_b, specular_a), XMFLOAT3(position_x, position_y, position_z), XMFLOAT3(attenuation_r, attenuation_g, attenuation_b), range, XMFLOAT3(direction_x, direction_y, direction_z), spot);
+    }
 }
 
 void Level::Load(char* path)
@@ -148,12 +269,19 @@ void Level::Load(char* path)
     //Parse json
     json jFile;
 
-    std::ifstream fileOpen("Levels/Level1.json");
+    std::ifstream fileOpen(path);
 
     fileOpen >> jFile;
 
-    std::string v = jFile["version"].get<std::string>();
     std::string levelName = jFile["name"];
+
+    LoadMeshes(jFile);
+    LoadMaterials(jFile);
+    LoadTextures(jFile);
+    LoadActors(jFile);
+    LoadDirectionalLights(jFile);
+    LoadPointLights(jFile);
+    LoadSpotLights(jFile);
 
     //initialise objects
     InitObjects();
@@ -167,49 +295,6 @@ void Level::Load(char* path)
     XMStoreFloat4x4(&m_world, XMMatrixIdentity());
     XMStoreFloat4x4(&m_view, XMMatrixLookAtLH(Eye, At, Up));
 }
-
-//void Level::LoadTextures()
-//{
-//    _textures = new std::map<std::string, Texture*>();
-//
-//    _textures->insert({ "crateDiffuse", LoadTexture(m_d3dDevice, "Textures/Crate_COLOR.dds") });
-//    _textures->insert({ "crateSpecular", LoadTexture(m_d3dDevice, "Textures/Crate_SPEC.dds") });
-//}
-//
-//void Level::LoadMeshes()
-//{
-//    _meshes = new std::map<std::string, Mesh*>();
-//
-//    _meshes->insert({ "cube", LoadMesh(m_d3dDevice, "Models/3dsMax/cube.obj") });
-//    _meshes->insert({ "cylinder", LoadMesh(m_d3dDevice, "Models/3dsMax/cylinder.obj") });
-//}
-//
-//void Level::LoadMaterials()
-//{
-//    _materials = new std::map<std::string, Material*>();
-//
-//    _materials->insert({ "crate", new Material(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 10.0f) });
-//}
-//
-//void Level::LoadLights()
-//{
-//    _directionalLights = new std::map<std::string, DirectionalLight*>();
-//    _pointLights = new std::map<std::string, PointLight*>();
-//    _spotLights = new std::map<std::string, SpotLight*>();
-//
-//    _directionalLights->insert({ "sun", new DirectionalLight(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f), XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT3(0.0f, 0.5f, -0.5f)) });
-//
-//    _pointLights->insert({ "bulb", new PointLight(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f), XMFLOAT4(0.7f, 0.7f, 0.7f, 25.0f), XMFLOAT3(3.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.4f), 10.0f) });
-//
-//    _spotLights->insert({ "torch", new SpotLight(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f), XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f), XMFLOAT4(0.7f, 0.7f, 0.7, 20.0f), XMFLOAT3(0.0f, 0.0f, -3.0f), XMFLOAT3(0.0f, 0.0f, 0.4f), 10.0f, XMFLOAT3(-1.0f, -1.0f, 1.0f), 8.0f) });
-//}
-//
-//void Level::LoadActors()
-//{
-//    _actors->insert({ "cube", new Actor(_meshes->find("cube")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second) });
-//    _actors->insert({ "cylinder", new Actor(_meshes->find("cylinder")->second, _materials->find("crate")->second, _textures->find("crateDiffuse")->second, _textures->find("crateSpecular")->second) });;
-//    _actors->find("cylinder")->second->SetPosition(XMFLOAT3(3.0f, 0.0f, 3.0f));
-//}
 
 #pragma endregion
 

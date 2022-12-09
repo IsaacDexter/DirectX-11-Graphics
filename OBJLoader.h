@@ -22,7 +22,7 @@ struct MeshData
 namespace OBJLoader
 {
 	//The only method you'll need to call
-	MeshData Load(char* filename, ID3D11Device* _pd3dDevice, bool invertTexCoords = true);
+	MeshData Load(std::string filename, ID3D11Device* _pd3dDevice, bool invertTexCoords = true);
 
 	//Helper methods for the above method
 	//Searhes to see if a similar vertex already exists in the buffer -- if true, we re-use that index

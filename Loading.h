@@ -9,5 +9,5 @@ using namespace DirectX;
 typedef MeshData Mesh;
 typedef ID3D11ShaderResourceView Texture;
 
-Mesh* LoadMesh(ID3D11Device* d3dDevice, char* path);
-Texture* LoadTexture(ID3D11Device* d3dDevice, char* path);
+Mesh* LoadOBJ(ID3D11Device* d3dDevice, std::string path);
+Texture* LoadDDS(ID3D11Device* d3dDevice, std::string path);

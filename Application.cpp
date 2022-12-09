@@ -82,7 +82,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     // Tell DirectX which sampler to use in the texture shader, assigning it to sampler register one:
     _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
 
-    _level = new Level("", _pd3dDevice, _pImmediateContext, _pConstantBuffer);
+    _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer);
 
     // Initialize the projection matrix
     /*XMMatrixPerspective(  Top-down field of view angle in radians,
