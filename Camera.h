@@ -16,8 +16,12 @@ public:
 	/// <returns>The camera's Up Direction</returns>
 	XMFLOAT4 GetUp();
 
+	XMFLOAT4X4 GetView();
+
 private:
 	XMFLOAT4 m_eye;
 	XMFLOAT4 m_at;
 	XMFLOAT4 m_up;
+
+	XMFLOAT4X4 m_view;
 };

@@ -24,7 +24,6 @@ private:
 	ID3D11Device* m_d3dDevice;
 
 	XMFLOAT4X4				m_world;
-	XMFLOAT4X4              m_view;
 
 	Camera* m_camera;
 	std::map<std::string, Texture*>* _textures;

@@ -287,14 +287,8 @@ void Level::Load(char* path)
     //initialise objects
     InitObjects();
 
-    // Initialize the view matrix
-    XMVECTOR Eye = XMLoadFloat4(&m_camera->GetEye());
-    XMVECTOR At = XMLoadFloat4(&m_camera->GetAt());
-    XMVECTOR Up = XMLoadFloat4(&m_camera->GetUp());
-
     // Initialize the world matrix
     XMStoreFloat4x4(&m_world, XMMatrixIdentity());
-    XMStoreFloat4x4(&m_view, XMMatrixLookAtLH(Eye, At, Up));
 }
 
 #pragma endregion
@@ -408,7 +402,7 @@ void Level::StoreSpotLights(ConstantBuffer* cb)
 void Level::Draw(ConstantBuffer* cb)
 {
     XMMATRIX world = XMLoadFloat4x4(&m_world);
-    XMMATRIX view = XMLoadFloat4x4(&m_view);
+    XMMATRIX view = XMLoadFloat4x4(&m_camera->GetView());
     cb->mWorld = XMMatrixTranspose(world);
     cb->mView = XMMatrixTranspose(view);
 
