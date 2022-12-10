@@ -27,6 +27,8 @@ private:
 	XMFLOAT4X4				m_world;
 
 	Camera* m_camera;
+
+	std::map<std::string, Camera*>* _cameras;
 	std::map<std::string, Texture*>* _textures;
 	std::map<std::string, Mesh*>* _meshes;
 	std::map<std::string, Material*>* _materials;
@@ -42,8 +44,6 @@ public:
 private:
 	void Load(char* path);
 
-	void InitObjects();
-
 	void LoadTexture(std::string name, std::string path);
 	void LoadMesh(std::string name, std::string path);
 	void LoadMaterial(std::string name, std::string path);
@@ -54,6 +54,7 @@ private:
 	void LoadSpotLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 position, XMFLOAT3 attenuation, float range, XMFLOAT3 direction, float spot);
 	
 	void LoadActor(std::string name, std::string mesh, std::string material, std::string diffuseMap, std::string specularMap, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale);
+	void LoadCamera(std::string name, XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
 
 	void LoadTextures(json jFile);
 	void LoadMeshes(json jFile);
@@ -64,6 +65,7 @@ private:
 	void LoadSpotLights(json jFile);
 
 	void LoadActors(json jFile);
+	void LoadCameras(json jFile);
 
 	void UpdateActors();
 	void DrawActors(ConstantBuffer* cb);

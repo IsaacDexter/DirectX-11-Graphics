@@ -12,13 +12,6 @@ Level::Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediate
     Load(path);
 }
 
-void Level::InitObjects()
-{
-    //Initialise the camera
-    m_camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f), m_windowSize.x, m_windowSize.y, 0.01f, 100.0f);
-
-}
-
 #pragma endregion
 
 #pragma region Loading
@@ -55,6 +48,11 @@ void Level::LoadActor(std::string name, std::string mesh, std::string material, 
                                         position,
                                         rotation,
                                         scale   ) });
+}
+
+void Level::LoadCamera(std::string name, XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth)
+{
+    _cameras->insert({ name, new Camera(eye, at, up, windowWidth, windowHeight, nearDepth, farDepth) });
 }
 
 void Level::LoadDirectionalLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction)
@@ -163,6 +161,35 @@ void Level::LoadActors(json jFile)
     }
 }
 
+void Level::LoadCameras(json jFile)
+{
+    json cameras = jFile["cameras"];  //Gets the array
+    int size = cameras.size();
+    for (unsigned int i = 0; i < size; i++)
+    {
+        json cameraDesc = cameras.at(i);
+        std::string name = cameraDesc["name"];    //Get the name
+        float eye_x = cameraDesc["eye_x"];
+        float eye_y = cameraDesc["eye_y"];
+        float eye_z = cameraDesc["eye_z"];
+        float eye_w = cameraDesc["eye_w"];
+        float at_x = cameraDesc["at_x"];
+        float at_y = cameraDesc["at_y"];
+        float at_z = cameraDesc["at_z"];
+        float at_w = cameraDesc["at_w"];
+        float up_x = cameraDesc["up_x"];
+        float up_y = cameraDesc["up_y"];
+        float up_z = cameraDesc["up_z"];
+        float up_w = cameraDesc["up_w"];
+        float nearDepth = cameraDesc["nearDepth"];
+        float farDepth = cameraDesc["farDepth"];
+        LoadCamera(name, XMFLOAT4(eye_x, eye_y, eye_z, eye_w), XMFLOAT4(at_x, at_y, at_z, at_w), XMFLOAT4(up_x, up_y, up_z, up_w), m_windowSize.x, m_windowSize.y, nearDepth, farDepth);    //Append this camera to its map
+    }
+    // set the current camera
+    std::string defaultCamera = jFile["defaultCamera"];
+    m_camera = _cameras->find(defaultCamera)->second;
+}
+
 void Level::LoadDirectionalLights(json jFile)
 {
     json lights = jFile["directionalLights"]; //Gets the array
@@ -264,11 +291,12 @@ void Level::Load(char* path)
     _textures = new std::map<std::string, Texture*>();
     _materials = new std::map<std::string, Material*>();
 
+    _actors = new std::map<std::string, Actor*>();
+    _cameras = new std::map<std::string, Camera*>();
+
     _directionalLights = new std::map<std::string, DirectionalLight*>();
     _pointLights = new std::map<std::string, PointLight*>();
     _spotLights = new std::map<std::string, SpotLight*>();
-
-    _actors = new std::map<std::string, Actor*>();
 
     //Parse json
     json jFile;
@@ -282,13 +310,13 @@ void Level::Load(char* path)
     LoadMeshes(jFile);
     LoadMaterials(jFile);
     LoadTextures(jFile);
+
     LoadActors(jFile);
+    LoadCameras(jFile);
+
     LoadDirectionalLights(jFile);
     LoadPointLights(jFile);
     LoadSpotLights(jFile);
-
-    //initialise objects
-    InitObjects();
 
     // Initialize the world matrix
     XMStoreFloat4x4(&m_world, XMMatrixIdentity());
