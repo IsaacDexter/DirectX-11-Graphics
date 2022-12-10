@@ -474,16 +474,16 @@ void Application::Update()
         }
     }
 
-    auto kb = _keyboard->GetState();
+    Keyboard::State kb = _keyboard->GetState();
     if (kb.Escape)
     {
         PostQuitMessage(0);
     }
 
-    auto mouse = _mouse->GetState();
+    Mouse::State mouse = _mouse->GetState();
 
     //Update the level
-    _level->Update(t);
+    _level->Update(t, kb, mouse);
 }
 
 void Application::Draw()

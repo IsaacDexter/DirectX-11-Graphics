@@ -341,7 +341,7 @@ void Level::UpdateActors()
     }
 }
 
-void Level::Update(float t)
+void Level::Update(float t, Keyboard::State kb, Mouse::State mouse)
 {
     // Animate actors
     _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));

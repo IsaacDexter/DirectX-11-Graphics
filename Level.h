@@ -6,6 +6,8 @@
 
 #include "Loading.h"
 #include "include/nlohmann/json.hpp"
+#include "Keyboard.h"
+#include "Mouse.h"
 
 #include "Materials.h"
 #include "Vertices.h"
@@ -39,7 +41,7 @@ private:
 public:
 	Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, XMFLOAT2 windowSize);
 	~Level();
-	void Update(float t);
+	void Update(float t, Keyboard::State kb, Mouse::State);
 	void Draw();
 private:
 	void Load(char* path);
