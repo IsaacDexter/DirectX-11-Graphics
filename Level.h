@@ -44,6 +44,8 @@ public:
 	void Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons);
 	void Draw();
 private:
+	XMFLOAT4 ToXMFLOAT4(XMFLOAT3 a, float w = 0.0f);
+
 	void Load(char* path);
 
 	void LoadTexture(std::string name, std::string path);

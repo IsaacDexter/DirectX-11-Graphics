@@ -20,12 +20,15 @@ public:
 	void SetAt(XMFLOAT4 at);
 	void SetUp(XMFLOAT4 up);
 
+
 	void Reshape(float windowWidth, float windowHeight, float nearDepth, float farDepth);
 
 	XMFLOAT4X4 GetView();
 	XMFLOAT4X4 GetProjection();
 	XMFLOAT4X4 GetViewProjection();
-
+private:
+	void UpdateView();
+	void UpdateProjection();
 private:
 	//View matrix
 	XMFLOAT4 m_eye;

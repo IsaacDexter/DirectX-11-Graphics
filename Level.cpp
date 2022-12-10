@@ -346,6 +346,12 @@ void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonSt
     // Animate actors
     _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));
     _actors->find("cylinder")->second->SetRotation(XMFLOAT3(-t, -t / 2, 0.0f));
+    _actors->find("barrel")->second->SetPosition(XMFLOAT3(t, 0.0f, 0.0f));
+
+    if (_cameras->find("fixed3")->second == m_camera)
+    {
+        _cameras->find("fixed3")->second->SetAt(ToXMFLOAT4(_actors->find("barrel")->second->GetPosition()));
+    }
 
     //Handle camera selection
     if (keys.pressed.D1)
@@ -464,6 +470,11 @@ void Level::Draw()
     cb.EyeWorldPos = m_camera->GetEye();
 
     DrawActors(&cb);
+}
+
+XMFLOAT4 Level::ToXMFLOAT4(XMFLOAT3 a, float w)
+{
+    return XMFLOAT4(a.x, a.y, a.z, w);
 }
 
 #pragma endregion
