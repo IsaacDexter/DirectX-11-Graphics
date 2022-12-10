@@ -42,8 +42,6 @@ private:
 	/// <summary>Interface Used to store the depth/stencil buffer</summary>
 	ID3D11Texture2D*		_depthStencilBuffer;
 
-	XMFLOAT4X4              _projection;
-
 	Level* _level;
 
 private:

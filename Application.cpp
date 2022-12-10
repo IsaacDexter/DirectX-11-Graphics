@@ -82,15 +82,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     // Tell DirectX which sampler to use in the texture shader, assigning it to sampler register one:
     _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
 
-    _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer);
-
-    // Initialize the projection matrix
-    /*XMMatrixPerspective(  Top-down field of view angle in radians,
-                            Aspect ratio of view-space X:Y,
-                            Distance to the near clipping plane > 0,
-                            Distance to the far clipping plane > 0),
-                                                                        Returns: the perspective projection matrix  */
-    XMStoreFloat4x4(&_projection, XMMatrixPerspectiveFovLH(XM_PIDIV2, _WindowWidth / (float)_WindowHeight, 0.01f, 100.0f));
+    _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer, XMFLOAT2(_WindowWidth, _WindowHeight));
 
 	return S_OK;
 }
@@ -453,19 +445,12 @@ void Application::Draw()
     _pImmediateContext->ClearRenderTargetView(_pRenderTargetView, ClearColor);  // Clear the rendering target to blue
     _pImmediateContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    XMMATRIX projection = XMLoadFloat4x4(&_projection); //Load in infromation about our object
-    //
-    // Update variables
-    //
-    ConstantBuffer cb;
-    cb.mProjection = XMMatrixTranspose(projection);
-
     _pImmediateContext->VSSetShader(_pVertexShader, nullptr, 0);
     _pImmediateContext->VSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetConstantBuffers(0, 1, &_pConstantBuffer);
     _pImmediateContext->PSSetShader(_pPixelShader, nullptr, 0);
 
-    _level->Draw(&cb);
+    _level->Draw();
 
     _pSwapChain->Present(0, 0);
 }

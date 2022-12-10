@@ -2,18 +2,21 @@
 
 #pragma region Initialisation
 
-Level::Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer)
+Level::Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, XMFLOAT2 windowSize)
 {
     m_d3dDevice = d3dDevice;
     m_immediateContext = immediateContext;
     m_constantBuffer = constantBuffer;
+    m_windowSize = windowSize;
+
     Load(path);
 }
 
 void Level::InitObjects()
 {
     //Initialise the camera
-    m_camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f));
+    m_camera = new Camera(XMFLOAT4(0.0f, 0.0f, -3.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f), m_windowSize.x, m_windowSize.y, 0.01f, 100.0f);
+
 }
 
 #pragma endregion
@@ -399,21 +402,26 @@ void Level::StoreSpotLights(ConstantBuffer* cb)
     cb->spotLightsCount = i;
 }
 
-void Level::Draw(ConstantBuffer* cb)
+void Level::Draw()
 {
+    ConstantBuffer cb;
+
     XMMATRIX world = XMLoadFloat4x4(&m_world);
     XMMATRIX view = XMLoadFloat4x4(&m_camera->GetView());
-    cb->mWorld = XMMatrixTranspose(world);
-    cb->mView = XMMatrixTranspose(view);
+    XMMATRIX projection = XMLoadFloat4x4(&m_camera->GetProjection()); 
+    
+    cb.mWorld = XMMatrixTranspose(world);
+    cb.mView = XMMatrixTranspose(view);
+    cb.mProjection = XMMatrixTranspose(projection);
 
     // Store lights in the constant buffer
-    StoreDirectionalLights(cb);
-    StorePointLights(cb);
-    StoreSpotLights(cb);
+    StoreDirectionalLights(&cb);
+    StorePointLights(&cb);
+    StoreSpotLights(&cb);
 
-    cb->EyeWorldPos = m_camera->GetEye();
+    cb.EyeWorldPos = m_camera->GetEye();
 
-    DrawActors(cb);
+    DrawActors(&cb);
 }
 
 #pragma endregion

@@ -22,6 +22,7 @@ private:
 	ID3D11DeviceContext* m_immediateContext;
 	ID3D11Buffer* m_constantBuffer;
 	ID3D11Device* m_d3dDevice;
+	XMFLOAT2 m_windowSize;
 
 	XMFLOAT4X4				m_world;
 
@@ -34,10 +35,10 @@ private:
 	std::map<std::string, PointLight*>* _pointLights;
 	std::map<std::string, SpotLight*>* _spotLights;
 public:
-	Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer);
+	Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, XMFLOAT2 windowSize);
 	~Level();
 	void Update(float t);
-	void Draw(ConstantBuffer* cb);
+	void Draw();
 private:
 	void Load(char* path);
 
