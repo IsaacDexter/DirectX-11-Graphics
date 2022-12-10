@@ -7,6 +7,9 @@
 #include <directxcolors.h>
 #include "resource.h"
 
+#include "Keyboard.h"
+#include "Mouse.h"
+
 #include "Level.h"
 
 
@@ -41,6 +44,9 @@ private:
 	ID3D11DepthStencilView*	_depthStencilView;
 	/// <summary>Interface Used to store the depth/stencil buffer</summary>
 	ID3D11Texture2D*		_depthStencilBuffer;
+
+	std::unique_ptr<DirectX::Keyboard> m_keyboard;
+	std::unique_ptr<DirectX::Mouse> m_mouse;
 
 	Level* _level;
 

@@ -114,5 +114,6 @@
     <None Include="Levels\Level1.json">
       <Filter>Levels</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
