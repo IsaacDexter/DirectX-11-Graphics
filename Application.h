@@ -45,8 +45,8 @@ private:
 	/// <summary>Interface Used to store the depth/stencil buffer</summary>
 	ID3D11Texture2D*		_depthStencilBuffer;
 
-	std::unique_ptr<DirectX::Keyboard> m_keyboard;
-	std::unique_ptr<DirectX::Mouse> m_mouse;
+	std::unique_ptr<DirectX::Keyboard> _keyboard;
+	std::unique_ptr<DirectX::Mouse> _mouse;
 
 	Level* _level;
 

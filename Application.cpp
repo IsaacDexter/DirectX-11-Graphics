@@ -18,6 +18,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
+
+        case WM_ACTIVATEAPP:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            Mouse::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_ACTIVATE:
+        case WM_INPUT:
+        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_MOUSEHOVER:
+            Mouse::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_SYSKEYDOWN:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
+            {
+            }
+            break;
+
+        case WM_MOUSEACTIVATE:
+            // When you click activate the window, we want Mouse to ignore it.
+            return MA_ACTIVATEANDEAT;
     }
 
     return 0;
@@ -81,6 +119,10 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 
     // Tell DirectX which sampler to use in the texture shader, assigning it to sampler register one:
     _pImmediateContext->PSSetSamplers(0, 1, &_pSamplerLinear);
+
+    _keyboard = std::make_unique<Keyboard>();
+    _mouse = std::make_unique<Mouse>();
+    _mouse->SetWindow(_hWnd);
 
     _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer, XMFLOAT2(_WindowWidth, _WindowHeight));
 
@@ -431,6 +473,14 @@ void Application::Update()
 
         }
     }
+
+    auto kb = _keyboard->GetState();
+    if (kb.Escape)
+    {
+        PostQuitMessage(0);
+    }
+
+    auto mouse = _mouse->GetState();
 
     //Update the level
     _level->Update(t);
