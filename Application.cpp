@@ -479,15 +479,17 @@ void Application::Update()
     }
 
     Keyboard::State kb = _keyboard->GetState();
+    _keys.Update(kb);
     if (kb.Escape)
     {
         PostQuitMessage(0);
     }
 
     Mouse::State mouse = _mouse->GetState();
+    _mouseButtons.Update(mouse);
 
     //Update the level
-    _level->Update(t, kb, mouse);
+    _level->Update(t, _keys, _mouseButtons);
 }
 
 void Application::Draw()

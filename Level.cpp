@@ -341,22 +341,22 @@ void Level::UpdateActors()
     }
 }
 
-void Level::Update(float t, Keyboard::State kb, Mouse::State mouse)
+void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons)
 {
     // Animate actors
     _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));
     _actors->find("cylinder")->second->SetRotation(XMFLOAT3(-t, -t / 2, 0.0f));
 
     //Handle camera selection
-    if (kb.D1)
+    if (keys.pressed.D1)
     {
         m_camera = _cameras->find("fixed1")->second;
     }
-    if (kb.D2)
+    if (keys.pressed.D2)
     {
         m_camera = _cameras->find("fixed2")->second;
     }
-    if (kb.D3)
+    if (keys.pressed.D3)
     {
         m_camera = _cameras->find("fixed3")->second;
     }

@@ -47,6 +47,8 @@ private:
 
 	std::unique_ptr<DirectX::Keyboard> _keyboard;
 	std::unique_ptr<DirectX::Mouse> _mouse;
+	DirectX::Keyboard::KeyboardStateTracker _keys;
+	DirectX::Mouse::ButtonStateTracker _mouseButtons;
 
 	Level* _level;
 
