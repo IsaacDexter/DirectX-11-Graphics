@@ -1,5 +1,6 @@
 {
   "name": "Level1",
+  "defaultCamera": "fixed3",
   "meshes": [
     {
       "name": "cube",
@@ -94,6 +95,22 @@
       "scale_x": 1.0,
       "scale_y": 1.0,
       "scale_z": 1.0
+    },
+    {
+      "name": "barrel",
+      "mesh": "cylinder",
+      "material": "crate",
+      "diffuseMap": "crateDiffuse",
+      "specularMap": "crateSpecular",
+      "position_x": 5.0,
+      "position_y": -1.0,
+      "position_z": 2.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.0,
+      "rotation_z": 0.0,
+      "scale_x": 2.0,
+      "scale_y": 2.0,
+      "scale_z": 2.0
     }
   ],
   "cameras": [
@@ -113,9 +130,42 @@
       "up_w": 0.0,
       "nearDepth": 0.01,
       "farDepth": 100.0
+    },
+    {
+      "name": "fixed2",
+      "eye_x": -3.0,
+      "eye_y": 0.0,
+      "eye_z": 0.0,
+      "eye_w": 0.0,
+      "at_x": 0.0,
+      "at_y": 0.0,
+      "at_z": 0.0,
+      "at_w": 0.0,
+      "up_x": 0.0,
+      "up_y": 1.0,
+      "up_z": 0.0,
+      "up_w": 0.0,
+      "nearDepth": 0.01,
+      "farDepth": 100.0
+    },
+    {
+      "name": "fixed3",
+      "eye_x": 6.0,
+      "eye_y": 0.0,
+      "eye_z": -3.0,
+      "eye_w": 0.0,
+      "at_x": 3.0,
+      "at_y": 0.0,
+      "at_z": 3.0,
+      "at_w": 0.0,
+      "up_x": 0.0,
+      "up_y": 1.0,
+      "up_z": 0.0,
+      "up_w": 0.0,
+      "nearDepth": 0.01,
+      "farDepth": 100.0
     }
   ],
-  "defaultCamera": "fixed1",
   "directionalLights": [
     {
       "name": "sun",
