@@ -74,7 +74,12 @@ Application::Application()
 	_pVertexShader = nullptr;
 	_pPixelShader = nullptr;
 	_pVertexLayout = nullptr;
-
+    _pSamplerLinear = nullptr;
+    _wireFrame = nullptr;
+    _solidFill = nullptr;
+    _currentRasterizerState = nullptr;
+    _depthStencilView = nullptr;
+    _depthStencilBuffer = nullptr;
 	_pConstantBuffer = nullptr;
 }
 
@@ -419,8 +424,10 @@ HRESULT Application::InitDevice()
 
 void Application::Cleanup()
 {
+    if (_pImmediateContext) _pImmediateContext->Release();
+    if (_pImmediateContext) _pImmediateContext->ClearState();
+    if (_pd3dDevice) _pd3dDevice->Release();
     if (_pVertexLayout) _pVertexLayout->Release();
-    
     if (_pSwapChain) _pSwapChain->Release();
     if (_pRenderTargetView) _pRenderTargetView->Release();
     if (_pSamplerLinear) _pSamplerLinear->Release();
@@ -431,9 +438,6 @@ void Application::Cleanup()
     if (_currentRasterizerState) _currentRasterizerState->Release();
     if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
-    if (_pImmediateContext) _pImmediateContext->Release();
-    if (_pImmediateContext) _pImmediateContext->ClearState();
-    if (_pd3dDevice) _pd3dDevice->Release();
 }
 
 void Application::Update()
