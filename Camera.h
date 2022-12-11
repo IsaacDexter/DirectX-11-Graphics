@@ -45,9 +45,11 @@ protected:
 	float m_farDepth;
 
 	XMFLOAT4X4 m_projection;
+
+	XMFLOAT2 m_mousePos;
 };
 
-class FirstPersonCamera : Camera
+class FirstPersonCamera : public Camera
 {
 public:
 	FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
@@ -63,8 +65,7 @@ private:
 	void Rotate(XMFLOAT3 rotation);
 	void SetRotation(XMFLOAT3 newRotation);
 
-	void LookTo(XMFLOAT3 direction);
-	void LookAt(XMFLOAT4 at);
+	void SetDirection(XMFLOAT3 direction);
 
 private:
 	float m_movementSpeed;

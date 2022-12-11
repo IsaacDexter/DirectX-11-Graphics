@@ -116,13 +116,14 @@
   "cameras": [
     {
       "name": "fixed1",
+      "type": "firstPerson",
       "eye_x": 0.0,
       "eye_y": 0.0,
       "eye_z": -3.0,
       "eye_w": 0.0,
       "at_x": 0.0,
       "at_y": 0.0,
-      "at_z": 0.0,
+      "at_z": -1.0,
       "at_w": 0.0,
       "up_x": 0.0,
       "up_y": 1.0,
@@ -133,6 +134,7 @@
     },
     {
       "name": "fixed2",
+      "type": "orbiting",
       "eye_x": -3.0,
       "eye_y": 0.0,
       "eye_z": 0.0,
@@ -150,6 +152,7 @@
     },
     {
       "name": "fixed3",
+      "type": "orbiting",
       "eye_x": 6.0,
       "eye_y": 0.0,
       "eye_z": -3.0,

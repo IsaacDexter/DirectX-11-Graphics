@@ -50,9 +50,16 @@ void Level::LoadActor(std::string name, std::string mesh, std::string material, 
                                         scale   ) });
 }
 
-void Level::LoadCamera(std::string name, XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth)
+void Level::LoadCamera(std::string name, std::string type, XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth)
 {
-    _cameras->insert({ name, new Camera(eye, at, up, windowWidth, windowHeight, nearDepth, farDepth) });
+    if (type == "orbiting")
+    {
+        _cameras->insert({ name, new Camera(eye, at, up, windowWidth, windowHeight, nearDepth, farDepth) });
+    }
+    else if (type == "firstPerson")
+    {
+        _cameras->insert({ name, new FirstPersonCamera(eye, at, up, windowWidth, windowHeight, nearDepth, farDepth) });
+    }
 }
 
 void Level::LoadDirectionalLight(std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction)
@@ -169,6 +176,7 @@ void Level::LoadCameras(json jFile)
     {
         json cameraDesc = cameras.at(i);
         std::string name = cameraDesc["name"];    //Get the name
+        std::string type = cameraDesc["type"];  //get the type, which is used to instanciate the correct class
         float eye_x = cameraDesc["eye_x"];
         float eye_y = cameraDesc["eye_y"];
         float eye_z = cameraDesc["eye_z"];
@@ -183,7 +191,7 @@ void Level::LoadCameras(json jFile)
         float up_w = cameraDesc["up_w"];
         float nearDepth = cameraDesc["nearDepth"];
         float farDepth = cameraDesc["farDepth"];
-        LoadCamera(name, XMFLOAT4(eye_x, eye_y, eye_z, eye_w), XMFLOAT4(at_x, at_y, at_z, at_w), XMFLOAT4(up_x, up_y, up_z, up_w), m_windowSize.x, m_windowSize.y, nearDepth, farDepth);    //Append this camera to its map
+        LoadCamera(name, type, XMFLOAT4(eye_x, eye_y, eye_z, eye_w), XMFLOAT4(at_x, at_y, at_z, at_w), XMFLOAT4(up_x, up_y, up_z, up_w), m_windowSize.x, m_windowSize.y, nearDepth, farDepth);    //Append this camera to its map
     }
     // set the current camera
     std::string defaultCamera = jFile["defaultCamera"];

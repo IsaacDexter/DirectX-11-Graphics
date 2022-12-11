@@ -85,30 +85,66 @@ void Camera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonS
 }
 
 
-FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth) : Camera(eye, at, up, windowWidth, windowHeight, nearDepth, farDepth)
+FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth) : Camera(eye, to, up, windowWidth, windowHeight, nearDepth, farDepth)
 {
     m_movementSpeed = 0.07f;
     m_rotationSpeed = 0.004f;
 
     m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+    m_to = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    SetPosition(XMFLOAT3(eye.x, eye.y, eye.z));
-    LookAt(at);
+    m_mousePos = XMFLOAT2(0.0f, 0.0f);
 
-    XMFLOAT4 m_to;
+    SetDirection(XMFLOAT3(-to.x, -to.y, -to.z));
+    SetPosition(XMFLOAT3(eye.x, eye.y, eye.z));
 }
 
 void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
 {
     if (keys.pressed.Left)
     {
-        Rotate(XMFLOAT3(-0.004f, 0.0f, 0.0f));
+        Rotate(XMFLOAT3(0.0f, -0.05f, 0.0f));
     }
-    if (keys.pressed.Left)
+    if (keys.pressed.Right)
     {
-        Rotate(XMFLOAT3(-0.004f, 0.0f, 0.0f));
+        Rotate(XMFLOAT3(0.0f, 0.05f, 0.0f));
     }
+    if (keys.pressed.Up)
+    {
+        Rotate(XMFLOAT3(0.05f, 0.0f, 0.0f));
+    }
+    if (keys.pressed.Down)
+    {
+        Rotate(XMFLOAT3(-0.05f, 0.0f, 0.0f));
+    }
+
+    if (keys.pressed.A)
+    {
+        Translate(XMFLOAT3(-0.05f, 0.0f, 0.0f));
+    }
+    if (keys.pressed.D)
+    {
+        Translate(XMFLOAT3(0.05f, 0.0f, 0.0f));
+    }
+    if (keys.pressed.W)
+    {
+        Translate(XMFLOAT3(0.0f, 0.0f, 0.05f));
+    }
+    if (keys.pressed.S)
+    {
+        Translate(XMFLOAT3(0.0f, 0.0f, -0.05f));
+    }
+    if (keys.pressed.Space)
+    {
+        Translate(XMFLOAT3(0.0f, 0.05f, 0.0f));
+    }
+    if (keys.pressed.LeftControl)
+    {
+        Translate(XMFLOAT3(0.0f, -0.05f, 0.0f));
+    }
+
+    m_mousePos = mousePosition;
 }
 
 void FirstPersonCamera::UpdateView()
@@ -129,31 +165,23 @@ void FirstPersonCamera::SetPosition(XMFLOAT3 newPosition)
 
 void FirstPersonCamera::Rotate(XMFLOAT3 rotation)
 {
-    SetRotation(XMFLOAT3(m_rotation.x + rotation.x, m_rotation.z + rotation.z, m_rotation.z + rotation.z));
+    m_rotation.x += rotation.x;
+    m_rotation.y += rotation.y;
+    m_rotation.z += rotation.z;
+    SetRotation(m_rotation);
 }
 
 void FirstPersonCamera::SetRotation(XMFLOAT3 newRotation)
 {
-    m_rotation = newRotation;
-    LookTo(m_rotation);
+    XMFLOAT3 direction = XMFLOAT3(sin(newRotation.y) * cos(newRotation.x), sin(newRotation.x), cos(-newRotation.y) * cos(newRotation.x));
+    XMStoreFloat3(&direction, XMVector3Normalize(XMLoadFloat3(&direction)));
+    SetDirection(direction);
 }
 
-void FirstPersonCamera::LookTo(XMFLOAT3 direction)
+void FirstPersonCamera::SetDirection(XMFLOAT3 direction)
 {
-    m_to.x = direction.x;
-    m_to.y = direction.y;
-    m_to.z = direction.z;
+    m_to.x = -direction.x;
+    m_to.y = -direction.y;
+    m_to.z = -direction.z;
     UpdateView();
-}
-
-void FirstPersonCamera::LookAt(XMFLOAT4 at)
-{
-    // Get the direction the camera is initially looking in from the constructor
-    XMVECTOR direction = XMVectorSet(at.x - m_position.x, at.y - m_position.y, at.z - m_position.z, 1.0f);
-    direction = XMVector4Normalize(direction);
-
-    // Store that normalised direction in m_rotation
-    XMFLOAT4 rotation;
-    XMStoreFloat4(&rotation, direction);
-    SetRotation(XMFLOAT3(rotation.x, rotation.y, rotation.z));
 }
