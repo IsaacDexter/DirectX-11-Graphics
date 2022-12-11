@@ -102,22 +102,11 @@ FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, flo
 
 void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
 {
-    if (keys.pressed.Left)
-    {
-        Rotate(XMFLOAT3(0.0f, -0.05f, 0.0f));
-    }
-    if (keys.pressed.Right)
-    {
-        Rotate(XMFLOAT3(0.0f, 0.05f, 0.0f));
-    }
-    if (keys.pressed.Up)
-    {
-        Rotate(XMFLOAT3(0.05f, 0.0f, 0.0f));
-    }
-    if (keys.pressed.Down)
-    {
-        Rotate(XMFLOAT3(-0.05f, 0.0f, 0.0f));
-    }
+    float mouseMovementX = mousePosition.x - m_mousePos.x;
+    float mouseMovementY = mousePosition.y - m_mousePos.y;
+    float timeChange = t - m_time;
+    Rotate(XMFLOAT3(-mouseMovementY * t * m_rotationSpeed, mouseMovementX * t * m_rotationSpeed, 0.0f));
+
 
     if (keys.pressed.A)
     {
@@ -145,6 +134,7 @@ void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Mou
     }
 
     m_mousePos = mousePosition;
+    m_time = t;
 }
 
 void FirstPersonCamera::UpdateView()

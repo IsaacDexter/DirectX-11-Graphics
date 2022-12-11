@@ -489,8 +489,7 @@ void Application::Update()
     Mouse::State mouse = _mouse->GetState();
     _mouseButtons.Update(mouse);
     _mousePosition = XMFLOAT2(float(mouse.x), float(mouse.y));
-    _mouse->SetMode(mouse.leftButton
-        ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+    _mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 
     //Update the level
     _level->Update(t, _keys, _mouseButtons, _mousePosition, mouse.positionMode);

@@ -47,6 +47,7 @@ protected:
 	XMFLOAT4X4 m_projection;
 
 	XMFLOAT2 m_mousePos;
+	float m_time;
 };
 
 class FirstPersonCamera : public Camera
