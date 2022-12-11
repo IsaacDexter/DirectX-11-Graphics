@@ -1,6 +1,6 @@
 {
   "name": "Level1",
-  "defaultCamera": "fixed3",
+  "defaultCamera": "fixed1",
   "meshes": [
     {
       "name": "cube",

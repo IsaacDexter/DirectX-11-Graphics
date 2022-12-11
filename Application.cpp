@@ -128,6 +128,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     _keyboard = std::make_unique<Keyboard>();
     _mouse = std::make_unique<Mouse>();
     _mouse->SetWindow(_hWnd);
+    _mousePosition = XMFLOAT2(0.0f, 0.0f);
 
     _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer, XMFLOAT2(_WindowWidth, _WindowHeight));
 
@@ -487,9 +488,12 @@ void Application::Update()
 
     Mouse::State mouse = _mouse->GetState();
     _mouseButtons.Update(mouse);
+    _mousePosition = XMFLOAT2(float(mouse.x), float(mouse.y));
+    _mouse->SetMode(mouse.leftButton
+        ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 
     //Update the level
-    _level->Update(t, _keys, _mouseButtons);
+    _level->Update(t, _keys, _mouseButtons, _mousePosition, mouse.positionMode);
 }
 
 void Application::Draw()
