@@ -32,35 +32,27 @@
   "textures": [
     {
       "name": "crateDiffuse",
-      "path": "Textures/Crate_COLOR.dds"
+      "path": "Textures/Crate/Crate_COLOR.dds"
     },
     {
       "name": "crateSpecular",
-      "path": "Textures/Crate_SPEC.dds"
-    },
-    {
-      "name": "asphaltDiffuse",
-      "path": "Textures/Asphalt_COLOR.dds"
-    },
-    {
-      "name": "asphaltSpecular",
-      "path": "Textures/Asphalt_SPEC.dds"
+      "path": "Textures/Crate/Crate_SPEC.dds"
     },
     {
       "name": "tilesDiffuse",
-      "path": "Textures/Tiles_COLOR.dds"
+      "path": "Textures/Tiles/Tiles_COLOR.dds"
     },
     {
       "name": "tilesSpecular",
-      "path": "Textures/Tiles_SPEC.dds"
+      "path": "Textures/Tiles/Tiles_SPEC.dds"
     },
     {
       "name": "rustDiffuse",
-      "path": "Textures/Rust_COLOR.dds"
+      "path": "Textures/Rust/Rust_COLOR.dds"
     },
     {
       "name": "rustSpecular",
-      "path": "Textures/Rust_SPEC.dds"
+      "path": "Textures/Rust/Rust_SPEC.dds"
     }
   ],
   "actors": [
