@@ -115,6 +115,7 @@ void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Key
     movementVector.y = (keyboard.Space - keyboard.LeftControl);
     movementVector.z = (keyboard.S - keyboard.W);
 
+
     Translate(movementVector);
 
     m_mousePos = mousePosition;
