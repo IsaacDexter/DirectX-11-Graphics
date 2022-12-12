@@ -439,7 +439,7 @@ void Application::Cleanup()
     if (_wireFrame) _wireFrame->Release();
     if (_solidFill) _solidFill->Release();
     if (_currentRasterizerState) _currentRasterizerState->Release();
-    if (_depthStencilView) _depthStencilView->Release();
+    //if (_depthStencilView) _depthStencilView->Release();
     if (_depthStencilBuffer) _depthStencilBuffer->Release();
 }
 

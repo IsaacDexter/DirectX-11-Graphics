@@ -9,11 +9,47 @@
     {
       "name": "cylinder",
       "path": "Models/3dsMax/cylinder.obj"
+    },
+    {
+      "name": "arch",
+      "path": "Models/Arch/Arch.obj"
+    },
+    {
+      "name": "blacksmith",
+      "path": "Models/Blacksmith/Blacksmith.obj"
+    },
+    {
+      "name": "pillar",
+      "path": "Models/Pillar/Pillar.obj"
+    },
+    {
+      "name": "plane",
+      "path": "Models/Plane/Plane.obj"
+    },
+    {
+      "name": "terrain",
+      "path": "Models/Terrain/Terrain.obj"
+    },
+    {
+      "name": "palm",
+      "path": "Models/Tree/Palm.obj"
+    },
+    {
+      "name": "spruce",
+      "path": "Models/Tree/Spruce.obj"
+    },
+    {
+      "name": "cottage",
+      "path": "Models/Cottage/Cottage.obj"
+    },
+    {
+      "name": "warehouse",
+      "path": "Models/Warehouse/Warehouse.obj"
     }
   ],
   "materials": [
     {
-      "name": "crate",
+      "name": "crateMaterial",
       "diffuse_r": 0.8,
       "diffuse_g": 0.8,
       "diffuse_b": 0.8,
@@ -27,6 +63,54 @@
       "specular_b": 1.0,
       "specular_a": 1.0,
       "specularFalloff": 10.0
+    },
+    {
+      "name": "mossMaterial",
+      "diffuse_r": 0.6,
+      "diffuse_g": 0.6,
+      "diffuse_b": 0.6,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.2,
+      "ambient_g": 0.2,
+      "ambient_b": 0.2,
+      "ambient_a": 1.0,
+      "specular_r": 0.4,
+      "specular_g": 0.4,
+      "specular_b": 0.4,
+      "specular_a": 1.0,
+      "specularFalloff": 25.0
+    },
+    {
+      "name": "blacksmithMaterial",
+      "diffuse_r": 0.6980,
+      "diffuse_g": 0.6980,
+      "diffuse_b": 0.6980,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.2,
+      "ambient_g": 0.2,
+      "ambient_b": 0.2,
+      "ambient_a": 1.0,
+      "specular_r": 0.4,
+      "specular_g": 0.4,
+      "specular_b": 0.4,
+      "specular_a": 1.0,
+      "specularFalloff": 25.0
+    },
+    {
+      "name": "archMaterial",
+      "diffuse_r": 0.553,
+      "diffuse_g": 0.553,
+      "diffuse_b": 0.553,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.106,
+      "ambient_g": 0.106,
+      "ambient_b": 0.106,
+      "ambient_a": 1.0,
+      "specular_r": 0.812,
+      "specular_g": 0.812,
+      "specular_b": 0.812,
+      "specular_a": 1.0,
+      "specularFalloff": 17.0
     }
   ],
   "textures": [
@@ -53,13 +137,89 @@
     {
       "name": "rustSpecular",
       "path": "Textures/Rust/Rust_SPEC.dds"
+    },
+    {
+      "name": "archDiffuse",
+      "path": "Textures/Arch/Arch_COLOR.dds"
+    },
+    {
+      "name": "archSpecular",
+      "path": "Textures/Arch/Arch_SPEC.dds"
+    },
+    {
+      "name": "blacksmithDiffuse",
+      "path": "Textures/Blacksmith/Blacksmith_COLOR.dds"
+    },
+    {
+      "name": "blacksmithSpecular",
+      "path": "Textures/Blacksmith/Blacksmith_SPEC.dds"
+    },
+    {
+      "name": "mossDiffuse",
+      "path": "Textures/Moss/Moss_COLOR.dds"
+    },
+    {
+      "name": "mossSpecular",
+      "path": "Textures/Moss/Moss_SPEC.dds"
+    },
+    {
+      "name": "palmDiffuse",
+      "path": "Textures/Palm/Palm_COLOR.dds"
+    },
+    {
+      "name": "palmSpecular",
+      "path": "Textures/Palm/Palm_SPEC.dds"
+    },
+    {
+      "name": "pillarDiffuse",
+      "path": "Textures/Pillar/Pillar_COLOR.dds"
+    },
+    {
+      "name": "pillarSpecular",
+      "path": "Textures/Pillar/Pillar_SPEC.dds"
+    },
+    {
+      "name": "planeDiffuse",
+      "path": "Textures/Plane/Plane_COLOR.dds"
+    },
+    {
+      "name": "planeSpecular",
+      "path": "Textures/Plane/Plane_SPEC.dds"
+    },
+    {
+      "name": "spruceDiffuse",
+      "path": "Textures/Spruce/Spruce_COLOR.dds"
+    },
+    {
+      "name": "spruceSpecular",
+      "path": "Textures/Spruce_SPEC.dds"
+    },
+    {
+      "name": "sky",
+      "path": "Textures/Sky/Sky_COLOR.dds"
+    },
+    {
+      "name": "cottageDiffuse",
+      "path": "Textures/Cottage/Cottage_COLOR.dds"
+    },
+    {
+      "name": "cottageSpecular",
+      "path": "Textures/Cottage/Cottage_SPEC.dds"
+    },
+    {
+      "name": "warehouseDiffuse",
+      "path": "Textures/Warehouse/Warehouse_COLOR.dds"
+    },
+    {
+      "name": "warehouseSpecular",
+      "path": "Textures/Warehouse/Warehouse_SPEC.dds"
     }
   ],
   "actors": [
     {
       "name": "cube",
       "mesh": "cube",
-      "material": "crate",
+      "material": "crateMaterial",
       "diffuseMap": "tilesDiffuse",
       "specularMap": "tilesSpecular",
       "position_x": 0.0,
@@ -75,9 +235,9 @@
     {
       "name": "cylinder",
       "mesh": "cylinder",
-      "material": "crate",
-      "diffuseMap": "rustDiffuse",
-      "specularMap": "rustSpecular",
+      "material": "crateMaterial",
+      "diffuseMap": "mossDiffuse",
+      "specularMap": "blacksmithSpecular",
       "position_x": 3.0,
       "position_y": 0.0,
       "position_z": 3.0,
@@ -91,7 +251,7 @@
     {
       "name": "barrel",
       "mesh": "cylinder",
-      "material": "crate",
+      "material": "crateMaterial",
       "diffuseMap": "crateDiffuse",
       "specularMap": "crateSpecular",
       "position_x": 5.0,
@@ -103,6 +263,86 @@
       "scale_x": 2.0,
       "scale_y": 2.0,
       "scale_z": 2.0
+    },
+    {
+      "name": "blacksmith",
+      "mesh": "blacksmith",
+      "material": "blacksmithMaterial",
+      "diffuseMap": "blacksmithDiffuse",
+      "specularMap": "blacksmithSpecular",
+      "position_x": 10.0,
+      "position_y": 0.0,
+      "position_z": 0.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.3,
+      "rotation_z": 0.0,
+      "scale_x": 5.0,
+      "scale_y": 5.0,
+      "scale_z": 5.0
+    },
+    {
+      "name": "plane",
+      "mesh": "plane",
+      "material": "mossMaterial",
+      "diffuseMap": "planeDiffuse",
+      "specularMap": "planeSpecular",
+      "position_x": -10.0,
+      "position_y": 0.0,
+      "position_z": 0.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.3,
+      "rotation_z": 0.0,
+      "scale_x": 0.1,
+      "scale_y": 0.1,
+      "scale_z": 0.1
+    },
+    {
+      "name": "arch",
+      "mesh": "arch",
+      "material": "mossMaterial",
+      "diffuseMap": "mossDiffuse",
+      "specularMap": "mossSpecular",
+      "position_x": -10.0,
+      "position_y": 0.0,
+      "position_z": 10.0,
+      "rotation_x": 0.0,
+      "rotation_y": 3.2,
+      "rotation_z": 0.0,
+      "scale_x": 0.17,
+      "scale_y": 0.17,
+      "scale_z": 0.17
+    },
+    {
+      "name": "ground",
+      "mesh": "cube",
+      "material": "mossMaterial",
+      "diffuseMap": "mossDiffuse",
+      "specularMap": "mossSpecular",
+      "position_x": 0.0,
+      "position_y": -4.0,
+      "position_z": 0.0,
+      "rotation_x": 0.0,
+      "rotation_y": 0.0,
+      "rotation_z": 0.0,
+      "scale_x": 75.0,
+      "scale_y": 0.01,
+      "scale_z": 75.0
+    },
+    {
+      "name": "warehouse",
+      "mesh": "warehouse",
+      "material": "archMaterial",
+      "diffuseMap": "rustDiffuse",
+      "specularMap": "warehouseSpecular",
+      "position_x": 15.0,
+      "position_y": 0.0,
+      "position_z": -20.0,
+      "rotation_x": 0.0,
+      "rotation_y": 1.6,
+      "rotation_z": 0.0,
+      "scale_x": 0.10,
+      "scale_y": 0.1,
+      "scale_z": 0.1
     }
   ],
   "cameras": [
@@ -168,9 +408,9 @@
       "diffuse_g": 0.6,
       "diffuse_b": 0.6,
       "diffuse_a": 1.0,
-      "ambient_r": 0.03,
-      "ambient_g": 0.03,
-      "ambient_b": 0.03,
+      "ambient_r": 0.3,
+      "ambient_g": 0.3,
+      "ambient_b": 0.3,
       "ambient_a": 1.0,
       "specular_r": 0.5,
       "specular_g": 0.5,
@@ -203,6 +443,72 @@
       "attenuation_g": 0.0,
       "attenuation_b": 0.4,
       "range": 10.0
+    },
+    {
+      "name": "lantern1",
+      "diffuse_r": 1.0,
+      "diffuse_g": 0.85,
+      "diffuse_b": 0.7,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.1,
+      "ambient_g": 0.1,
+      "ambient_b": 0.1,
+      "ambient_a": 1.0,
+      "specular_r": 0.7,
+      "specular_g": 0.6,
+      "specular_b": 0.5,
+      "specular_a": 10.0,
+      "position_x": 4.73,
+      "position_y": -1.80,
+      "position_z": -0.28,
+      "attenuation_r": 0.0,
+      "attenuation_g": 0.3,
+      "attenuation_b": 0.01,
+      "range": 20.0
+    },
+    {
+      "name": "lantern2",
+      "diffuse_r": 1.0,
+      "diffuse_g": 0.85,
+      "diffuse_b": 0.7,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.1,
+      "ambient_g": 0.1,
+      "ambient_b": 0.1,
+      "ambient_a": 1.0,
+      "specular_r": 0.7,
+      "specular_g": 0.6,
+      "specular_b": 0.5,
+      "specular_a": 10.0,
+      "position_x": 9.19,
+      "position_y": -2.25,
+      "position_z": 3.16,
+      "attenuation_r": 0.0,
+      "attenuation_g": 0.3,
+      "attenuation_b": 0.01,
+      "range": 20.0
+    },
+    {
+      "name": "furnace",
+      "diffuse_r": 1.0,
+      "diffuse_g": 0.7,
+      "diffuse_b": 0.5,
+      "diffuse_a": 1.0,
+      "ambient_r": 0.1,
+      "ambient_g": 0.1,
+      "ambient_b": 0.1,
+      "ambient_a": 1.0,
+      "specular_r": 0.9,
+      "specular_g": 0.5,
+      "specular_b": 0.2,
+      "specular_a": 5.0,
+      "position_x": 9.19,
+      "position_y": -2.25,
+      "position_z": 3.16,
+      "attenuation_r": 0.0,
+      "attenuation_g": 0.0,
+      "attenuation_b": 0.01,
+      "range": 30.0
     }
   ],
   "spotLights": [

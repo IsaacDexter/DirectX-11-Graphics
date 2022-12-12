@@ -3,7 +3,7 @@
 Mesh* LoadOBJ(ID3D11Device* d3dDevice, std::string path)
 {
     Mesh* mesh = new Mesh;
-    *mesh = OBJLoader::Load(path, d3dDevice);
+    *mesh = OBJLoader::Load(path, d3dDevice, true);
 
     return mesh;
 }
