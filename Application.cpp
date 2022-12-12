@@ -224,6 +224,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
     _hInst = hInstance;
     RECT rc = {0, 0, 640, 480};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+    ShowCursor(FALSE);
     _hWnd = CreateWindow(L"TutorialWindowClass", L"DX11 Framework", WS_OVERLAPPEDWINDOW,
                          CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
                          nullptr);
@@ -231,6 +232,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 		return E_FAIL;
 
     ShowWindow(_hWnd, nCmdShow);
+    SetCapture(_hWnd);
 
     return S_OK;
 }
@@ -492,7 +494,7 @@ void Application::Update()
     _mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 
     //Update the level
-    _level->Update(t, _keys, _mouseButtons, _mousePosition, mouse.positionMode);
+    _level->Update(t, _keys, kb, _mouseButtons, _mousePosition, mouse.positionMode);
 }
 
 void Application::Draw()

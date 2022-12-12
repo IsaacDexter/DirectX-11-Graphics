@@ -21,7 +21,7 @@ public:
 	XMFLOAT4 GetEye();
 
 	//Pure virtual
-	virtual void Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode);
+	virtual void Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode);
 protected:
 	virtual void UpdateView();
 	void UpdateProjection();
@@ -53,9 +53,9 @@ protected:
 class FirstPersonCamera : public Camera
 {
 public:
-	FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 at, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
+	FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
 
-	void Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode) override;
+	void Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode) override;
 private:
 	void UpdateView() override;
 

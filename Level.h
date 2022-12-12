@@ -41,7 +41,7 @@ private:
 public:
 	Level(char* path, ID3D11Device* d3dDevice, ID3D11DeviceContext* immediateContext, ID3D11Buffer* constantBuffer, XMFLOAT2 windowSize);
 	~Level();
-	void Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode);
+	void Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode);
 	void Draw();
 private:
 	XMFLOAT4 ToXMFLOAT4(XMFLOAT3 a, float w = 0.0f);

@@ -349,7 +349,7 @@ void Level::UpdateActors()
     }
 }
 
-void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePositon, Mouse::Mode mouseMode)
+void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePositon, Mouse::Mode mouseMode)
 {
     // Animate actors
     _actors->find("cube")->second->SetRotation(XMFLOAT3(t / 2, t, 0.0f));
@@ -375,7 +375,7 @@ void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonSt
         m_camera = _cameras->find("fixed3")->second;
     }
 
-    m_camera->Update(t, keys, mouseButtons, mousePositon, mouseMode);
+    m_camera->Update(t, keys, keyboard, mouseButtons, mousePositon, mouseMode);
 
     UpdateActors();
 }

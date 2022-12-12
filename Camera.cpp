@@ -79,7 +79,7 @@ XMFLOAT4 Camera::GetEye()
     return m_eye;
 }
 
-void Camera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
+void Camera::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
 {
 
 }
@@ -87,8 +87,8 @@ void Camera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonS
 
 FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth) : Camera(eye, to, up, windowWidth, windowHeight, nearDepth, farDepth)
 {
-    m_movementSpeed = 0.07f;
-    m_rotationSpeed = 0.004f;
+    m_movementSpeed = 0.0025f;
+    m_rotationSpeed = 0.025f;
 
     m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);
     m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -96,42 +96,26 @@ FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, flo
     
     m_mousePos = XMFLOAT2(0.0f, 0.0f);
 
+    
+
     SetDirection(XMFLOAT3(-to.x, -to.y, -to.z));
     SetPosition(XMFLOAT3(eye.x, eye.y, eye.z));
 }
 
-void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
+void FirstPersonCamera::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode)
 {
     float mouseMovementX = mousePosition.x - m_mousePos.x;
     float mouseMovementY = mousePosition.y - m_mousePos.y;
-    float timeChange = t - m_time;
-    Rotate(XMFLOAT3(-mouseMovementY * t * m_rotationSpeed, mouseMovementX * t * m_rotationSpeed, 0.0f));
+    XMFLOAT3 rotationVector = XMFLOAT3(mouseMovementY * m_rotationSpeed, mouseMovementX * m_rotationSpeed, 0.0f);
+    Rotate(rotationVector);
 
+    XMFLOAT3 movementVector = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-    if (keys.pressed.A)
-    {
-        Translate(XMFLOAT3(-0.05f, 0.0f, 0.0f));
-    }
-    if (keys.pressed.D)
-    {
-        Translate(XMFLOAT3(0.05f, 0.0f, 0.0f));
-    }
-    if (keys.pressed.W)
-    {
-        Translate(XMFLOAT3(0.0f, 0.0f, 0.05f));
-    }
-    if (keys.pressed.S)
-    {
-        Translate(XMFLOAT3(0.0f, 0.0f, -0.05f));
-    }
-    if (keys.pressed.Space)
-    {
-        Translate(XMFLOAT3(0.0f, 0.05f, 0.0f));
-    }
-    if (keys.pressed.LeftControl)
-    {
-        Translate(XMFLOAT3(0.0f, -0.05f, 0.0f));
-    }
+    movementVector.x = (keyboard.D - keyboard.A);
+    movementVector.y = (keyboard.Space - keyboard.LeftControl);
+    movementVector.z = (keyboard.S - keyboard.W);
+
+    Translate(movementVector);
 
     m_mousePos = mousePosition;
     m_time = t;
@@ -144,7 +128,22 @@ void FirstPersonCamera::UpdateView()
 
 void FirstPersonCamera::Translate(XMFLOAT3 translation)
 {
-    SetPosition(XMFLOAT3(m_position.x + translation.x, m_position.y + translation.y, m_position.z + translation.z));
+    //Find new position for movement in z axis
+    m_position.x += (translation.z * m_to.x * m_movementSpeed);
+    m_position.y += (translation.z * m_to.y * m_movementSpeed);
+    m_position.z += (translation.z * m_to.z * m_movementSpeed);
+    //Find new position for movment in y axis 
+    m_position.x += (translation.y * m_up.x * m_movementSpeed);
+    m_position.y += (translation.y * m_up.y * m_movementSpeed);
+    m_position.z += (translation.y * m_up.z * m_movementSpeed);
+    //Find new position for movement in x axis
+    XMFLOAT4 right;
+    XMStoreFloat4(&right, XMVector3Cross(XMLoadFloat4(&m_to), XMLoadFloat4(&m_up)));
+    m_position.x += (translation.x * right.x * m_movementSpeed);
+    m_position.y += (translation.x * right.y * m_movementSpeed);
+    m_position.z += (translation.x * right.z * m_movementSpeed);
+
+    SetPosition(XMFLOAT3(m_position.x, m_position.y, m_position.z));
 }
 
 void FirstPersonCamera::SetPosition(XMFLOAT3 newPosition)
