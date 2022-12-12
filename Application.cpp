@@ -1,5 +1,66 @@
 #include "Application.h"
 
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    PAINTSTRUCT ps;
+    HDC hdc;
+
+    switch (message)
+    {
+        case WM_PAINT:
+            hdc = BeginPaint(hWnd, &ps);
+            EndPaint(hWnd, &ps);
+            break;
+
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            break;
+
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+
+        case WM_ACTIVATEAPP:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            Mouse::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_ACTIVATE:
+        case WM_INPUT:
+        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_RBUTTONDOWN:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONDOWN:
+        case WM_MBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_MOUSEHOVER:
+            Mouse::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_KEYDOWN:
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            break;
+
+        case WM_SYSKEYDOWN:
+            Keyboard::ProcessMessage(message, wParam, lParam);
+            if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
+            {
+            }
+            break;
+
+        case WM_MOUSEACTIVATE:
+            // When you click activate the window, we want Mouse to ignore it.
+            return MA_ACTIVATEANDEAT;
+    }
+
+    return 0;
+}
+
 Application::Application()
 {
 	_hInst = nullptr;
@@ -67,123 +128,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
     _keyboard = std::make_unique<Keyboard>();
     _mouse = std::make_unique<Mouse>();
     _mouse->SetWindow(_hWnd);
-    _mousePosition = XMFLOAT2(_mouse->GetState().x, _mouse->GetState().y);
-    SetCapture(_hWnd);
+    _mousePosition = XMFLOAT2(0.0f, 0.0f);
 
     _level = new Level("Levels/Level1.json", _pd3dDevice, _pImmediateContext, _pConstantBuffer, XMFLOAT2(_WindowWidth, _WindowHeight));
 
 	return S_OK;
-}
-
-LRESULT Application::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    PAINTSTRUCT ps;
-    HDC hdc;
-
-    switch (message)
-    {
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        EndPaint(hWnd, &ps);
-        break;
-
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-
-    case WM_ACTIVATEAPP:
-        Keyboard::ProcessMessage(message, wParam, lParam);
-        Mouse::ProcessMessage(message, wParam, lParam);
-        break;
-
-    case WM_ACTIVATE:
-    case WM_INPUT:
-    case WM_MOUSEMOVE:
-    case WM_LBUTTONDOWN:
-    case WM_LBUTTONUP:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    case WM_MBUTTONDOWN:
-    case WM_MBUTTONUP:
-    case WM_MOUSEWHEEL:
-    case WM_XBUTTONDOWN:
-    case WM_XBUTTONUP:
-    case WM_MOUSEHOVER:
-        Mouse::ProcessMessage(message, wParam, lParam);
-        break;
-
-    case WM_KEYDOWN:
-    case WM_KEYUP:
-    case WM_SYSKEYUP:
-        Keyboard::ProcessMessage(message, wParam, lParam);
-        break;
-
-    case WM_SYSKEYDOWN:
-        Keyboard::ProcessMessage(message, wParam, lParam);
-        if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
-        {
-        }
-        break;
-
-    case WM_MOUSEACTIVATE:
-        // When you click activate the window, we want Mouse to ignore it.
-        return MA_ACTIVATEANDEAT;
-    case WM_SIZE:
-    {
-        int width = LOWORD(lParam);  // Macro to get the low-order word.
-        int height = HIWORD(lParam); // Macro to get the high-order word.
-
-        // Respond to the message:
-        OnResize();
-    }
-    return 1;
-    }
-
-    return 0;
-}
-
-void Application::OnResize()
-{
-    if (_pSwapChain)
-    {
-        _pImmediateContext->OMSetRenderTargets(0, 0, 0);
-
-        // Release all outstanding references to the swap chain's buffers.
-        _pRenderTargetView->Release();
-
-        HRESULT hr;
-        // Preserve the existing buffer count and format.
-        // Automatically choose the width and height to match the client rect for HWNDs.
-        hr = _pSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-
-        // Perform error handling here!
-
-        // Get buffer and create a render-target-view.
-        ID3D11Texture2D* pBuffer;
-        hr = _pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-            (void**)&pBuffer);
-        // Perform error handling here!
-
-        hr = _pd3dDevice->CreateRenderTargetView(pBuffer, NULL,
-            &_pRenderTargetView);
-        // Perform error handling here!
-        pBuffer->Release();
-
-        _pImmediateContext->OMSetRenderTargets(1, &_pRenderTargetView, NULL);
-
-        // Set up the viewport.
-        D3D11_VIEWPORT vp;
-        vp.Width = _WindowWidth;
-        vp.Height = _WindowHeight;
-        vp.MinDepth = 0.0f;
-        vp.MaxDepth = 1.0f;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
-        _pImmediateContext->RSSetViewports(1, &vp);
-    }
 }
 
 HRESULT Application::InitShadersAndInputLayout()    //Loads in shaders from the HLSL (high-level shader language) file and returns an error if it fails
@@ -258,7 +207,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc = GetWindowLongPtr( WndPr;
+    wcex.lpfnWndProc = WndProc;
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
@@ -283,6 +232,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 		return E_FAIL;
 
     ShowWindow(_hWnd, nCmdShow);
+    SetCapture(_hWnd);
 
     return S_OK;
 }
