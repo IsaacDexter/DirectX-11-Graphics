@@ -50,6 +50,14 @@ protected:
 	float m_time;
 };
 
+class OrbitingCamera : public Camera
+{
+public:
+	OrbitingCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth);
+	void Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State keyboard, Mouse::ButtonStateTracker mouseButtons, XMFLOAT2 mousePosition, Mouse::Mode mouseMode) override;
+private:
+};
+
 class FirstPersonCamera : public Camera
 {
 public:

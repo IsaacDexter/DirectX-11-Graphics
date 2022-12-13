@@ -356,6 +356,10 @@ void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State
     _actors->find("cylinder")->second->SetRotation(XMFLOAT3(-t, -t / 2, 0.0f));
     _actors->find("barrel")->second->SetPosition(XMFLOAT3(t, 0.0f, 0.0f));
 
+    //Move the skybox to the players position
+    XMFLOAT4 cameraPos = m_camera->GetEye();
+    _actors->find("skybox")->second->SetPosition(XMFLOAT3(cameraPos.x, cameraPos.y, cameraPos.z));
+
     /*if (_cameras->find("fixed3")->second == m_camera)
     {
         _cameras->find("fixed3")->second->LookAt(ToXMFLOAT4(_actors->find("barrel")->second->GetPosition()));
