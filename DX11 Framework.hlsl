@@ -145,7 +145,7 @@ float4 CalculateDiffuse(float4 diffuseMaterial, float4 diffuseLight, float1 inci
     
     //find the hadamard product of diffuse material and diffuse light. This is the maximum potential diffuse
     diffusePotential = Hadamard(diffuseMaterial, diffuseLight);
-    diffuse = saturate(diffuseIntesity * diffusePotential);
+    diffuse = (diffuseIntesity * diffusePotential);
     
     return diffuse;
 }
@@ -154,7 +154,7 @@ float4 CalculateAmbient(float4 ambientMaterial, float4 ambientLight)
 {
     //Calculate ambient lighting
     //find the hadamard product of ambient material and ambient light
-    float4 ambient = saturate(Hadamard(ambientMaterial, ambientLight));
+    float4 ambient = (Hadamard(ambientMaterial, ambientLight));
     return ambient;
 }
 
@@ -171,7 +171,7 @@ float4 CalculateSpecular(float4 specularMaterial, float4 specularLight, float1 s
     specularIntensity = pow(max(specularAngle, 0), specularPower);
     //find the hadamard product of specular material and specular light, this is the maximum potential specular
     specularPotential = Hadamard(float4(specularMaterial.xyz, 1.0f), specularLight);
-    specular = saturate(specularIntensity * specularPotential);
+    specular = (specularIntensity * specularPotential);
     return specular;
 }
 
@@ -270,7 +270,7 @@ void CalculatePointLighting
     specular = CalculateSpecular(specularMaterial, specularLight, angleOfIncidence);
     
     //Apply attenuation
-    float1 attenuationFactor = saturate(1.0f / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
+    float1 attenuationFactor = (1.0f / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
     specular *= attenuationFactor;
     diffuse *= attenuationFactor;
 }
@@ -331,7 +331,7 @@ void CalculateSpotLighting
     float spotFactor = pow(max(angleFromBeam, 0.0f), spot);
     
     //Apply attenuation
-    float1 attenuationFactor = saturate(spotFactor / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
+    float1 attenuationFactor = (spotFactor / (dot(attenuation, float3(1.0f, lightDistance, lightDistance * lightDistance))));
     ambient *= attenuationFactor;
     specular *= attenuationFactor;
     diffuse *= attenuationFactor;
@@ -368,7 +368,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
         
         CalculateDirectionalLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, directionalLights[i].diffuse, directionalLights[i].ambient, directionalLights[i].specular, directionalLights[i].directionToLight, input.NormalW, viewerDir, diffuse, ambient, specular);
 
-        lightColor += saturate(specular + ambient + diffuse);
+        lightColor += (specular + ambient + diffuse);
     }
     
     for (int i = 0; i < pointLightsCount; i++)
@@ -382,7 +382,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
         
         CalculatePointLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, pointLights[i].diffuse, pointLights[i].ambient, pointLights[i].specular, directionToLight, input.NormalW, viewerDir, pointLights[i].attenuation, pointLights[i].range, diffuse, ambient, specular);
 
-        lightColor += saturate(specular + ambient + diffuse);
+        lightColor += (specular + ambient + diffuse);
     }
         
     for (int i = 0; i < spotLightsCount; i++)
@@ -396,10 +396,10 @@ float4 PS(VS_OUTPUT input) : SV_Target
         
         CalculateSpotLighting(material.DiffuseMaterial, material.AmbientMaterial, specularMaterial, spotLights[i].diffuse, spotLights[i].ambient, spotLights[i].specular, directionToLight, input.NormalW, viewerDir, spotLights[i].attenuation, spotLights[i].range, spotLights[i].direction, spotLights[i].spot, diffuse, ambient, specular);
 
-        lightColor += saturate(specular + ambient + diffuse);
+        lightColor += (specular + ambient + diffuse);
     }
 
-    input.Color = textureColor * saturate(lightColor);
+    input.Color = saturate(textureColor * lightColor);
     
     
     return input.Color;
