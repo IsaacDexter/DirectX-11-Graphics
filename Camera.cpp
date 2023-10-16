@@ -87,7 +87,7 @@ void Camera::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::Stat
 
 FirstPersonCamera::FirstPersonCamera(XMFLOAT4 eye, XMFLOAT4 to, XMFLOAT4 up, float windowWidth, float windowHeight, float nearDepth, float farDepth) : Camera(eye, to, up, windowWidth, windowHeight, nearDepth, farDepth)
 {
-    m_movementSpeed = 0.0075f;
+    m_movementSpeed = 0.00125f;
     m_rotationSpeed = 0.0125f;
 
     m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);

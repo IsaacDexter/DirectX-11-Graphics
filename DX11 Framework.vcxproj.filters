@@ -69,6 +69,7 @@
     <ClInclude Include="Level.h">
       <Filter>Levels</Filter>
     </ClInclude>
+    <ClInclude Include="Billboard.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Level.cpp">
       <Filter>Levels</Filter>
     </ClCompile>
+    <ClCompile Include="Billboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

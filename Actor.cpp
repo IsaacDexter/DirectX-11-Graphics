@@ -98,6 +98,11 @@ void Actor::SetTransform(XMFLOAT3 newPosition, XMFLOAT3 newRotation, XMFLOAT3 ne
     UpdateTransform();
 }
 
+void Actor::SetTexture(Texture* texture)
+{
+    m_diffuseMap = texture;
+}
+
 #pragma endregion
 
 void Actor::UpdateTransform()

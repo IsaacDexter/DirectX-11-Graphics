@@ -306,6 +306,12 @@ void Level::Load(char* path)
     _pointLights = new std::map<std::string, PointLight*>();
     _spotLights = new std::map<std::string, SpotLight*>();
 
+    _night = false;
+    if (_directionalLights->find("sun") != _directionalLights->end())
+    {
+        _night = _directionalLights->find("sun")->second->directionToLight.y < 0;
+    }
+
     //Parse json
     json jFile;
 
@@ -364,6 +370,55 @@ void Level::Update(float t, Keyboard::KeyboardStateTracker keys, Keyboard::State
     {
         _cameras->find("fixed3")->second->LookAt(ToXMFLOAT4(_actors->find("barrel")->second->GetPosition()));
     }*/
+
+    //Rotate billboards
+    //For each billboard
+    int i = 0;
+    while (_actors->find("billboard" + std::to_string(i)) != _actors->end())
+    {
+        //Get the billboards postion
+        XMVECTOR billboardPosition = XMLoadFloat3(&_actors->find("billboard" + std::to_string(i))->second->GetPosition());
+        //The cameras position
+        XMVECTOR cameraPosition = XMLoadFloat4(&cameraPos);
+        //The billboards up (regular up as billboard does not turn in the x)
+        XMVECTOR billboardUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        //Get the rotation matrix by looking at the cameras position
+        XMMATRIX r = XMMatrixLookAtLH(billboardPosition, cameraPosition, billboardUp);
+        //store to a float 4x4 to access the values
+        XMFLOAT4X4 rotation;
+        XMStoreFloat4x4(&rotation, r);
+
+        //Extract the roll and yaw from the rotation matrix
+        float pitch = (float)asin(-rotation._23);
+        float yaw = (float)atan2(rotation._13, rotation._33);
+        float roll = (float)atan2(rotation._21, rotation._22);
+
+        //rotate by these pitch roll and yaw values. This is so the m_rotation vector 3 doesnt lose track of itself
+        _actors->find("billboard" + std::to_string(i))->second->SetRotation(XMFLOAT3(0.0f, yaw, roll));
+        i++;
+    }
+
+    //Handle day and night cycle
+    // If there is a sun
+    if (_directionalLights->find("sun") != _directionalLights->end())
+    {
+        //Calculate its new angle from the time
+        float sunAngle = sin(t / 5);
+        _directionalLights->find("sun")->second->directionToLight.y = sunAngle; //Change the suns direction to this new angle
+
+        if (sunAngle < 0 && !_night)    //if the sun has set
+        {
+            _night = true;  //Set it to night
+            _actors->find("skybox")->second->SetTexture(_textures->find("nightDiffuse")->second);   //Set the skys texture to be a night sky
+        }
+        else if (sunAngle > 0 && _night) //if the sun has risen
+        {
+            _night = false; //Set it to day
+            _actors->find("skybox")->second->SetTexture(_textures->find("dayDiffuse")->second); //Set the skys texture to be a day slky
+        }
+    }
+
+
 
     //Handle camera selection
     if (keys.pressed.D1)

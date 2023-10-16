@@ -222,7 +222,7 @@ HRESULT Application::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
     // Create window
     _hInst = hInstance;
-    RECT rc = {0, 0, 640, 480};
+    RECT rc = {0, 0, 1920, 1080};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
     ShowCursor(FALSE);
     _hWnd = CreateWindow(L"TutorialWindowClass", L"DX11 Framework", WS_OVERLAPPEDWINDOW,
@@ -427,20 +427,24 @@ HRESULT Application::InitDevice()
 
 void Application::Cleanup()
 {
-    if (_pImmediateContext) _pImmediateContext->Release();
-    if (_pImmediateContext) _pImmediateContext->ClearState();
-    if (_pd3dDevice) _pd3dDevice->Release();
-    if (_pVertexLayout) _pVertexLayout->Release();
-    if (_pSwapChain) _pSwapChain->Release();
-    if (_pRenderTargetView) _pRenderTargetView->Release();
-    if (_pSamplerLinear) _pSamplerLinear->Release();
-    if (_pVertexShader) _pVertexShader->Release();
-    if (_pPixelShader) _pPixelShader->Release();
-    if (_wireFrame) _wireFrame->Release();
-    if (_solidFill) _solidFill->Release();
-    if (_currentRasterizerState) _currentRasterizerState->Release();
-    //if (_depthStencilView) _depthStencilView->Release();
-    if (_depthStencilBuffer) _depthStencilBuffer->Release();
+    try
+    {
+        if (_pImmediateContext) _pImmediateContext->Release();
+        if (_pImmediateContext) _pImmediateContext->ClearState();
+        if (_pd3dDevice) _pd3dDevice->Release();
+        if (_pVertexLayout) _pVertexLayout->Release();
+        if (_pSwapChain) _pSwapChain->Release();
+        if (_pRenderTargetView) _pRenderTargetView->Release();
+        if (_pSamplerLinear) _pSamplerLinear->Release();
+        if (_pVertexShader) _pVertexShader->Release();
+        if (_pPixelShader) _pPixelShader->Release();
+        if (_wireFrame) _wireFrame->Release();
+        if (_solidFill) _solidFill->Release();
+    }
+    catch (const std::exception&)
+    {
+        return;
+    }
 }
 
 void Application::Update()

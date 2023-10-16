@@ -88,6 +88,8 @@ public:
 	/// <param name="newScale">The objects new scale (x, y, z)</param>
 	void SetTransform(XMFLOAT3 newPosition, XMFLOAT3 newRotation, XMFLOAT3 newScale);
 
+	void SetTexture(Texture* texture);
+
 private:
 	void UpdateTransform();
 

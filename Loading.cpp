@@ -18,7 +18,12 @@ Texture* LoadDDS(ID3D11Device* d3dDevice, std::string path)
     wchar_t* wPath = new wchar_t[cSize];
     mbstowcs(wPath, c, cSize);
 
-    CreateDDSTextureFromFile(d3dDevice, wPath, nullptr, &texture);
+    HRESULT hr;
+    hr = CreateDDSTextureFromFile(d3dDevice, wPath, nullptr, &texture);
 
+    if (texture == nullptr)
+    {
+        throw(hr);
+    }
     return texture;
 }

@@ -15,6 +15,7 @@
 #include "Normals.h"
 #include "Camera.h"
 #include "Actor.h"
+#include "Billboard.h"
 
 using json = nlohmann::json;
 
@@ -27,6 +28,8 @@ private:
 	XMFLOAT2 m_windowSize;
 
 	XMFLOAT4X4				m_world;
+
+	bool _night;
 
 	Camera* m_camera;
 
